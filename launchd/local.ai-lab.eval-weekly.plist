@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>local.ai-lab.eval-weekly</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/bin/python3</string>
+      <string>/Users/hugo/local-ai-lab/eval-weekly.py</string>
+      <string>--out</string>
+      <string>/Users/hugo/local-ai-lab/eval-weekly.jsonl</string>
+      <string>--timeout</string>
+      <string>120</string>
+      <string>--mem-min</string>
+      <string>12</string>
+    </array>
+    <!-- Weekly: Monday 04:00 local time (quiet hour). launchd runs it on the
+         next wake if the Mac was asleep at the scheduled minute. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+      <key>Weekday</key>
+      <integer>1</integer>
+      <key>Hour</key>
+      <integer>4</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/Users/hugo/local-ai-lab/eval-weekly.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/hugo/local-ai-lab/eval-weekly.err.log</string>
+    <!-- Keep CPU courteous on the 8 GB box while the eval runs. -->
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>Nice</key>
+    <integer>5</integer>
+  </dict>
+</plist>

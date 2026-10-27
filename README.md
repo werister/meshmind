@@ -32,6 +32,7 @@ Live state (`*.log`, `monitor-state`, results) is git-ignored on purpose.
 - Health: `tail ~/local-ai-lab/health.log` (columns: local/serve, installed, loaded, probe tok/s, cumulative totals, feedback).
 - Feedback: agents POST `{agent, model, ok, note, tokens}` to `/feedback`.
 - Evals: `python3 context-probe.py [--only MODEL] [--steps 4096,8192]` (background it; watch `context-probe.log`).
+- Weekly smoke eval: installed as the `local.ai-lab.eval-weekly` LaunchAgent (Mon 04:00). Runs 3 fast models x 3 fixed prompts, grades PASS/FAIL + tok/s, appends to `~/local-ai-lab/eval-weekly.jsonl`; `/status.eval` tails the latest run and the dashboard shows a "Weekly eval" card. Run on demand: `python3 eval-weekly.py` (flags: `--models a,b`, `--timeout 120`, `--mem-min 12`, `--out PATH`). The memory guard SKIPs a model when free RAM % is below `--mem-min`; a bad model name yields FAIL rows, never a crash. Logs: `eval-weekly.{out,err}.log`.
 - Never run `qwen2.5:14b` / `deepseek-r1:8b` interactively; never `tailscale funnel`; never `OLLAMA_HOST=0.0.0.0`.
 
 ## Deploy flow
