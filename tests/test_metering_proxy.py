@@ -14,6 +14,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+SLOW_LOCK = threading.Lock()
+SLOW_COUNT = 0
+SLOW_EVENT = threading.Event()
 
 
 class Backend(BaseHTTPRequestHandler):
@@ -30,11 +33,18 @@ class Backend(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
     def do_POST(self):
+        global SLOW_COUNT
         n = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(n)
         if self.headers.get("Host") != "127.0.0.1:11434":
             self.send_error(400, "Host was not rewritten")
             return
+        if b'"slow":true' in body:
+            with SLOW_LOCK:
+                SLOW_COUNT += 1
+                if SLOW_COUNT >= 16:
+                    SLOW_EVENT.set()
+            time.sleep(3)
         if self.path == "/api/chat" and b'"stream":true' in body:
             frames = [b'{"message":{"content":"one"},"done":false}\n',
                       b'{"message":{"content":"two"},"done":false}\n',
@@ -138,6 +148,7 @@ class MeterAcceptance(unittest.TestCase):
         row = self.calls()[0]
         self.assertEqual(row["agent"], "self-declared")
         self.assertEqual((row["model"], row["prompt_tokens"], row["eval_tokens"]), ("probe", 3, 7))
+        self.assertEqual((row["path"], row["status"]), ("/api/chat", 200))
         self.assertEqual(json.loads(self.request("GET", "/status")[1])["metering"]["calls_total"], before + 1)
 
     def test_stream_relay_is_incremental_and_one_row(self):
@@ -205,6 +216,29 @@ class MeterAcceptance(unittest.TestCase):
         self.assertLessEqual(status["metering"]["ring_len"], 256)
         self.assertEqual(len(self.calls()), 256)
 
+    def test_busy_proxy_records_503_status(self):
+        global SLOW_COUNT
+        with SLOW_LOCK:
+            SLOW_COUNT = 0
+        SLOW_EVENT.clear()
+        body = b'{"model":"slow","slow":true}'
+        workers = [threading.Thread(target=self.request,
+                                    args=("POST", "/api/chat", body, {"Content-Type": "application/json"}))
+                   for _ in range(16)]
+        for worker in workers:
+            worker.start()
+        try:
+            self.assertTrue(SLOW_EVENT.wait(timeout=5), "16 slow requests did not reach backend")
+            status, _, _ = self.request("POST", "/api/chat", b'{"model":"busy"}',
+                                        {"Content-Type": "application/json"})
+            self.assertEqual(status, 503)
+            row = next(r for r in self.calls() if r["status"] == 503)
+            self.assertEqual((row["path"], row["status"]), ("/api/chat", 503))
+        finally:
+            for worker in workers:
+                worker.join(timeout=5)
+                self.assertFalse(worker.is_alive())
+
     def test_backend_down_returns_502_and_records_failed_call(self):
         dead_port = free_port()
         env = os.environ.copy()
@@ -232,6 +266,7 @@ class MeterAcceptance(unittest.TestCase):
             data = (Path(env["METER_DIR"]) / "calls.log").read_text().strip().splitlines()
             row = json.loads(data[-1])
             self.assertFalse(row["ok"])
+            self.assertEqual((row["path"], row["status"]), ("/api/chat", 502))
         finally:
             process.terminate()
             process.wait(timeout=5)
@@ -276,6 +311,9 @@ class MeterAcceptance(unittest.TestCase):
             response.read()
             conn.close()
             ledger = Path(data_dir) / "calls.log"
+            deadline = time.monotonic() + 3
+            while time.monotonic() < deadline and not (ledger.exists() and ledger.stat().st_size):
+                time.sleep(.01)
             self.assertTrue(ledger.exists(), f"no ledger written; sidecar stderr: {Path(stderr_path).read_text(errors='replace')}")
             rows = [json.loads(line) for line in ledger.read_text().splitlines()]
             row = rows[-1]

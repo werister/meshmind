@@ -330,8 +330,9 @@ class H(BaseHTTPRequestHandler):
     def _proxy(self, metered=False):
         global BACKEND_UP, UNMETERED_STREAM_CALLS
         started = time.time()
-        path = urlsplit(self.path).path
+        path = self.path
         call = {"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "path": path, "status": None,
                 "agent": (self.headers.get("X-Agent") or "unknown")[:64], "model": "unknown",
                 "prompt_tokens": None, "eval_tokens": None, "ok": False,
                 "stream": False, "partial": False, "truncated": False}
@@ -346,6 +347,7 @@ class H(BaseHTTPRequestHandler):
             return
         if not PROXY_SEM.acquire(blocking=False):
             call["error"] = "proxy concurrency limit"
+            call["status"] = 503
             try:
                 self.send_error(503, "proxy busy")
             except (BrokenPipeError, ConnectionResetError):
@@ -395,6 +397,7 @@ class H(BaseHTTPRequestHandler):
                 remaining -= len(part)
             upstream = conn.getresponse()
             BACKEND_UP = True
+            call["status"] = upstream.status
             self.send_response(upstream.status, upstream.reason)
             for key, value in upstream.getheaders():
                 if key.lower() not in ("transfer-encoding", "connection"):
@@ -451,6 +454,8 @@ class H(BaseHTTPRequestHandler):
                 call["truncated"] = call["truncated"] or response_size > BODY_CAP
         except (OSError, http.client.HTTPException, TimeoutError, ConnectionError):
             BACKEND_UP = False
+            if call["status"] is None:
+                call["status"] = 502
             try:
                 self.send_error(502, "backend unavailable")
             except (BrokenPipeError, ConnectionResetError):
