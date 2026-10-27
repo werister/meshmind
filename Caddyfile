@@ -21,6 +21,18 @@
         reverse_proxy 127.0.0.1:8081
     }
 
+    handle /calls* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle /v1/* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
     handle {
         reverse_proxy 127.0.0.1:11434 {
             header_up Host 127.0.0.1:11434

@@ -7,12 +7,17 @@ GET  /dashboard -> auto-refreshing HTML showcase page (mml Apple-light styling)
 GET  /agents.md -> the agent quickstart doc, served over HTTPS
 """
 import html
+import http.client
 import json
 import os
+import tempfile
+import threading
 import time
 import urllib.request
+from collections import deque
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlsplit
 
 LAB = os.path.join(os.path.expanduser("~"), "local-ai-lab")
 FB = os.path.join(LAB, "feedback.log")
@@ -20,6 +25,21 @@ HEALTH = os.path.join(LAB, "health.log")
 STATE = os.path.join(LAB, "monitor-state")
 AGENTS_MD = os.path.join(LAB, "AGENTS.md")
 OLLAMA = "http://127.0.0.1:11434"
+UPSTREAM = urlsplit(os.environ.get("OLLAMA_URL", OLLAMA))
+PROXY_PORT = int(os.environ.get("FEEDBACK_SERVER_PORT", "8081"))
+METER_DIR = os.environ.get("METER_DIR", LAB)
+CALLS = os.path.join(METER_DIR, "calls.log")
+PROXY_TOTAL = os.path.join(METER_DIR, "proxy-token-total")
+CALLS_MAX = int(os.environ.get("CALLS_MAX_BYTES", str(50 * 1024 * 1024)))
+RING_SIZE = 256
+BODY_CAP = 2 * 1024 * 1024
+TAIL_SIZE = 64 * 1024
+PROXY_PATHS = {"/api/chat", "/api/generate", "/api/embeddings", "/v1/chat/completions", "/v1/completions", "/v1/embeddings"}
+CALLS_RING = deque(maxlen=RING_SIZE)
+METER_LOCK = threading.Lock()
+PROXY_SEM = threading.BoundedSemaphore(16)
+UNMETERED_STREAM_CALLS = 0
+BACKEND_UP = False
 STARTED = time.time()
 MEASURED_MAX = {
     "functiongemma:latest": "16k",
@@ -116,6 +136,76 @@ def ollama_get(path, timeout=8):
     except Exception:
         return None
 
+def _nonnegative_int(value):
+    try:
+        return max(0, int(value)) if value is not None else None
+    except (TypeError, ValueError):
+        return None
+
+def _load_calls():
+    try:
+        with open(CALLS, "rb") as f:
+            f.seek(max(0, os.path.getsize(CALLS) - 1024 * 1024))
+            if f.tell():
+                f.readline()
+            for line in f:
+                try:
+                    CALLS_RING.append(json.loads(line))
+                except (ValueError, UnicodeDecodeError):
+                    pass
+    except OSError:
+        pass
+
+def _read_call_count():
+    try:
+        with open(PROXY_TOTAL) as f:
+            d = json.load(f)
+        return int(d.get("calls_total", 0))
+    except (OSError, ValueError, TypeError):
+        return len(CALLS_RING)
+
+def _total_tokens(key):
+    try:
+        with open(PROXY_TOTAL) as f:
+            d = json.load(f)
+        return int(d.get(key + "_total", 0))
+    except (OSError, ValueError, TypeError):
+        return 0
+
+def _record_call(call):
+    """Best-effort metering persistence; never affects bytes already relayed."""
+    with METER_LOCK:
+        try:
+            os.makedirs(METER_DIR, exist_ok=True)
+            if os.path.exists(CALLS) and os.path.getsize(CALLS) >= CALLS_MAX:
+                rotated = CALLS + ".1"
+                try:
+                    os.unlink(rotated)
+                except FileNotFoundError:
+                    pass
+                os.replace(CALLS, rotated)
+            with open(CALLS, "a", encoding="utf-8") as f:
+                f.write(json.dumps(call, separators=(",", ":")) + "\n")
+            total = _read_call_count() + 1
+            state = {"calls_total": total,
+                     "prompt_tokens_total": _total_tokens("prompt_tokens") + (call.get("prompt_tokens") or 0),
+                     "eval_tokens_total": _total_tokens("eval_tokens") + (call.get("eval_tokens") or 0)}
+            fd, tmp = tempfile.mkstemp(prefix="proxy-token-total.", dir=METER_DIR)
+            try:
+                with os.fdopen(fd, "w") as f:
+                    json.dump(state, f)
+                    f.flush()
+                    os.fsync(f.fileno())
+                os.replace(tmp, PROXY_TOTAL)
+            finally:
+                try:
+                    os.unlink(tmp)
+                except FileNotFoundError:
+                    pass
+            CALLS_RING.append(dict(call))
+        except Exception:
+            pass
+
 def parse_health(line):
     parts = line.split(" ")
     out = {"at": parts[0] if parts else ""}
@@ -179,6 +269,9 @@ def build_status():
         "ollama": {"up": ver is not None, "version": (ver or {}).get("version", "?"), "installed": len(models)},
         "health": {"local": h.get("local", "?"), "serve": h.get("serve", "?"), "at": h.get("at", "?"), "probe_tok_s": h.get("probe_tok_s", "?")},
         "tokens": {"probe_total": ptot, "feedback_total": fbtoks, "grand_total": ptot + fbtoks},
+        "metering": {"calls_total": _read_call_count(), "prompt_tokens_total": _total_tokens("prompt_tokens"),
+                     "eval_tokens_total": _total_tokens("eval_tokens"), "ring_len": len(CALLS_RING),
+                     "backend_up": BACKEND_UP, "unmetered_stream_calls": UNMETERED_STREAM_CALLS},
         "feedback": {"n": fbn, "latest": fblast, "recent": recent},
         "models": models,
         "activity": {"probe_tok_s_last24": hist},
@@ -234,7 +327,149 @@ class H(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+    def _proxy(self, metered=False):
+        global BACKEND_UP, UNMETERED_STREAM_CALLS
+        started = time.time()
+        path = urlsplit(self.path).path
+        call = {"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "agent": (self.headers.get("X-Agent") or "unknown")[:64], "model": "unknown",
+                "prompt_tokens": None, "eval_tokens": None, "ok": False,
+                "stream": False, "partial": False, "truncated": False}
+        length = 0
+        capture = bytearray()
+        try:
+            length = int(self.headers.get("Content-Length", "0") or 0)
+            if length < 0:
+                raise ValueError()
+        except ValueError:
+            self.send_json({"error": "invalid content length"}, 400)
+            return
+        if not PROXY_SEM.acquire(blocking=False):
+            call["error"] = "proxy concurrency limit"
+            try:
+                self.send_error(503, "proxy busy")
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+            self.close_connection = True
+            if metered:
+                _record_call(call)
+            return
+        if metered:
+            # Read and forward in bounded pieces; retain only a small JSON prefix.
+            try:
+                # Parse at most 64 KB of request metadata without buffering the body.
+                needed = min(length, 65536)
+                while len(capture) < needed:
+                    part = self.rfile.read(min(8192, needed - len(capture)))
+                    if not part:
+                        break
+                    capture.extend(part)
+                payload = json.loads(capture) if len(capture) == length else json.loads(capture[:65536])
+                call["model"] = str(payload.get("model", "unknown"))[:128]
+                call["stream"] = bool(payload.get("stream", False))
+            except Exception:
+                payload = {}
+                call["meter_parse_failed"] = True
+            call["truncated"] = length > BODY_CAP
+        else:
+            payload = {}
+        conn = None
+        try:
+            conn = http.client.HTTPConnection(UPSTREAM.hostname or "127.0.0.1", UPSTREAM.port or 80,
+                                              timeout=300 if metered else 15)
+            conn.putrequest(self.command, self.path, skip_host=True, skip_accept_encoding=True)
+            for key, value in self.headers.items():
+                if key.lower() not in ("host", "connection", "x-agent", "transfer-encoding"):
+                    conn.putheader(key, value)
+            conn.putheader("Host", "127.0.0.1:11434")
+            conn.putheader("Connection", "close")
+            conn.endheaders()
+            if capture:
+                conn.send(capture)
+            remaining = length - len(capture)
+            while remaining > 0:
+                part = self.rfile.read(min(65536, remaining))
+                if not part:
+                    raise ConnectionError("client request ended early")
+                conn.send(part)
+                remaining -= len(part)
+            upstream = conn.getresponse()
+            BACKEND_UP = True
+            self.send_response(upstream.status, upstream.reason)
+            for key, value in upstream.getheaders():
+                if key.lower() not in ("transfer-encoding", "connection"):
+                    self.send_header(key, value)
+            self.send_header("Connection", "close")
+            self.end_headers()
+            tail = bytearray()
+            response_size = 0
+            try:
+                while True:
+                    chunk = upstream.read1(8192)
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    self.wfile.flush()
+                    if metered:
+                        response_size += len(chunk)
+                        tail.extend(chunk)
+                        if len(tail) > TAIL_SIZE:
+                            del tail[:-TAIL_SIZE]
+            except (BrokenPipeError, ConnectionResetError):
+                call["partial"] = True
+                return
+            call["ok"] = 200 <= upstream.status < 400
+            if metered:
+                found_usage = False
+                for line in reversed(bytes(tail).splitlines()):
+                    line = line.strip()
+                    if line.startswith(b"data:"):
+                        line = line[5:].strip()
+                    if not line or line == b"[DONE]":
+                        continue
+                    try:
+                        frame = json.loads(line)
+                    except Exception:
+                        continue
+                    if path.startswith("/api/") and frame.get("done"):
+                        call["prompt_tokens"] = _nonnegative_int(frame.get("prompt_eval_count"))
+                        call["eval_tokens"] = _nonnegative_int(frame.get("eval_count"))
+                        found_usage = True
+                        break
+                    usage = frame.get("usage")
+                    if usage is not None:
+                        call["prompt_tokens"] = _nonnegative_int(usage.get("prompt_tokens"))
+                        call["eval_tokens"] = _nonnegative_int(usage.get("completion_tokens"))
+                        found_usage = True
+                        break
+                if not found_usage:
+                    if call["stream"] and path.startswith("/v1/"):
+                        call["no_usage"] = True
+                        UNMETERED_STREAM_CALLS += 1
+                    else:
+                        call["meter_parse_failed"] = True
+                call["truncated"] = call["truncated"] or response_size > BODY_CAP
+        except (OSError, http.client.HTTPException, TimeoutError, ConnectionError):
+            BACKEND_UP = False
+            try:
+                self.send_error(502, "backend unavailable")
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+        finally:
+            if conn:
+                conn.close()
+            PROXY_SEM.release()
+            if metered:
+                call["duration_ms"] = int((time.time() - started) * 1000)
+                _record_call(call)
     def do_POST(self):
+        path = urlsplit(self.path).path
+        if path in PROXY_PATHS:
+            self._proxy(True)
+            return
+        if path.startswith(("/api/", "/v1/")):
+            self._proxy(False)
+            return
         if self.path.split("?")[0].rstrip("/") != "/feedback":
             self.send_response(404)
             self.end_headers()
@@ -264,9 +499,34 @@ class H(BaseHTTPRequestHandler):
         with open(FB, "a") as f:
             f.write(json.dumps(entry) + "\n")
         self.send_json({"status": "ok"})
+    def _other_proxy_method(self):
+        if urlsplit(self.path).path.startswith(("/api/", "/v1/")):
+            self._proxy(False)
+        else:
+            self.send_error(501, "unsupported method")
+    def do_HEAD(self):
+        self._other_proxy_method()
+    def do_PUT(self):
+        self._other_proxy_method()
+    def do_PATCH(self):
+        self._other_proxy_method()
+    def do_DELETE(self):
+        self._other_proxy_method()
+    def do_OPTIONS(self):
+        self._other_proxy_method()
     def do_GET(self):
         p = self.path.split("?")[0].rstrip("/")
-        if p == "/status":
+        if p == "/calls":
+            try:
+                limit = max(0, min(RING_SIZE, int(parse_qs(urlsplit(self.path).query).get("limit", ["50"])[0])))
+            except ValueError:
+                limit = 50
+            with METER_LOCK:
+                calls = list(reversed(CALLS_RING))[:limit]
+            self.send_json(calls)
+        elif p.startswith(("/api/", "/v1/")):
+            self._proxy(False)
+        elif p == "/status":
             self.send_json(build_status())
         elif p == "" or p == "/dashboard":
             body = build_dashboard(build_status()).encode()
@@ -293,4 +553,6 @@ class H(BaseHTTPRequestHandler):
             self.end_headers()
 
 if __name__ == "__main__":
-    ThreadingHTTPServer(("127.0.0.1", 8081), H).serve_forever()
+    os.makedirs(METER_DIR, exist_ok=True)
+    _load_calls()
+    ThreadingHTTPServer(("127.0.0.1", PROXY_PORT), H).serve_forever()
