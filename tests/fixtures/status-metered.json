@@ -1,0 +1,72 @@
+{
+  "ts": "2026-10-27T11:00:00+00:00",
+  "service_uptime_s": 5513,
+  "ollama": {"up": true, "version": "0.32.1", "installed": 13},
+  "health": {"local": "OK", "serve": "OK", "at": "2026-10-27T03:59:18-0700", "probe_tok_s": "115.8"},
+  "tokens": {"probe_total": 414, "feedback_total": 445, "grand_total": 859},
+  "metering": {
+    "calls_total": 128,
+    "prompt_tokens_total": 9640,
+    "eval_tokens_total": 23110,
+    "ring_len": 128,
+    "backend_up": true,
+    "unmetered_stream_calls": 4
+  },
+  "feedback": {
+    "n": 7,
+    "latest": {"ts": "2026-10-27T08:58:51+00:00", "agent": "setup", "model": "none", "ok": true, "note": "post-upgrade route test", "tokens": 0},
+    "recent": [
+      {"ts": "2026-10-27T08:58:51+00:00", "agent": "setup", "model": "none", "ok": true, "note": "post-upgrade route test", "tokens": 0},
+      {"ts": "2026-10-27T08:34:48+00:00", "agent": "kiro-spar", "model": "qwen3:4b", "ok": true, "note": "All endpoints 200; qwen3:4b streams fine but /no_think ignored", "tokens": 200},
+      {"ts": "2026-10-27T08:31:22+00:00", "agent": "codex-spar", "model": "qwen3:4b", "ok": true, "note": "Replies correctly but /no_think not honored; took 177s.", "tokens": 245},
+      {"ts": "2026-10-27T08:06:29+00:00", "agent": "muse-status", "model": "none", "ok": true, "note": "morning status check", "tokens": 0},
+      {"ts": "2026-10-26T17:32:16+00:00", "agent": "muse-verify", "model": "qwen3:4b", "ok": true, "note": "end-to-end https check", "tokens": 0}
+    ]
+  },
+  "calls": [
+    {"ts": "2026-10-27T10:59:40+00:00", "agent": "kiro-spar", "model": "qwen3:4b", "path": "/v1/chat/completions", "ok": true, "eval_tokens": 212, "prompt_tokens": 88, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:58:12+00:00", "agent": "codex-spar", "model": "llama3.2:3b", "path": "/api/chat", "ok": true, "eval_tokens": 98, "prompt_tokens": 40, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:55:03+00:00", "agent": "unknown", "model": "qwen2.5:0.5b", "path": "/api/generate", "ok": true, "eval_tokens": 15, "prompt_tokens": 9, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:51:47+00:00", "agent": "muse-status", "model": "qwen3:4b", "path": "/v1/chat/completions", "ok": true, "eval_tokens": null, "prompt_tokens": 61, "no_usage": true, "partial": false},
+    {"ts": "2026-10-27T10:49:30+00:00", "agent": "kiro-spar", "model": "gemma2:2b", "path": "/api/chat", "ok": false, "eval_tokens": 0, "prompt_tokens": 33, "no_usage": false, "partial": false, "note": "backend 502"}
+  ],
+  "models": [
+    {"name": "qwen3:4b", "size_mb": 2382, "params": "4.0B", "max_ctx_measured": "4k", "loaded": false, "calls": 3, "tokens": 445, "last_called": "2026-10-27T08:34:48+00:00"},
+    {"name": "qwen2.5:0.5b", "size_mb": 379, "params": "494.03M", "max_ctx_measured": "4k", "loaded": true, "calls": 0, "tokens": 0, "last_called": ""},
+    {"name": "gemma2:2b", "size_mb": 1554, "params": "2.6B", "max_ctx_measured": "8k", "loaded": false, "calls": 0, "tokens": 0, "last_called": ""}
+  ],
+  "eval": {
+    "ts": "2026-10-27T04:12:00+00:00",
+    "models": 3,
+    "passed_models": 2,
+    "failed_models": 1,
+    "skipped_models": 0,
+    "wall_s": 221.4,
+    "per_model": [
+      {"model": "qwen2.5:0.5b", "verdict": "PASS", "passed": 3, "total": 3, "avg_tok_s": 112.0},
+      {"model": "gemma2:2b", "verdict": "PASS", "passed": 3, "total": 3, "avg_tok_s": 41.5},
+      {"model": "llama3.2:3b", "verdict": "FAIL", "passed": 2, "total": 3, "avg_tok_s": 28.3}
+    ]
+  },
+  "activity": {
+    "probe_tok_s_last24": [117.3, 62.9, 117.0, 117.6, 102.0, 117.6, 117.1, 116.6, 117.2, 116.2, 117.3, 116.9, 117.1, 117.8, 115.4, 117.6, 85.1, 117.6, 117.1, 117.1, 107.4, 117.5, 117.3, 115.8],
+    "daily": [
+      {"date": "2026-10-14", "count": 0},
+      {"date": "2026-10-15", "count": 6},
+      {"date": "2026-10-16", "count": 11},
+      {"date": "2026-10-17", "count": 4},
+      {"date": "2026-10-18", "count": 0},
+      {"date": "2026-10-19", "count": 0},
+      {"date": "2026-10-20", "count": 9},
+      {"date": "2026-10-21", "count": 14},
+      {"date": "2026-10-22", "count": 22},
+      {"date": "2026-10-23", "count": 18},
+      {"date": "2026-10-24", "count": 7},
+      {"date": "2026-10-25", "count": 3},
+      {"date": "2026-10-26", "count": 16},
+      {"date": "2026-10-27", "count": 31}
+    ],
+    "current_streak": 8,
+    "longest_streak": 8
+  }
+}
