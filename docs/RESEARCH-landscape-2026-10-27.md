@@ -10,8 +10,12 @@ from the GitHub API, same day.
   Hardware: 6th Gen Intel to RTX 50". Author ran 0.5B–1.5B stably on
   an LG Gram i7-6500U/8GB/iGPU ("hostile hardware"), and 7B at 0.53s
   TTFT / 28.87 tok/s on an RTX 5050 laptop (8GB VRAM). Closest public
-  analogue to our Mini envelope. REQUIRED READING for squeeze-more
-  techniques; comments may hold CPU flags and serving tricks.
+  analogue to our Mini envelope. CORRECTION (round-2 sparring read the
+  full thread): closed-source commercial promo ("Source Code: Still
+  Private"), GPU-only benches; the one substantive reply (RevolutionAI)
+  is Linux NUMA + CPU-governor + batch sweeps, mostly N/A to a
+  single-socket macOS Mini. Downgraded to "skim the one reply" — only
+  transferable item is micro-benchmarking ubatch.
 - **incoai/splash** (C++, 1863 stars, pushed today, Apache-2.0): local
   engine for Apple silicon (M3+), DFlash2 speculative decoding,
   Metal kernels, OpenAI+Anthropic APIs, `splash claude/codex` agent
@@ -76,5 +80,6 @@ from the GitHub API, same day.
 
 Stay on Ollama (default endorsed everywhere, incl. B70 guides);
 do not chase ipex-llm (dead); splash goes on the MacBook trial
-list; lim goes on the Mini experiment list; discussion #19813 is
-required reading for old-Intel optimization.
+list; lim goes on the Mini experiment list (with a RAM-ceiling flag);
+discussion #19813 downgraded to "skim the one reply" (closed-source
+promo, GPU benches, one Linux reply).
