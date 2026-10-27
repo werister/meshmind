@@ -1,0 +1,29 @@
+{
+    auto_https off
+}
+
+:8080 {
+    bind 127.0.0.1
+
+    handle /feedback* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle /status* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle /dashboard* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle /agents.md* {
+        reverse_proxy 127.0.0.1:8081
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:11434 {
+            header_up Host 127.0.0.1:11434
+        }
+    }
+}

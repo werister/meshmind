@@ -1,0 +1,7 @@
+*.log
+monitor-state
+__pycache__/
+*.pyc
+.DS_Store
+context-probe.log
+context-results.jsonl
