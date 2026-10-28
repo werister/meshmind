@@ -11,7 +11,10 @@ import http.client
 import json
 import math
 import os
+import re
 import statistics
+import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -478,6 +481,112 @@ def daily_activity(days=14):
     return out
 
 
+# ---- memory + swap telemetry (T6, additive) --------------------------------
+# Samples macOS `vm_stat` and `sysctl vm.swapusage`, both stdlib-only via
+# subprocess, and reports MB. Any parse drift or missing tool -> the affected
+# field is null and a one-line note goes to stderr; the server keeps running.
+# The three fields are spread as TOP-LEVEL keys of /status (run_ladder.py reads
+# data["mem_free_mb"] etc.) and are purely additive -- old readers unaffected.
+MEM_FIELDS = ("mem_free_mb", "mem_compressed_mb", "swap_used_mb")
+
+
+def _run_cmd(argv, timeout=5):
+    """Run a short command, return stdout text or None (never raises)."""
+    try:
+        out = subprocess.run(argv, capture_output=True, timeout=timeout, check=False)
+        if out.returncode != 0:
+            return None
+        return out.stdout.decode("utf-8", "replace")
+    except Exception:
+        return None
+
+
+def parse_vm_stat(text):
+    """Parse `vm_stat` output -> (mem_free_mb, mem_compressed_mb).
+
+    vm_stat reports counts in pages; the header line declares the page size.
+    Returns (None, None) on drift/absence; a single missing field is null on
+    its own. Pure function so the parse-drift test can feed a mutated fixture.
+    """
+    if not text:
+        return None, None
+    page_size = None
+    header = text.splitlines()[0] if text.splitlines() else ""
+    m = re.search(r"page size of (\d+) bytes", header)
+    if m:
+        page_size = int(m.group(1))
+    free_pages = None
+    compressed_pages = None
+    for line in text.splitlines():
+        if ":" not in line:
+            continue
+        key, _, val = line.partition(":")
+        key = key.strip().lower()
+        digits = re.sub(r"[^0-9]", "", val)
+        if not digits:
+            continue
+        pages = int(digits)
+        if key == "pages free":
+            free_pages = pages
+        elif key == "pages occupied by compressor":
+            compressed_pages = pages
+    if page_size is None:
+        return None, None
+
+    def to_mb(pages):
+        if pages is None:
+            return None
+        return round(pages * page_size / 1048576)
+
+    return to_mb(free_pages), to_mb(compressed_pages)
+
+
+def parse_swapusage(text):
+    """Parse `sysctl vm.swapusage` -> swap_used_mb (None on drift/absence)."""
+    if not text:
+        return None
+    m = re.search(r"used\s*=\s*([0-9.]+)([KMG]?)", text)
+    if not m:
+        return None
+    try:
+        val = float(m.group(1))
+    except ValueError:
+        return None
+    unit = m.group(2)
+    mb = {"K": val / 1024, "M": val, "G": val * 1024, "": val / 1048576}.get(unit)
+    if mb is None:
+        return None
+    return round(mb)
+
+
+def read_mem():
+    """Sample memory + swap. Returns a dict with the three additive fields.
+
+    Any failure leaves the affected field null and emits one stderr note; the
+    caller (build_status) always gets a well-formed dict.
+    """
+    out = {k: None for k in MEM_FIELDS}
+    vm_text = _run_cmd(["vm_stat"])
+    try:
+        free_mb, compressed_mb = parse_vm_stat(vm_text)
+        out["mem_free_mb"] = free_mb
+        out["mem_compressed_mb"] = compressed_mb
+    except Exception as e:  # defensive: parse_vm_stat should not raise
+        print("T6 mem: vm_stat parse failed: %r" % (e,), file=sys.stderr)
+    if out["mem_free_mb"] is None or out["mem_compressed_mb"] is None:
+        print("T6 mem: vm_stat unavailable or unparseable; mem fields null",
+              file=sys.stderr)
+    swap_text = _run_cmd(["sysctl", "vm.swapusage"])
+    try:
+        out["swap_used_mb"] = parse_swapusage(swap_text)
+    except Exception as e:  # defensive
+        print("T6 mem: swapusage parse failed: %r" % (e,), file=sys.stderr)
+    if out["swap_used_mb"] is None:
+        print("T6 mem: vm.swapusage unavailable or unparseable; swap field null",
+              file=sys.stderr)
+    return out
+
+
 def build_status():
     ver = ollama_get("/api/version")
     ps = ollama_get("/api/ps") or {}
@@ -504,6 +613,7 @@ def build_status():
         "ollama": {"up": ver is not None, "version": (ver or {}).get("version", "?"), "installed": len(models)},
         "health": {"local": h.get("local", "?"), "serve": h.get("serve", "?"), "at": h.get("at", "?"), "probe_tok_s": h.get("probe_tok_s", "?")},
         "tokens": {"probe_total": ptot, "feedback_total": fbtoks, "grand_total": ptot + fbtoks},
+        **read_mem(),
         "metering": {"calls_total": _read_call_count(), "prompt_tokens_total": _total_tokens("prompt_tokens"),
                      "eval_tokens_total": _total_tokens("eval_tokens"), "ring_len": len(CALLS_RING),
                      "backend_up": BACKEND_UP, "unmetered_stream_calls": UNMETERED_STREAM_CALLS},
