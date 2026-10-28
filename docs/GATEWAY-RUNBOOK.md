@@ -7,8 +7,10 @@ run this. Window approved: now (daytime, sequential, guarded).
 
 ```
 Gate 1 (now, needs nobody): pulls, ONE model at a time (mini_pull.py
-  guards, or the guard checklist below for hand-pulls before it lands)
-Gate 2 (needs builders): run_8q per model (filter, needs T8)
+  guards, or the guard checklist below for hand-pulls before it lands;
+  exact specs + freshness decisions come from T9 PULLPACK)
+Gate 2 (needs builders): run_8q per model (filter, needs T8 + reviewed
+  questions via --questions)
   → T6 deploy (telemetry live → mem floor works, needs T6)
   → run_ladder per SURVIVOR (measure, needs T8 + T6 live)
   → logprob screen per survivor (mml-stack script, --screen-cmd)
@@ -18,6 +20,20 @@ Gate 2 (needs builders): run_8q per model (filter, needs T8)
 
 Between models: `ollama stop <prev>` + `ollama ps` shows unloaded.
 Never two weight servers / never parallel pulls.
+
+## Pinned environment (second-model review — no unstated variables)
+
+- KV mode: the bake-off runs under the LIVE KV setting. Record
+  `OLLAMA_KV_CACHE_TYPE` (or "default") in every findings table. If
+  Phase 5 later adopts q8_0, re-run ladders for adopted models —
+  headroom numbers are KV-relative, never absolute.
+- Parallel-2 steps measure two concurrent clients against the DEPLOYED
+  server config. If the server serializes (queueing), that IS the
+  finding — record it, do not change server env.
+- T6 deploy restarts the sidecar ONLY (dashboard/status), never ollama —
+  no contention with any Phase 5 ollama restart window.
+- Keeper refresh (re-pulling the stale installed roster) is deferred
+  until after the bake-off: do not move the baseline mid-experiment.
 
 ## Abort guards (any trip stops the run)
 
@@ -52,5 +68,6 @@ known-dissimilar). Record in the findings note.
 ## Findings note (deliverable back to gateway user)
 
 Per model: 8Q pass/fail, ladder tok_s + mem, screen AUC/kappa where
-run, keep/drop verdict. Plus: what was cut (SmolLM3? embeddings
-scope?) and the measured numbers that replace yesterday's inferences.
+run, keep/drop verdict, and the pinned environment (KV mode, server
+parallelism). Plus: what was cut (SmolLM3? embeddings scope?) and the
+measured numbers that replace yesterday's inferences.
