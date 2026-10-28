@@ -26,6 +26,7 @@ curl:
 - Default quality: `qwen3:4b` (about 1 min per answer; append `/no_think` or send `"think": false` for short ones)
 - Fast: `qwen2.5:0.5b` (about 2 s)
 - Code: `qwen2.5-coder:3b`
+- Embed: `nomic-embed-text:v1.5` (`POST /api/embed`, 768 dims, fastest on CPU)
 - Tools: `llama3.2:3b`, `phi4-mini`, `functiongemma`
 - Keep context at 4k or below (llmfit: nothing above 4k fits here)
 - Do NOT run `qwen2.5:14b` or `deepseek-r1:8b` (too big for 8 GB)
