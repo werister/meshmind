@@ -1,0 +1,43 @@
+{
+ "ts": "2026-10-28T09:15:00+00:00",
+ "service_uptime_s": 48213,
+ "ollama": {
+  "up": true,
+  "version": "0.32.1",
+  "installed": 13
+ },
+ "health": {
+  "local": "OK",
+  "serve": "OK",
+  "at": "2026-10-28T02:15:00-0700",
+  "probe_tok_s": "116.4"
+ },
+ "tokens": {
+  "probe_total": 512,
+  "feedback_total": 604,
+  "grand_total": 1116
+ },
+ "mem_free_mb": 742,
+ "mem_compressed_mb": 2980,
+ "swap_used_mb": 1536,
+ "metering": {
+  "calls_total": 141,
+  "prompt_tokens_total": 10233,
+  "eval_tokens_total": 24655,
+  "ring_len": 141,
+  "backend_up": true,
+  "unmetered_stream_calls": 4
+ },
+ "feedback": {
+  "n": 8,
+  "latest": {
+   "ts": "2026-10-28T09:01:00+00:00",
+   "agent": "muse-status",
+   "model": "none",
+   "ok": true,
+   "note": "morning status check",
+   "tokens": 0
+  },
+  "recent": []
+ }
+}
