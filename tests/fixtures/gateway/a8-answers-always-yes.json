@@ -1,0 +1,13 @@
+{
+  "_note": "Always-yes model fixture (crew A). All 8 replies are 'yes'. Against the mixed 4/4 placeholder set this is a lazy always-yes model -> all answers agree -> pass=false (the whole point of the 8Q filter).",
+  "answers": {
+    "1": {"reply": "yes", "latency_s": 0.05},
+    "2": {"reply": "Yes", "latency_s": 0.05},
+    "3": {"reply": "YES", "latency_s": 0.05},
+    "4": {"reply": "yes.", "latency_s": 0.05},
+    "5": {"reply": "yes", "latency_s": 0.05},
+    "6": {"reply": "Yes!", "latency_s": 0.05},
+    "7": {"reply": "yes", "latency_s": 0.05},
+    "8": {"reply": "Yes, definitely.", "latency_s": 0.05}
+  }
+}

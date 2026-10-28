@@ -1,0 +1,13 @@
+{
+  "_note": "Timeout fixture (crew A). Question 3 carries \"timeout\": true -> run_8q records answer null for that question, the run still completes, and pass=false because a null answer is present (T8 failure table: test_probe_timeout).",
+  "answers": {
+    "1": {"reply": "Yes", "latency_s": 0.11},
+    "2": {"reply": "yes", "latency_s": 0.09},
+    "3": {"timeout": true},
+    "4": {"reply": "Yes", "latency_s": 0.10},
+    "5": {"reply": "No", "latency_s": 0.08},
+    "6": {"reply": "no", "latency_s": 0.07},
+    "7": {"reply": "No", "latency_s": 0.13},
+    "8": {"reply": "No", "latency_s": 0.06}
+  }
+}

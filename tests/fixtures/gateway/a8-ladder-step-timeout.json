@@ -1,0 +1,8 @@
+{
+  "_note": "run_ladder fixture (crew A): the 4096:2 step times out -> that step ok:false, verdict=false, but the run continues (both steps still present in output). Status carries mem_free_mb so mem_kb stays populated. Drives test_ladder_timeout.",
+  "status": {"ollama": {"up": true}, "mem_free_mb": 2048},
+  "steps": {
+    "4096:1": {"prompt_tokens": 12, "gen_tokens": 40, "tok_s": 22.5, "ok": true, "notes": "ok (1 client, fixture)"},
+    "4096:2": {"timeout": true}
+  }
+}

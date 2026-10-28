@@ -1,0 +1,13 @@
+{
+  "_note": "Canned run_8q answers (crew A fixture). Keys are 1-based question numbers as strings. Each value is a raw model reply string that run_8q parses into yes/no/null. These replies match the 4/4 placeholder set perfectly -> mixed, not all-agree -> pass=true.",
+  "answers": {
+    "1": {"reply": "Yes.", "latency_s": 0.11},
+    "2": {"reply": "yes", "latency_s": 0.09},
+    "3": {"reply": "YES, it does.", "latency_s": 0.12},
+    "4": {"reply": "Yes", "latency_s": 0.10},
+    "5": {"reply": "No.", "latency_s": 0.08},
+    "6": {"reply": "no", "latency_s": 0.07},
+    "7": {"reply": "No, it cannot.", "latency_s": 0.13},
+    "8": {"reply": "NO", "latency_s": 0.06}
+  }
+}

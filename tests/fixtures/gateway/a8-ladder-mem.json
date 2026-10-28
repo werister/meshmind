@@ -1,0 +1,8 @@
+{
+  "_note": "run_ladder fixture (crew A): status carries mem_free_mb=3072 -> mem_kb=3145728 on every step. Both default steps succeed -> verdict=true. Drives test_mem_populated.",
+  "status": {"ollama": {"up": true}, "mem_free_mb": 3072},
+  "steps": {
+    "4096:1": {"prompt_tokens": 12, "gen_tokens": 40, "tok_s": 22.5, "ok": true, "notes": "ok (1 client, fixture)"},
+    "4096:2": {"prompt_tokens": 24, "gen_tokens": 70, "tok_s": 18.1, "ok": true, "notes": "ok (2 clients, fixture)"}
+  }
+}

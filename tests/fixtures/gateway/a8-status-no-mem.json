@@ -1,0 +1,5 @@
+{
+  "_note": "Pre-T6 /status (crew A): reachable but mem_free_mb absent (T6 not deployed yet). run_ladder emits mem_kb null + a note distinguishing 'field absent' from 'status unreachable'. Never fabricated, never zero-filled.",
+  "ollama": {"up": true, "version": "0.32.1"},
+  "tokens": {"probe_total": 414, "feedback_total": 445, "grand_total": 859}
+}

@@ -1,0 +1,13 @@
+{
+  "_note": "INVALID question set (crew A): 5 yes / 3 no, not a 4/4 split. The contract makes 'all agree' meaningful ONLY on a mixed 4/4 set, so run_8q must refuse this set as an infrastructure error (exit 2) rather than emit an ambiguous pass/fail.",
+  "questions": [
+    {"q": "yes q1", "expect_yes": true},
+    {"q": "yes q2", "expect_yes": true},
+    {"q": "yes q3", "expect_yes": true},
+    {"q": "yes q4", "expect_yes": true},
+    {"q": "yes q5", "expect_yes": true},
+    {"q": "no q1", "expect_yes": false},
+    {"q": "no q2", "expect_yes": false},
+    {"q": "no q3", "expect_yes": false}
+  ]
+}

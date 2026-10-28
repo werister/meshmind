@@ -1,0 +1,8 @@
+{
+  "_note": "Post-T6 /status with the mem_free_mb field present (crew A). run_ladder must compute mem_kb = mem_free_mb * 1024 = 3072 * 1024 = 3145728. Drives test_mem_populated so null is NOT the only tested path.",
+  "ollama": {"up": true, "version": "0.32.1"},
+  "tokens": {"probe_total": 414, "feedback_total": 445, "grand_total": 859},
+  "mem_free_mb": 3072,
+  "mem_compressed_mb": 1200,
+  "swap_used_mb": 512
+}

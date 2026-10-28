@@ -1,0 +1,13 @@
+{
+  "_PLACEHOLDER": "PLACEHOLDER question set shipped by T8 (crew A). NOT a reviewed probe. The coordinator swaps in the reviewed 8-question set via --questions without rebuilding. Mixed ground truth is mandatory: exactly a 4 yes / 4 no split so the 'all answers agree' always-yes/always-no filter is unambiguous.",
+  "questions": [
+    {"q": "Is the digit 2 an even number?", "expect_yes": true},
+    {"q": "Is water wet under normal conditions?", "expect_yes": true},
+    {"q": "Does the sun rise in the east?", "expect_yes": true},
+    {"q": "Is ice colder than boiling water?", "expect_yes": true},
+    {"q": "Is the digit 3 an even number?", "expect_yes": false},
+    {"q": "Is the moon larger than the sun?", "expect_yes": false},
+    {"q": "Can a fish breathe air out of water indefinitely?", "expect_yes": false},
+    {"q": "Is 10 less than 5?", "expect_yes": false}
+  ]
+}

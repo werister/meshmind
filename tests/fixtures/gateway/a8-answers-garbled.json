@@ -1,0 +1,13 @@
+{
+  "_note": "Non-yes/no fixture (crew A). Question 4 replies with prose that is neither yes nor no -> parsed as null -> pass=false (contract: pass=false when any answer is non-yes/no). Distinct regression from the timeout path.",
+  "answers": {
+    "1": {"reply": "Yes", "latency_s": 0.11},
+    "2": {"reply": "yes", "latency_s": 0.09},
+    "3": {"reply": "Yes", "latency_s": 0.12},
+    "4": {"reply": "I would rather not commit to an answer here.", "latency_s": 0.20},
+    "5": {"reply": "No", "latency_s": 0.08},
+    "6": {"reply": "no", "latency_s": 0.07},
+    "7": {"reply": "No", "latency_s": 0.13},
+    "8": {"reply": "No", "latency_s": 0.06}
+  }
+}
