@@ -24,11 +24,11 @@
     ]
   },
   "calls": [
-    {"ts": "2026-10-27T10:59:40+00:00", "agent": "kiro-spar", "model": "qwen3:4b", "path": "/v1/chat/completions", "ok": true, "eval_tokens": 212, "prompt_tokens": 88, "no_usage": false, "partial": false},
-    {"ts": "2026-10-27T10:58:12+00:00", "agent": "codex-spar", "model": "llama3.2:3b", "path": "/api/chat", "ok": true, "eval_tokens": 98, "prompt_tokens": 40, "no_usage": false, "partial": false},
-    {"ts": "2026-10-27T10:55:03+00:00", "agent": "unknown", "model": "qwen2.5:0.5b", "path": "/api/generate", "ok": true, "eval_tokens": 15, "prompt_tokens": 9, "no_usage": false, "partial": false},
-    {"ts": "2026-10-27T10:51:47+00:00", "agent": "muse-status", "model": "qwen3:4b", "path": "/v1/chat/completions", "ok": true, "eval_tokens": null, "prompt_tokens": 61, "no_usage": true, "partial": false},
-    {"ts": "2026-10-27T10:49:30+00:00", "agent": "kiro-spar", "model": "gemma2:2b", "path": "/api/chat", "ok": false, "eval_tokens": 0, "prompt_tokens": 33, "no_usage": false, "partial": false, "note": "backend 502"}
+    {"ts": "2026-10-27T10:59:40+00:00", "agent": "kiro-spar", "model": "qwen3:4b", "path": "/v1/chat/completions", "status": 200, "ok": true, "eval_tokens": 212, "prompt_tokens": 88, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:58:12+00:00", "agent": "codex-spar", "model": "llama3.2:3b", "path": "/api/chat", "status": 200, "ok": true, "eval_tokens": 98, "prompt_tokens": 40, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:55:03+00:00", "agent": "unknown", "model": "qwen2.5:0.5b", "path": "/api/generate", "status": 200, "ok": true, "eval_tokens": 15, "prompt_tokens": 9, "no_usage": false, "partial": false},
+    {"ts": "2026-10-27T10:51:47+00:00", "agent": "muse-status", "model": "qwen3:4b", "path": "/v1/chat/completions", "status": 200, "ok": true, "eval_tokens": null, "prompt_tokens": 61, "no_usage": true, "partial": false},
+    {"ts": "2026-10-27T10:49:30+00:00", "agent": "kiro-spar", "model": "gemma2:2b", "path": "/api/chat", "status": 502, "ok": false, "eval_tokens": 0, "prompt_tokens": 33, "no_usage": false, "partial": false, "note": "backend 502"}
   ],
   "models": [
     {"name": "qwen3:4b", "size_mb": 2382, "params": "4.0B", "max_ctx_measured": "4k", "loaded": false, "calls": 3, "tokens": 445, "last_called": "2026-10-27T08:34:48+00:00"},

@@ -139,17 +139,41 @@ class MeterAcceptance(unittest.TestCase):
     def calls(self):
         return json.loads(self.request("GET", "/calls?limit=256")[1])
 
+    def status_when(self, predicate, timeout=3):
+        """The meter records after relaying the response (fail-open), so poll briefly."""
+        deadline = time.monotonic() + timeout
+        while True:
+            status = json.loads(self.request("GET", "/status")[1])
+            if predicate(status) or time.monotonic() > deadline:
+                return status
+            time.sleep(0.02)
+
     def test_nonstream_counts_and_caller_agent(self):
         before = json.loads(self.request("GET", "/status")[1])["metering"]["calls_total"]
         body = json.dumps({"model": "probe", "messages": [{"role": "user", "content": "hi"}]}).encode()
         status, _, _ = self.request("POST", "/api/chat", body,
                                     {"Content-Type": "application/json", "X-Agent": "self-declared"})
         self.assertEqual(status, 200)
+        self.status_when(lambda st: st["metering"]["calls_total"] >= before + 1)
         row = self.calls()[0]
         self.assertEqual(row["agent"], "self-declared")
         self.assertEqual((row["model"], row["prompt_tokens"], row["eval_tokens"]), ("probe", 3, 7))
         self.assertEqual((row["path"], row["status"]), ("/api/chat", 200))
         self.assertEqual(json.loads(self.request("GET", "/status")[1])["metering"]["calls_total"], before + 1)
+
+    def test_status_carries_rollups_and_keeps_metering_block(self):
+        body = json.dumps({"model": "rollup", "messages": []}).encode()
+        self.request("POST", "/api/chat", body, {"Content-Type": "application/json", "X-Agent": "rollup-agent"})
+        status = self.status_when(lambda st: any(r["model"] == "rollup" for r in st["metering_breakdown"]["per_model"]))
+        self.assertEqual(set(status["metering"]), {"calls_total", "prompt_tokens_total", "eval_tokens_total",
+                                                   "ring_len", "backend_up", "unmetered_stream_calls"})
+        bd = status["metering_breakdown"]
+        model = next(r for r in bd["per_model"] if r["model"] == "rollup")
+        self.assertEqual((model["calls"], model["prompt_tokens"], model["eval_tokens"]), (1, 3, 7))
+        self.assertIn("rollup-agent", [r["agent"] for r in bd["per_agent"]])
+        self.assertEqual(len(bd["daily"]), 14)
+        self.assertGreaterEqual(bd["daily"][-1]["by_model"].get("rollup", 0), 7)
+        self.assertTrue((Path(self.tmp.name) / "metering-aggregates.json").exists())
 
     def test_stream_relay_is_incremental_and_one_row(self):
         body = b'{"model":"stream","stream":true}'
@@ -204,7 +228,7 @@ class MeterAcceptance(unittest.TestCase):
         before = json.loads(self.request("GET", "/status")[1])["metering"]["calls_total"]
         for _ in range(4):
             self.request("POST", "/api/chat", b'{"model":"rotate"}', {"Content-Type": "application/json"})
-        after = json.loads(self.request("GET", "/status")[1])["metering"]["calls_total"]
+        after = self.status_when(lambda st: st["metering"]["calls_total"] >= before + 4)["metering"]["calls_total"]
         self.assertEqual(after, before + 4)
         self.assertTrue((Path(self.tmp.name) / "calls.log.1").exists())
 
