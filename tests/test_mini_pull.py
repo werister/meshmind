@@ -205,6 +205,62 @@ class GuardPipeline(unittest.TestCase):
         self.assertTrue(report["ok"])
 
 
+class T91TagAndProbeFixes(unittest.TestCase):
+    """T9.1: :latest-tolerant size lookup + embeddings probe fallback.
+
+    Live-found on the Mini: `tag:bge-m3` pulled fine but the size lookup
+    missed because /api/tags reports `bge-m3:latest`; embedding-only models
+    also fail a /api/generate probe. No network: file:// tags fixtures and
+    injected probe fakes.
+    """
+
+    def _tags_uri(self, models):
+        tmp = tempfile.TemporaryDirectory(prefix="b9-tags-")
+        self.addCleanup(tmp.cleanup)
+        apidir = Path(tmp.name) / "api"
+        apidir.mkdir()
+        (apidir / "tags").write_text(json.dumps({"models": models}))
+        return Path(tmp.name).as_uri()
+
+    def test_size_lookup_tolerates_missing_latest(self):
+        uri = self._tags_uri([{"name": "bge-m3:latest", "size": 1157672605}])
+        self.assertEqual(mini_pull.ollama_size_bytes("bge-m3", uri), 1157672605)
+
+    def test_size_lookup_exact_still_wins(self):
+        uri = self._tags_uri([{"name": "qwen3:1.7b", "size": 1359293444}])
+        self.assertEqual(mini_pull.ollama_size_bytes("qwen3:1.7b", uri), 1359293444)
+
+    def test_size_lookup_missing_trips(self):
+        uri = self._tags_uri([{"name": "other:tag", "size": 1}])
+        with self.assertRaises(mini_pull.GuardTrip):
+            mini_pull.ollama_size_bytes("nope", uri)
+
+    def test_probe_generate_ok_skips_fallback(self):
+        seen = {"emb": 0}
+
+        def emb(tag, url):
+            seen["emb"] += 1
+            return True
+
+        self.assertTrue(mini_pull.ollama_probe(
+            "m", "http://x", gen_fn=lambda *a: True, emb_fn=emb))
+        self.assertEqual(seen["emb"], 0)
+
+    def test_probe_falls_back_to_embeddings(self):
+        def gen(tag, url):
+            raise OSError("generate refused")
+
+        self.assertTrue(mini_pull.ollama_probe(
+            "bge-m3", "http://x", gen_fn=gen, emb_fn=lambda *a: True))
+
+    def test_probe_both_fail_raises(self):
+        def boom(tag, url):
+            raise OSError("down")
+
+        with self.assertRaises(OSError):
+            mini_pull.ollama_probe("m", "http://x", gen_fn=boom, emb_fn=boom)
+
+
 class CliExitCodes(unittest.TestCase):
     """End-to-end CLI: bad spec / missing args surface exit 2 without pulling.
 

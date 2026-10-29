@@ -130,14 +130,15 @@ def ollama_size_bytes(tag, ollama_url):
     url = ollama_url.rstrip("/") + "/api/tags"
     with urllib.request.urlopen(url, timeout=15) as resp:
         data = json.loads(resp.read().decode("utf-8", "replace"))
+    names = {tag} | ({tag + ":latest"} if ":" not in tag else set())
     for model in data.get("models", []):
-        if model.get("name") == tag:
+        if model.get("name") in names:
             return model.get("size")
     raise GuardTrip("model %r not found in /api/tags after pull" % tag)
 
 
-def ollama_probe(tag, ollama_url):
-    """1-token generation probe. Returns True on a non-empty response."""
+def _generate_ok(tag, ollama_url):
+    """True when a 1-token /api/generate call answers (raises otherwise)."""
     url = ollama_url.rstrip("/") + "/api/generate"
     body = json.dumps(
         {"model": tag, "prompt": "ping", "stream": False, "options": {"num_predict": 1}}
@@ -146,6 +147,26 @@ def ollama_probe(tag, ollama_url):
     with urllib.request.urlopen(req, timeout=120) as resp:
         payload = json.loads(resp.read().decode("utf-8", "replace"))
     return bool(payload.get("response") is not None or payload.get("done"))
+
+
+def _embeddings_ok(tag, ollama_url):
+    """True when /api/embeddings returns a non-empty vector (raises otherwise)."""
+    url = ollama_url.rstrip("/") + "/api/embeddings"
+    body = json.dumps({"model": tag, "prompt": "ping"}).encode()
+    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        payload = json.loads(resp.read().decode("utf-8", "replace"))
+    return bool(payload.get("embedding"))
+
+
+def ollama_probe(tag, ollama_url, gen_fn=_generate_ok, emb_fn=_embeddings_ok):
+    """Probe a pulled model. Generators answer /api/generate; embedding-only
+    models fail there, so any generate failure falls back to /api/embeddings
+    (model-agnostic: no name heuristics). Returns True when either answers."""
+    try:
+        return bool(gen_fn(tag, ollama_url))
+    except Exception:
+        return bool(emb_fn(tag, ollama_url))
 
 
 def _ollama_env(ollama_url):

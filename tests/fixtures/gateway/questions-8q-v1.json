@@ -1,0 +1,10 @@
+[
+  {"q": "A code review finding claims that concatenating untrusted user input directly into a SQL query string creates a SQL injection vulnerability; is that finding valid?", "expect_yes": true},
+  {"q": "When triaging bugs, should an unauthenticated remote-code-execution flaw be ranked as more severe than a cosmetic typo in a log message?", "expect_yes": true},
+  {"q": "A finding claims that storing a plaintext password in a source file committed to a public repository is a credential-exposure issue; is that finding valid?", "expect_yes": true},
+  {"q": "Is a finding that reports a hardcoded private API key in client-side JavaScript shipped to browsers a legitimate security concern?", "expect_yes": true},
+  {"q": "A code review finding claims that adding a clarifying code comment on its own introduces a runtime security vulnerability; is that finding valid?", "expect_yes": false},
+  {"q": "When severity-sorting issues, should a minor UI color-contrast warning be ranked as strictly more severe than an authentication bypass that grants admin access?", "expect_yes": false},
+  {"q": "A finding claims that using a parameterized prepared statement for a database query is itself the cause of a SQL injection vulnerability; is that finding valid?", "expect_yes": false},
+  {"q": "Is a finding that flags renaming a local variable, with no other change, as a critical data-loss defect a valid finding?", "expect_yes": false}
+]

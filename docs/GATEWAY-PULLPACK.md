@@ -123,6 +123,22 @@ stream, redirects followed) before** writing `FROM ./<FILE>` and running
   same-size-class rule it is **not** a drop-in; recorded here as a Tier-2 lead
   the coordinator may add as a 6th model if budget allows, not as a swap.
 
+### 6. bge-m3 — `tag:bge-m3`  [EMBEDDINGS — coordinator-added post-build]
+- spec: `tag:bge-m3` (resolves to `bge-m3:latest`; T9.1 lookup tolerates this)
+- expect_gb: `1.158`  (band 0.926–1.390)
+- source: `https://ollama.com/library/bge-m3`
+- verify (already run live from the Mini):
+  ```
+  curl -s https://registry.ollama.ai/v2/library/bge-m3/manifests/latest \
+    | python3 -c 'import sys,json;d=json.load(sys.stdin);print(sum(l["size"] for l in d["layers"])+d["config"]["size"])'
+  # expect 1157672605 — matched; on-box size 1.2 GB confirmed
+  ```
+- pull: `python3 scripts/mini_pull.py pull --spec tag:bge-m3 --expect-gb 1.158`
+- note: pulled AFTER the 5 text slots for the embedding mini-probe
+  (nomic vs bge-m3). This pull exposed the T9.1 lookup bug (fixed,
+  tested 22/22, re-validated live ok:true with the embeddings probe
+  fallback).
+
 ## Leads recorded but NOT taken this round (newer, wrong class / unverified-in-class)
 - `LiquidAI/LFM3-1.7B-GGUF` — newer gen, but 1.7B class (not 1.2B). Tier-2 lead.
 - `ibm-granite/granite-4.2-3b` (HF) — newer Granite point release, but **not**
