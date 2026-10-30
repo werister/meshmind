@@ -14,3 +14,23 @@ Scope (strictly OUT of the model bake-off — a runtime swap is a confounder):
 - Adopt for a lane only on measured i5-8500B wins.
 
 Acceptance: bench numbers recorded; adopt/reject decision with data.
+
+## Outcome (2026-10-30, coordinator) — REJECT
+
+Tested magnitude 0.2.15 on the Mini (macOS 15.8.1, i5-8500B) over SSH.
+Install was clean (pinned GitHub release, sha256 + codesign + spctl verified);
+`serve` ran headless on :10100 (no port conflict with Ollama/Caddy/sidecar).
+No benchmark was possible — capability reject, not a speed loss:
+
+- `catalog list`: zero compatible models for this computer.
+- All 13 Ollama models found but unrunnable ("No kernels for the <arch>
+  architecture" across qwen2/qwen3/gemma3/phi3/granite/smollm3/bert, plus
+  unsupported tokenizers).
+- Spot-check bartowski Llama-3.2-3B Q4_K_M: every quant Unsupported
+  (rope_freqs.weight, tied output layer, quant types).
+- Verdict: the engine cannot serve any model on this Intel CPU target in
+  v0.2.15, so the "2x" claim is untestable here. Reject; revisit on a future
+  version with CPU kernel coverage. Full evidence:
+  `docs/RESEARCH-runtime-scout-2026-10-30.md`.
+- Box restored to Ollama-only (app + data removed, Ollama 0.32.1 verified
+  healthy, no models left loaded by this test).

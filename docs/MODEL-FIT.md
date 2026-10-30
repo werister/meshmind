@@ -22,6 +22,7 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | qwen3.5:0.8b | 1.3 GB | Newest Qwen small |
 | nomic-embed-text:v1.5 | ~274 MB | **Pulled 2026-10-28** — first embeddings lane (probed live, 768-dim vector OK) |
 | bge-m3 | 1.2 GB | Optional multilingual follow-up (verify CPU tok/s first) |
+| Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools-lane candidate (BFCL 163/258); validate on-box via T11/T12 (see addendum) |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 
@@ -45,3 +46,17 @@ no weights; laya needs Apple-Silicon MLX anyway).
   `llama-server` only (Ollama can't emit I-quants); needs a local PPL check.
 - Distillation (see tickets/T5): QLoRA specialists beat bigger bases on domain;
   the next judge upgrade path after smollm2.
+
+## Scout addendum (2026-10-30, TurinTech Artemis 0.8B)
+
+- Source: HF `turintech/Qwen3.5-0.8B-Artemis-GGUF` (130k DL/mo); file verified
+  (Q5_K_M = 569082048 bytes). Install: `ollama run
+  hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M` (no native ollama.com 0.8b
+  tag; the 2b tag exists).
+- Published: BFCL-live 163/258 vs 109 for bartowski Q4_K_M same-size baseline;
+  IFEval 308/541; GSM8K 124/250; 8k ctx in tests.
+- Caveats (from the card): all numbers measured on RTX 5090, all layers on GPU —
+  quality should transfer, CPU tok/s on our i5-8500B unmeasured; thinking OFF for
+  short/tool calls; weak knowledge (MMLU-Pro 33/280) — tools lane only.
+- Validation: A/B vs llama3.2:3b / phi4-mini / functiongemma via the T11/T12
+  tool bench + weekly eval, on the box.
