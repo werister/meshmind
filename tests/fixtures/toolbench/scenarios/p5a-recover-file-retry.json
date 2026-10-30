@@ -1,0 +1,18 @@
+{
+  "name": "p5a-recover-file-retry",
+  "point": 5,
+  "title": "recovery: file_read errors (not found), model retries with corrected path",
+  "turns": [
+    {
+      "user": "Read the config at /etc/app/confg.yaml.",
+      "canned_reply": "```json\n{\"tool\": \"file_read\", \"args\": {\"path\": \"/etc/app/confg.yaml\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "file_read"},
+      "tool_result": {"error": "ENOENT: no such file '/etc/app/confg.yaml'"}
+    },
+    {
+      "user": "(tool error returned above)",
+      "canned_reply": "```json\n{\"tool\": \"file_read\", \"args\": {\"path\": \"/etc/app/config.yaml\"}}\n```",
+      "expect": {"kind": "recover", "tool": "file_read"}
+    }
+  ]
+}

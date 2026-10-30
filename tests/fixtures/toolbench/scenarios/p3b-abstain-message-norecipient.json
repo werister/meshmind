@@ -1,0 +1,12 @@
+{
+  "name": "p3b-abstain-message-norecipient",
+  "point": 3,
+  "title": "abstention: no recipient for send_message -> ask, do NOT guess 'to'",
+  "turns": [
+    {
+      "user": "Send a message saying the build is green.",
+      "canned_reply": "Who should I send that to? I need a recipient for the message.",
+      "expect": {"kind": "abstain"}
+    }
+  ]
+}

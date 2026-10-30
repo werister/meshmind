@@ -1,0 +1,12 @@
+{
+  "name": "s3-abstain",
+  "point": 3,
+  "title": "sample ABSTAIN pass: no city -> asks instead of calling the tool",
+  "turns": [
+    {
+      "user": "What's the weather?",
+      "canned_reply": "Which city should I check the weather for?",
+      "expect": {"kind": "abstain"}
+    }
+  ]
+}

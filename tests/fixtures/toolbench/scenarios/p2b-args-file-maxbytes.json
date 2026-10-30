@@ -1,0 +1,16 @@
+{
+  "name": "p2b-args-file-maxbytes",
+  "point": 2,
+  "title": "exact arguments: max_bytes must be an integer, not a string",
+  "turns": [
+    {
+      "user": "Read the first 1024 bytes of /etc/hosts.",
+      "canned_reply": "```json\n{\"tool\": \"file_read\", \"args\": {\"path\": \"/etc/hosts\", \"max_bytes\": 1024}}\n```",
+      "expect": {
+        "kind": "tool_call",
+        "tool": "file_read",
+        "args": {"path": "/etc/hosts", "max_bytes": 1024}
+      }
+    }
+  ]
+}

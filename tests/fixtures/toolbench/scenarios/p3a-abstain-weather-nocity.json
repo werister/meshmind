@@ -1,0 +1,12 @@
+{
+  "name": "p3a-abstain-weather-nocity",
+  "point": 3,
+  "title": "abstention: no city given -> ask, do NOT fabricate a get_weather call",
+  "turns": [
+    {
+      "user": "What's the weather like right now?",
+      "canned_reply": "Which city would you like the weather for? I need a city before I can look that up.",
+      "expect": {"kind": "abstain"}
+    }
+  ]
+}

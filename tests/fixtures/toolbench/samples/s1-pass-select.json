@@ -1,0 +1,12 @@
+{
+  "name": "s1-pass-select",
+  "point": 1,
+  "title": "sample PASS: correct tool selection",
+  "turns": [
+    {
+      "user": "Weather in Rome?",
+      "canned_reply": "```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Rome\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

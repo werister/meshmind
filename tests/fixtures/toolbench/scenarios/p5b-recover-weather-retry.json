@@ -1,0 +1,18 @@
+{
+  "name": "p5b-recover-weather-retry",
+  "point": 5,
+  "title": "recovery: get_weather backend errors on bad unit, model retries valid call",
+  "turns": [
+    {
+      "user": "Weather in Berlin, in kelvin please.",
+      "canned_reply": "```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Berlin\", \"unit\": \"k\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "get_weather"},
+      "tool_result": {"error": "unit 'k' not supported; use 'c' or 'f'"}
+    },
+    {
+      "user": "(tool error returned above)",
+      "canned_reply": "Kelvin isn't supported, so I'll use Celsius.\n```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Berlin\", \"unit\": \"c\"}}\n```",
+      "expect": {"kind": "recover", "tool": "get_weather"}
+    }
+  ]
+}

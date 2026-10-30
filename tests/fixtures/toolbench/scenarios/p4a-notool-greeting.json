@@ -1,0 +1,12 @@
+{
+  "name": "p4a-notool-greeting",
+  "point": 4,
+  "title": "correct no-tool: a greeting needs no tool call",
+  "turns": [
+    {
+      "user": "Hi there, can you help me today?",
+      "canned_reply": "Of course -- happy to help. What would you like to do?",
+      "expect": {"kind": "no_tool"}
+    }
+  ]
+}

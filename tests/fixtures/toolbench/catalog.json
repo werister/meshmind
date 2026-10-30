@@ -1,0 +1,36 @@
+{
+  "_note": "FIXED 4-tool catalog for tool_bench (ticket T12). Fake backends only -- no weather API, no filesystem, no messaging. The runner validates that every scenario references ONLY these four tools and that scripted tool_call arguments match these parameter names/types. 'backend' holds the deterministic scripted answer the fake backend returns for a correct call; scenarios may override per-turn via 'tool_result'.",
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Current weather for a city.",
+      "parameters": {
+        "city": {"type": "string", "required": true},
+        "unit": {"type": "string", "required": false, "enum": ["c", "f"]}
+      }
+    },
+    {
+      "name": "calc",
+      "description": "Evaluate a simple arithmetic expression.",
+      "parameters": {
+        "expression": {"type": "string", "required": true}
+      }
+    },
+    {
+      "name": "file_read",
+      "description": "Read a file by path (fake; returns scripted contents).",
+      "parameters": {
+        "path": {"type": "string", "required": true},
+        "max_bytes": {"type": "integer", "required": false}
+      }
+    },
+    {
+      "name": "send_message",
+      "description": "Send a message to a recipient.",
+      "parameters": {
+        "to": {"type": "string", "required": true},
+        "body": {"type": "string", "required": true}
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "p6b-useresult-calc",
+  "point": 6,
+  "title": "use result: calc returns 391, model reports that number next turn",
+  "turns": [
+    {
+      "user": "What is 17 times 23?",
+      "canned_reply": "```json\n{\"tool\": \"calc\", \"args\": {\"expression\": \"17*23\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "calc"},
+      "tool_result": {"result": 391}
+    },
+    {
+      "user": "(calc result returned above)",
+      "canned_reply": "17 times 23 is 391.",
+      "expect": {"kind": "use_result", "must_include": ["391"]}
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "_note": "Canned code_bench model replies (crew H T11 fixture). Top key 'replies' maps model tag -> task name -> raw model reply string (or {reply, prompt_tokens, eval_tokens}). The runner extracts the FIRST code fence from each reply exactly as it would from a live /api/chat message. These replies are built against the shipped task set so the three documented paths are exercised: a passing solution, a failing solution, and a fenceless reply. No network is touched.",
+  "replies": {
+    "good-model": {
+      "01-median": {
+        "reply": "Here you go:\n\n```python\ndef median(nums):\n    ordered = sorted(nums)\n    n = len(ordered)\n    mid = n // 2\n    if n % 2 == 1:\n        return ordered[mid]\n    return (ordered[mid - 1] + ordered[mid]) / 2\n```\n",
+        "prompt_tokens": 64,
+        "eval_tokens": 58
+      },
+      "02-dedup": {
+        "reply": "```python\ndef dedup(items):\n    seen = set()\n    out = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            out.append(item)\n    return out\n```",
+        "prompt_tokens": 60,
+        "eval_tokens": 52
+      }
+    },
+    "wrong-model": {
+      "01-median": {
+        "reply": "```python\ndef median(nums):\n    # bug: returns the mean, not the median\n    return sum(nums) / len(nums)\n```\n",
+        "prompt_tokens": 64,
+        "eval_tokens": 25
+      },
+      "02-dedup": {
+        "reply": "```python\ndef dedup(items):\n    # bug: sorts, breaking first-appearance order\n    return sorted(set(items))\n```",
+        "prompt_tokens": 60,
+        "eval_tokens": 27
+      }
+    },
+    "chatty-model": {
+      "01-median": {
+        "reply": "Sure! The median is the middle value of a sorted list. You would sort the numbers and pick the middle one, averaging the two middle values for an even-length list. I hope that explanation helps you understand the approach.",
+        "prompt_tokens": 64,
+        "eval_tokens": 40
+      },
+      "02-dedup": {
+        "reply": "You can remove duplicates by iterating and tracking which items you have already seen, appending only the first occurrence of each.",
+        "prompt_tokens": 60,
+        "eval_tokens": 30
+      }
+    }
+  }
+}

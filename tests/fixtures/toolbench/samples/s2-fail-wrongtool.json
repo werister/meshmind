@@ -1,0 +1,12 @@
+{
+  "name": "s2-fail-wrongtool",
+  "point": 1,
+  "title": "sample FAIL: picks calc for a weather question (wrong_tool)",
+  "turns": [
+    {
+      "user": "Weather in Rome?",
+      "canned_reply": "```json\n{\"tool\": \"calc\", \"args\": {\"expression\": \"weather(Rome)\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

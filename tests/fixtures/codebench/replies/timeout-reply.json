@@ -1,0 +1,12 @@
+{
+  "_note": "Canned reply whose extracted code enters an infinite loop, exercising the subprocess-timeout path (task fails with note 'timeout'). The runner must kill it at --timeout and continue. No network.",
+  "replies": {
+    "hang-model": {
+      "01-median": {
+        "reply": "```python\ndef median(nums):\n    while True:\n        pass\n```\n",
+        "prompt_tokens": 64,
+        "eval_tokens": 10
+      }
+    }
+  }
+}

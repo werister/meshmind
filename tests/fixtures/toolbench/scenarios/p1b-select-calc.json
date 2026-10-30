@@ -1,0 +1,12 @@
+{
+  "name": "p1b-select-calc",
+  "point": 1,
+  "title": "correct tool selection: arithmetic -> calc (not get_weather)",
+  "turns": [
+    {
+      "user": "What is 17 times 23?",
+      "canned_reply": "```json\n{\"tool\": \"calc\", \"args\": {\"expression\": \"17*23\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "calc"}
+    }
+  ]
+}

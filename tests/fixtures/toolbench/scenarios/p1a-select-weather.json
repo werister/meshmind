@@ -1,0 +1,12 @@
+{
+  "name": "p1a-select-weather",
+  "point": 1,
+  "title": "correct tool selection: weather question -> get_weather",
+  "turns": [
+    {
+      "user": "What's the weather in Paris right now?",
+      "canned_reply": "```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Paris\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

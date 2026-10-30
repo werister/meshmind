@@ -1,0 +1,16 @@
+{
+  "name": "p2a-args-weather-unit",
+  "point": 2,
+  "title": "exact arguments: city + unit values and types must match",
+  "turns": [
+    {
+      "user": "Give me the weather in Tokyo in Fahrenheit.",
+      "canned_reply": "```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Tokyo\", \"unit\": \"f\"}}\n```",
+      "expect": {
+        "kind": "tool_call",
+        "tool": "get_weather",
+        "args": {"city": "Tokyo", "unit": "f"}
+      }
+    }
+  ]
+}

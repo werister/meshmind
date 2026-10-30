@@ -1,0 +1,12 @@
+{
+  "name": "p4b-notool-knowledge",
+  "point": 4,
+  "title": "correct no-tool: a general-knowledge question is answered directly, no calc",
+  "turns": [
+    {
+      "user": "In one sentence, what is a hash map?",
+      "canned_reply": "A hash map is a data structure that maps keys to values using a hash function for fast average-case lookups.",
+      "expect": {"kind": "no_tool"}
+    }
+  ]
+}

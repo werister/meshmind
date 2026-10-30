@@ -1,0 +1,18 @@
+{
+  "name": "p6a-useresult-weather",
+  "point": 6,
+  "title": "use result: weather result fed back, model states the returned temperature",
+  "turns": [
+    {
+      "user": "What's the weather in Oslo?",
+      "canned_reply": "```json\n{\"tool\": \"get_weather\", \"args\": {\"city\": \"Oslo\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "get_weather"},
+      "tool_result": {"city": "Oslo", "temp_c": 4, "sky": "overcast"}
+    },
+    {
+      "user": "(weather result returned above)",
+      "canned_reply": "It's currently 4\u00b0C and overcast in Oslo.",
+      "expect": {"kind": "use_result", "must_include": ["4", "Oslo"]}
+    }
+  ]
+}

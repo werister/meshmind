@@ -1,0 +1,18 @@
+{
+  "name": "s6-recover-fail",
+  "point": 5,
+  "title": "sample recovery FAIL: after the error the model gives up instead of retrying",
+  "turns": [
+    {
+      "user": "Read /tmp/dat.txt",
+      "canned_reply": "```json\n{\"tool\": \"file_read\", \"args\": {\"path\": \"/tmp/dat.txt\"}}\n```",
+      "expect": {"kind": "tool_call", "tool": "file_read"},
+      "tool_result": {"error": "ENOENT: no such file '/tmp/dat.txt'"}
+    },
+    {
+      "user": "(tool error returned above)",
+      "canned_reply": "Sorry, I couldn't read that file.",
+      "expect": {"kind": "recover", "tool": "file_read"}
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "malformed",
+  "point": 9,
+  "_note": "Intentionally malformed for test_bad_scenarios: 'point' is out of the 1-6 range and 'turns' is missing. load_scenarios must exit 2 naming this file.",
+  "title": "this scenario is invalid on purpose"
+}
