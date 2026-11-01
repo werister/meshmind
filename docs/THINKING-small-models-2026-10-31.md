@@ -100,3 +100,13 @@ sent `think:true` (it errors).
 Live Mini `POST /api/chat` and `/api/tags` (2026-10-31); Ollama 0.32.1 thinking channel.
 Cross-ref: `docs/RESEARCH-runtime-scout-2026-10-30.md` (TurinTech empty-answer caveat),
 `AGENTS.md` (existing `/no_think` guidance), `docs/MODEL-FIT.md`.
+
+## Update (coordinator, 2026-11-01): qwen3:4b-thinking-2507 tested, rejected
+
+Head-to-head vs granite4.2:3b, think-on, capped `num_predict 1000`, same items:
+easy pair both-correct (2507: 45–48 s, 370+ tok; granite: 14–37 s, 136–303 tok),
+bat-and-ball trap both-correct (2507: 75 s, 670 tok; granite: 16 s, 178 tok).
+The 2507 over-thinks massively on CPU (4–5× slower, 4× the tokens) with no
+accuracy edge on these items. **Verdict: keep granite4.2:3b as the reasoning
+lane; 2507 rejected** (stays pulled on disk for possible future hard-math
+retests, where its AIME-81 class might show).
