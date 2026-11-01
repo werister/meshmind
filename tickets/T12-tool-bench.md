@@ -52,3 +52,15 @@ turns covering pass/fail/abstain). No live calls.
 - Must not: everything else, anything on the Mini.
 - Author: kiro crew H (after T11). Reviewer: coordinator.
 - Cost: $0. Disk note: MacBook tight — targeted tests, no installs.
+
+## Live findings (coordinator, 2026-10-31)
+
+- artemis-0.8B: 4/12; qwen3:4b-instruct-2507: 4/12 (identical shape); phi4-mini:
+  5/12 (twice). Endpoint fails 0 throughout — all models fairly judged.
+- Root cause (proven by raw-output capture): both Qwen models emit CORRECT tool
+  JSON (`{"tool": "get_weather", "args": {...}}`) but WITHOUT the ``` fence the
+  parser requires → scored `wrong_tool` on all 8 tool-call turns each. The
+  failure is the harness's fence-only rule, not model tool ability.
+- Next: harness fix (accept bare-JSON tool objects and/or grammar-constrained
+  `format:json` decoding), then re-bench all three for true scores. Model
+  verdicts on the tools lane are suspended until the fixed re-run.

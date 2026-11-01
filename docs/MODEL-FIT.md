@@ -23,6 +23,7 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | nomic-embed-text:v1.5 | ~274 MB | **Pulled 2026-10-28** — first embeddings lane (probed live, 768-dim vector OK) |
 | bge-m3 | 1.2 GB | Optional multilingual follow-up (verify CPU tok/s first) |
 | Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools-lane candidate (BFCL 163/258); validate on-box via T11/T12 (see addendum) |
+| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools-lane top pick (BFCL-v3 61.9); live 4/12 identical to artemis — fence-parser artifact, see T12 findings; re-bench after harness fix |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 
