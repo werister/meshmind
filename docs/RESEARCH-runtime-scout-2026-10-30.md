@@ -1,5 +1,14 @@
 # Runtime scout — 4 OSS repos vs the Local AI Lab box (2026-10-30)
 
+> **Update 2026-10-30 (coordinator, live test — supersedes the magnitude
+> recommendation below):** installed magnitude 0.2.15 on the Mini (macOS 15.8.1,
+> so the OS gate passed), ran headless on :10100, and found it cannot serve
+> anything on this Intel CPU target — zero catalog models compatible, all 13
+> Ollama models refused ("No kernels for the arch"), bartowski Llama-3.2-3B
+> unsupported in every quant. T7 verdict: REJECT, box restored to Ollama-only.
+> See `tickets/T7-magnitude-runtime-eval.md`. The source analysis below stands;
+> only the "worth installing" conclusion is overtaken by the live result.
+
 Scope: fit-scouting four open-source inference/serving projects against our target
 box. **No Mini SSH access** — all claims below come from primary sources (repo
 READMEs, project docs, release notes, install scripts, **and the actual source
@@ -332,6 +341,113 @@ starts with a real target number instead of the vendor's Apple-Silicon "2x."
 
 ---
 
+## Addendum (2026-10-31) — two follow-ups: a compressed tool model + a gateway
+
+Added after the original four-repo scout, in response to two items raised separately:
+a compressed small model (TurinTech / Artemis Qwen3.5-0.8B) and an AI gateway
+(eliasbiondo/antirion). Recent-signal gathering used the agent-reach skill (read-only
+GitHub + web channels) plus the GitHub REST API; all claims cited.
+
+### A. TurinTech `Qwen3.5-0.8B-Artemis-GGUF` — a tool-lane candidate (good fit)
+
+**What it is.** A TurinTech/Artemis-**compressed** build of Qwen3.5 0.8B, published as a
+llama.cpp GGUF, aimed at local tool calls + short chat. Verified against the HF model
+card (not just the vendor post). Source:
+[HF card](https://huggingface.co/turintech/Qwen3.5-0.8B-Artemis-GGUF),
+[collection](https://huggingface.co/collections/turintech/compressed-llms).
+
+**Verified claims (primary source).**
+- Default **Q5_K_M = 0.569 GB** (confirmed: the file resolves with
+  `x-linked-size: 569082048` ≈ 0.569 GB); smaller **Q4_K_M = 0.532 GB**; original 1.52 GB.
+  130,184 downloads last month.
+- **Tool calling: 163/258 BFCL-live**, and the card is explicit the "109" baseline is
+  **bartowski's Q4_K_M (0.580 GB)** — a *same-size public GGUF*, not the uncompressed
+  original. Also IFEval 308/541, GSM8K 124/250 (published eval-results on the card).
+- 8,192-token context in tests; optional vision projector (+207 MB, skip with `--no-mmproj`).
+- Installable on the lab stack via `ollama run hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M`
+  (the HF→Ollama passthrough; no separate native `ollama.com/turintech/...0.8b` tag — the
+  2B has one, the 0.8B does not, confirmed by a 405 on that URL).
+
+**Two caveats the card itself flags.** (1) **Turn thinking OFF** for short answers/tool
+calls — their test with thinking on burned all 1,500 output tokens and returned nothing.
+(2) **Knowledge is weak** — MMLU-Pro 33/280 vs 44 for the original; don't use it as a
+knowledge model (the card suggests Unsloth Q8_0 if knowledge matters).
+
+**Honest limitation.** Every benchmark/memory number on the card is measured on an
+**NVIDIA RTX 5090 with all layers on GPU** — not CPU. Tool-call *accuracy* is
+hardware-independent and should transfer; **tok/s on our AVX2 CPU is unmeasured** (same
+gap as magnitude).
+
+**Fit for the box: good, fills a gap.** At 0.57 GB it sits far under the ~3.8–4.4 GB
+model budget (`STRESSTEST-cpu-ram.md`), so unlike the 4B lane (measured pushing ~1.3 GB
+swap live today) it co-resides trivially. It targets a lane the lab actively routes —
+tools (`AGENTS.md`: `llama3.2:3b` / `phi4-mini` / `functiongemma`) — with a published
+BFCL number beating a same-size public GGUF. The T11/T12 tool bench + weekly eval can
+verify the claim on the i5-8500B and settle the CPU-tok/s question. Recommended Tier-1
+tools-lane A/B candidate (thinking-off, knowledge-weak caveats noted).
+
+### B. eliasbiondo/antirion — an AI *gateway*, not a runtime (off-box fit only)
+
+**What it is.** An open-source **AI/LLM gateway** (self-hosted LiteLLM / Bifrost
+alternative), Apache-2.0, one Rust binary with the admin console built in. It sits
+*between apps and providers* — routing, auth, rate-limits, budgets, guardrails, caching,
+observability — exposing OpenAI/Anthropic/Gemini/Bedrock-compatible APIs. It is the same
+*architectural slot* as the lab's Caddy + feedback-sidecar front door, **not** the
+model-serving layer. Source: [repo README](https://github.com/eliasbiondo/antirion).
+
+**Verified from source.**
+- **Memory is featherweight:** `docs/benchmarks.md` → **41 MiB idle / 215 MiB peak** at
+  5k RPS. For contrast, the same bench shows LiteLLM idling at 1,653 MiB — exactly why
+  `STRESSTEST-cpu-ram.md` ruled LiteLLM does-not-fit. Antirion is ~40× lighter at idle.
+- **Can front a local Ollama:** supports an **"OpenAI-compatible" provider with an
+  arbitrary Base URL** (how its own mock upstream is wired); Ollama serves
+  `/v1/chat/completions`. README names "any OpenAI- or Anthropic-compatible server such
+  as vLLM." Source: `docs/getting-started.md`, README.
+- **Single self-contained binary** in standalone mode: dedicated `antirion-store`
+  (embedded) crate separate from `antirion-redis` (cluster only) — no external DB needed.
+- **Platform gate (the blocker on macOS):** release assets are **Linux amd64/arm64 only**
+  (`antirion-v0.1.1-linux-*.tar.gz`, 110–118 MB). On macOS the only routes are the Docker
+  image or a from-source build (Rust 1.98.1 + Node 22/pnpm for the console). Source: GitHub
+  releases API, README "Binaries".
+
+**Recent-activity signal (agent-reach + GitHub API, 2026-10-31).** The repo is **brand
+new** (created 2026-10-17; releases v0.1.0/v0.1.1 both on 2026-10-18, nothing since) and
+**single-author** (`eliasbiondo` 523/534 contributions; the only other "contributor" is
+dependabot) — **bus-factor 1**. It does show serious engineering hygiene for its age:
+nightly fuzzing + supply-chain CI (self-filed issues #59/#60), dependabot, RUSTSEC
+tracking. **Independent third-party validation is essentially nil** — a web sweep found
+only the project's own site and auto-generated repo-rating mirrors (one, m8ven.ai, scores
+it "F 38/100"); no Hacker News or Reddit discussion.
+
+**Cross-connection worth noting (ties this scout together).** An external contributor's
+open PR #48 adds a **typed-decision endpoint `POST /v1/systemone`** to antirion — the
+*same* Choice/Noul/Score decision protocol as scout repo #1 (vllm-jev). The PR documents,
+and I independently verified, that this is now a published spec (`api.typesafe.ai`,
+TypeSafe v0.2.0) served by LiteLLM and **merged into vLLM mainline**
+([vllm-project/vllm#59299](https://github.com/vllm-project/vllm/pull/59299), merged
+2026-10-08 by mmastrac, shipped v0.32.0). So the "decision models" ecosystem (vllm-jev,
+plus TurinTech's Kev/Clef/Decider) is converging on one wire protocol, and gateways are
+starting to speak it. Not actionable for the Mini today, but relevant if the lab ever
+builds a decision/tiny-judge endpoint.
+
+**Fit for the box: off-box only (same verdict class as LiteLLM/UI stacks).** The blocker
+is *platform*, not RAM: no macOS binary → native route is a from-source build on a
+memory-saturated box, and the Docker route is a known blocker (`TRIALS-offbox.md`). Its
+value (multi-provider routing, budgets, guardrails, clustering at thousands of RPS) is
+aimed at a fleet of paid providers, not a single-node single-user local Ollama. **Verdict:
+"fits-with-work, off-box"** — strictly better than LiteLLM (40× lighter, single binary,
+no Python), but gated on macOS and far too young (v0.1.1, one author, no external
+validation) to put in front of the lab's only front door. If the lab ever adds a Linux
+tailnet node and wants per-key budgets / guardrails / caching / a cost ledger in front of
+the Mini's Ollama, antirion is worth a re-look *then*.
+
+**Revised-verdict row (for `STRESSTEST-cpu-ram.md`'s tool table, if adopted there):**
+`antirion | — | fits-with-work, off-box | Linux-only binary (Docker/build on mac); 41 MiB
+idle beats LiteLLM 40×, but v0.1.1 / single-author / no external validation — off-box
+front-door candidate only.`
+
+---
+
 ### Source index
 - Lab context: `README.md`, `AGENTS.md`, `docs/MODEL-FIT.md`, `STRESSTEST-cpu-ram.md`, `TRIALS-offbox.md`, `tickets/T7-magnitude-runtime-eval.md` (this repo).
 - Live Mini probes (2026-10-30, over tailnet): `/api/version` (Ollama 0.32.1), `/api/tags`, `/api/ps`, `/api/chat` (gemma3:4b, qwen2.5:0.5b), `/status`.
@@ -339,7 +455,9 @@ starts with a real target number instead of the vendor's Apple-Silicon "2x."
 - vllm-jev: https://github.com/mode-io/vllm-jev · scripts/install_mac.sh · pyproject.toml
 - goethe: https://github.com/meshapplied/goethe · engine/pyenv/requirements.in · (CUDA kernels under engine/experimental/goethe-kernels, nvfp4-kernels, ternary-kernels)
 - runntime: https://github.com/software-mansion/runntime · package.json
-- Repo liveness/metadata: GitHub REST API (stars, language, license, pushed_at, git trees) for all four repos.
+- Addendum A (TurinTech): https://huggingface.co/turintech/Qwen3.5-0.8B-Artemis-GGUF · https://huggingface.co/collections/turintech/compressed-llms · https://www.turintech.ai/blog/qwen35-family-compressed-with-artemis · HF resolve HEAD (x-linked-size)
+- Addendum B (antirion): https://github.com/eliasbiondo/antirion · docs/benchmarks.md · docs/getting-started.md · releases API (v0.1.1 Linux-only) · issues/PRs #47/#48/#59/#60 · contributors API · https://github.com/vllm-project/vllm/pull/59299 (systemone merged 2026-10-08) · agent-reach (GitHub + web channels) for recent signal
+- Repo liveness/metadata: GitHub REST API (stars, language, license, pushed_at, git trees) for all repos.
 - Intel Mac mini / macOS 26 support: https://9to5mac.com/2025/06/09/apple-will-end-support-for-intel-macs/ · https://discussions.apple.com/thread/256139610 · https://support.apple.com/en-us/122867
 
 *Content from external sources was rephrased for compliance with licensing restrictions.*

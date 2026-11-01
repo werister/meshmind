@@ -60,3 +60,10 @@ no weights; laya needs Apple-Silicon MLX anyway).
   short/tool calls; weak knowledge (MMLU-Pro 33/280) — tools lane only.
 - Validation: A/B vs llama3.2:3b / phi4-mini / functiongemma via the T11/T12
   tool bench + weekly eval, on the box.
+- Measured 2026-10-31 (coordinator, live): 27.7 tok/s decode / ~147 prefill,
+  847 MB resident, think-off clean stop. Tool bench (T12, 12 scenarios, live):
+  artemis **4/12** vs phi4-mini **5/12** — artemis 4/4 on non-tool turns but 0/8
+  on tool calls: it never emitted the instructed JSON fence (likely Harmony-style
+  output). Not adopted for the tools lane on this protocol. Follow-ups: retest
+  with Harmony-aware parsing/few-shot, or try the 2b tag
+  (`ollama.com/turintech/qwen3.5-2b-artemis`).
