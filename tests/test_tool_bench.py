@@ -195,6 +195,71 @@ class ToolBenchTests(unittest.TestCase):
             self.assertTrue(res["endpoint_error"])
             self.assertEqual(res["note"], "endpoint_error")
 
+    # --- --format json gated to tool-expected turns only --------------
+    def test_format_json_gated_to_tool_turns(self):
+        seen = []
+
+        class _CaptureHandler(BaseHTTPRequestHandler):
+            def log_message(self, *_a):
+                return
+
+            def do_GET(self):
+                if self.path.endswith("/api/tags"):
+                    body = b'{"models": []}'
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+
+            def do_POST(self):
+                length = int(self.headers.get("Content-Length", 0))
+                raw = self.rfile.read(length) if length else b"{}"
+                try:
+                    payload = json.loads(raw.decode("utf-8", "replace"))
+                except ValueError:
+                    payload = {}
+                seen.append(payload)
+                # Abstain-safe reply: plain prose, never a tool call.
+                body = b'{"message": {"content": "just a plain answer"}}'
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        def run_live(extra):
+            server = HTTPServer(("127.0.0.1", 0), _CaptureHandler)
+            thread = threading.Thread(target=server.serve_forever,
+                                      daemon=True)
+            thread.start()
+            try:
+                port = server.server_address[1]
+                return run(["--models", "m", "--live",
+                            "--ollama", "http://127.0.0.1:%d" % port,
+                            "--scenarios", str(SAMPLES), "--timeout", "5"]
+                           + extra)
+            finally:
+                server.shutdown()
+                thread.join()
+
+        # With --format json: tool_call/recover turns carry format=json,
+        # prose turns (abstain/no_tool/...) must NOT (SAMPLES has both).
+        del seen[:]
+        code, _, _ = run_live(["--format", "json"])
+        self.assertEqual(code, 0)
+        self.assertTrue(any(p.get("format") == "json" for p in seen))
+        self.assertTrue(any("format" not in p for p in seen))
+        # Default off: no turn is ever constrained.
+        del seen[:]
+        code, _, _ = run_live([])
+        self.assertEqual(code, 0)
+        self.assertTrue(seen)
+        self.assertFalse(any("format" in p for p in seen))
+
     # --- T12 failure table: host down mid-suite -> exit 2 ---------------
     def test_host_down(self):
         port = dead_port()

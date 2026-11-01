@@ -72,3 +72,10 @@ turns covering pass/fail/abstain). No live calls.
   to run, so 7/12s are tied within noise. Efficiency nod to artemis (0.85 GB,
   27.7 tok/s at equal score). Lead next item: grammar-constrained `format:json`
   decoding aimed at p2 args precision.
+- format:json arm (2026-10-31, `--format json` gated to tool turns): identical
+  7/12 × 3 — 2507 (2/2,0/2,0/2,2/2,1/2,2/2), artemis (2/2,0/2,1/2,2/2,0/2,2/2),
+  phi4-mini (2/2,0/2,0/2,2/2,1/2,2/2). p2 still 0/2 everywhere: confirms that
+  shape-constraint cannot fix value/type errors (Kiro's prediction) — the p2
+  failure is genuine arg reasoning. p3/p4 unregressed proves the gating works.
+  Next: full per-tool schema/GBNF grammar (Kiro drafting) in a two-arm
+  grammar/no-grammar comparison.

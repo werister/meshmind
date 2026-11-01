@@ -332,18 +332,22 @@ def score_turn(expect, reply):
 
 # --- driving a scenario --------------------------------------------------
 
-def ask_ollama(ollama_url, model, messages, timeout):
+def ask_ollama(ollama_url, model, messages, timeout, json_mode=False):
     """One /api/chat turn (stream:false). Returns the message content string.
 
     Transport failures are raised to the caller (endpoint error handling).
+    json_mode adds Ollama's format:json constraint (shape only, not values).
     """
     url = ollama_url.rstrip("/") + "/api/chat"
-    payload = json.dumps({
+    body = {
         "model": model,
         "messages": messages,
         "stream": False,
         "think": False,
-    }).encode("utf-8")
+    }
+    if json_mode:
+        body["format"] = "json"
+    payload = json.dumps(body).encode("utf-8")
     request = urllib.request.Request(
         url, data=payload,
         headers={"Content-Type": "application/json", "X-Agent": X_AGENT})
@@ -362,9 +366,15 @@ def _system_prompt(catalog):
             "is needed, answer in plain text." % names)
 
 
-def run_scenario(scenario, model, catalog, live, ollama_url, timeout):
+_JSON_GATED_KINDS = ("tool_call", "recover")
+
+def run_scenario(scenario, model, catalog, live, ollama_url, timeout,
+                 json_mode=False):
     """Drive one scenario for one model. Returns a result dict:
        {name, point, pass, note, endpoint_error, turns:[{expect,note,pass}]}.
+
+    json_mode constrains tool-expected turns to format:json; prose turns
+    (abstain/no_tool/use_result) are never constrained.
     """
     messages = [{"role": "system", "content": _system_prompt(catalog)}]
     turn_rows = []
@@ -376,8 +386,10 @@ def run_scenario(scenario, model, catalog, live, ollama_url, timeout):
         messages.append({"role": "user", "content": turn["user"]})
         reply = turn.get("canned_reply")
         if live:
+            gated = json_mode and turn["expect"]["kind"] in _JSON_GATED_KINDS
             try:
-                reply = ask_ollama(ollama_url, model, messages, timeout)
+                reply = ask_ollama(ollama_url, model, messages, timeout,
+                                   json_mode=gated)
             except (urllib.error.URLError, OSError) as exc:
                 # A per-turn transport/template failure is an ENDPOINT failure,
                 # recorded separately from reasoning. The host being entirely
@@ -470,6 +482,10 @@ def build_parser():
                         help="drive real models over --ollama (default: canned replies)")
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT,
                         help="per-turn timeout seconds when --live (default %(default)s)")
+    parser.add_argument("--format", choices=("off", "json"), default="off",
+                        help="constrain tool-expected turns to Ollama format:json "
+                             "when --live (default %(default)s; prose turns never "
+                             "constrained)")
     return parser
 
 
@@ -495,8 +511,10 @@ def main(argv=None):
         _preflight_live(args.ollama, args.timeout)
 
     model_blocks = []
+    json_mode = args.format == "json"
     for model in models:
-        results = [run_scenario(s, model, catalog, args.live, args.ollama, args.timeout)
+        results = [run_scenario(s, model, catalog, args.live, args.ollama,
+                                args.timeout, json_mode=json_mode)
                    for s in scenarios]
         model_blocks.append({
             "model": model,
