@@ -15,29 +15,39 @@ Python:
 
     from openai import OpenAI
     client = OpenAI(base_url="https://mac-mini-von-hugo-1.taild73e38.ts.net/v1", api_key="ollama")
-    print(client.chat.completions.create(model="qwen3:4b", messages=[{"role": "user", "content": "hi"}]).choices[0].message.content)
+    print(client.chat.completions.create(model="gemma3:4b", messages=[{"role": "user", "content": "hi"}]).choices[0].message.content)
 
 curl:
 
-    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/api/chat -d "{\"model\":\"qwen3:4b\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"stream\":false}"
+    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/api/chat -d "{\"model\":\"gemma3:4b\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"stream\":false}"
 
 ## Routing (measured on this 8 GB Intel box)
 
-- Default quality: `qwen3:4b` (about 1 min per answer; append `/no_think` or send `"think": false` for short ones)
-- Fast: `qwen2.5:0.5b` (about 2 s)
+- Default quality: `gemma3:4b` (about 1 min per answer at ~9.7 tok/s)
+- Fast: `qwen2.5:0.5b` (about 2 s); step up: `qwen3:1.7b` with `"think": false` (~10-20 s, correct on simple reasoning)
 - Code: `qwen2.5-coder:3b`
 - Embed: `nomic-embed-text:v1.5` (`POST /api/embed`, 768 dims, fastest on CPU)
-- Tools: `llama3.2:3b`, `phi4-mini`, `functiongemma`
+- Tools: `hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M` with the per-tool JSON schema (11-12/12 on the T12 bench); fallback `phi4-mini` (7/12). Always send `"think": false` to tool models
+- Reasoning (opt-in, slow): `granite4.2:3b` with `"think": true` and `num_predict` >= 900 (~75-95 s per answer) — the only reliable small thinker here
 - Keep context at 4k or below (llmfit: nothing above 4k fits here)
 - Do NOT run `qwen2.5:14b` or `deepseek-r1:8b` (too big for 8 GB)
 
 Every request names its model. There is no server-side switching and no restart, ever.
 
+### Thinking policy
+
+Think-off is the default everywhere except the granite reasoning lane above.
+Never send `"think": true` to instruct-only models (`gemma3:4b`, `qwen2.5:*`,
+`phi4-mini`, `qwen2.5:0.5b`, `functiongemma`) — the server hard-errors with
+"does not support thinking". Small thinkers that over-think past the output
+budget return empty answers, so always pair `"think": true` with a generous
+`num_predict` (>= 900).
+
 ## Leave feedback
 
 After a run, POST one line so the lab log shows real usage:
 
-    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/feedback -H "Content-Type: application/json" -d "{\"agent\":\"my-agent\",\"model\":\"qwen3:4b\",\"ok\":true,\"note\":\"code review, good, 58s\"}"
+    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/feedback -H "Content-Type: application/json" -d "{\"agent\":\"my-agent\",\"model\":\"gemma3:4b\",\"ok\":true,\"note\":\"code review, good, 58s\"}"
 
 Fields: `agent` (your name), `model`, `ok` (true/false), `note` (short).
 The 5-minute monitor reports feedback volume plus the latest note into `health.log`.
