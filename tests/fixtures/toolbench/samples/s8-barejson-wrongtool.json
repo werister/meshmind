@@ -1,0 +1,12 @@
+{
+  "name": "s8-barejson-wrongtool",
+  "point": 1,
+  "title": "sample FAIL: bare-JSON call naming the wrong tool",
+  "turns": [
+    {
+      "user": "Weather in Rome?",
+      "canned_reply": "{\"tool\": \"calc\", \"args\": {\"expr\": \"1+1\"}}",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

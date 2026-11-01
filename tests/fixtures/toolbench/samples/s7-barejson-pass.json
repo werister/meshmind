@@ -1,0 +1,12 @@
+{
+  "name": "s7-barejson-pass",
+  "point": 1,
+  "title": "sample PASS: bare-JSON tool call without fence",
+  "turns": [
+    {
+      "user": "Weather in Rome?",
+      "canned_reply": "{\"tool\": \"get_weather\", \"args\": {\"city\": \"Rome\"}}",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

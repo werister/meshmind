@@ -64,3 +64,11 @@ turns covering pass/fail/abstain). No live calls.
 - Next: harness fix (accept bare-JSON tool objects and/or grammar-constrained
   `format:json` decoding), then re-bench all three for true scores. Model
   verdicts on the tools lane are suspended until the fixed re-run.
+- Re-bench with fixed parser (2026-10-31): **three-way tie at 7/12** — 2507
+  (p1 2/2, p2 0/2, p3 0/2, p4 2/2, p5 1/2, p6 2/2), artemis (2/2, 0/2, 1/2,
+  2/2, 0/2, 2/2), phi4-mini (2/2, 0/2, 0/2, 1/2, 2/2, 2/2); endpoint fails 0.
+  Fence artifact confirmed gone (p1 0→2/2 on both Qwens). Nobody separates:
+  all fail exact-args (p2 0/2 across the board) and phi4-mini varies ±1-2 run
+  to run, so 7/12s are tied within noise. Efficiency nod to artemis (0.85 GB,
+  27.7 tok/s at equal score). Lead next item: grammar-constrained `format:json`
+  decoding aimed at p2 args precision.

@@ -1,0 +1,12 @@
+{
+  "name": "s9-barejson-badjson",
+  "point": 1,
+  "title": "sample FAIL: bare tool-like text that is not valid JSON",
+  "turns": [
+    {
+      "user": "Weather in Rome?",
+      "canned_reply": "{\"tool\": \"get_weather\", \"args\": }",
+      "expect": {"kind": "tool_call", "tool": "get_weather"}
+    }
+  ]
+}

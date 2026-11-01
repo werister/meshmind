@@ -23,7 +23,7 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | nomic-embed-text:v1.5 | ~274 MB | **Pulled 2026-10-28** — first embeddings lane (probed live, 768-dim vector OK) |
 | bge-m3 | 1.2 GB | Optional multilingual follow-up (verify CPU tok/s first) |
 | Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools-lane candidate (BFCL 163/258); validate on-box via T11/T12 (see addendum) |
-| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools-lane top pick (BFCL-v3 61.9); live 4/12 identical to artemis — fence-parser artifact, see T12 findings; re-bench after harness fix |
+| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools lane: live 7/12 tied three-way (parser fixed); p1/p4/p6 strong, p2 args weak; see T12 |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 
@@ -68,3 +68,6 @@ no weights; laya needs Apple-Silicon MLX anyway).
   output). Not adopted for the tools lane on this protocol. Follow-ups: retest
   with Harmony-aware parsing/few-shot, or try the 2b tag
   (`ollama.com/turintech/qwen3.5-2b-artemis`).
+- Update (parser fixed, re-bench): artemis now **7/12 in a three-way tie**
+  (p1 fixed 0→2/2; p2 args still 0/2). Efficiency-best at equal score (0.85 GB,
+  27.7 tok/s) but no outright winner — tied within noise. See T12 findings.

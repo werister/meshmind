@@ -134,6 +134,19 @@ class ToolBenchTests(unittest.TestCase):
         # bad_json is a REASONING failure, not an endpoint failure.
         self.assertFalse(by["s4-badjson"]["endpoint_error"])
 
+    # --- bare-JSON tool calls (no fence) score like fenced ones -------
+    def test_bare_json_tool_call(self):
+        code, out, _ = run(["--models", "m", "--scenarios", str(SAMPLES)])
+        self.assertEqual(code, 0)
+        by = scenarios_by_name(out["models"][0])
+        self.assertTrue(by["s7-barejson-pass"]["pass"])
+        self.assertFalse(by["s8-barejson-wrongtool"]["pass"])
+        self.assertEqual(by["s8-barejson-wrongtool"]["note"], "wrong_tool")
+        self.assertFalse(by["s9-barejson-badjson"]["pass"])
+        self.assertEqual(by["s9-barejson-badjson"]["note"], "bad_json")
+        # bad_json stays a REASONING failure, never an endpoint failure.
+        self.assertFalse(by["s9-barejson-badjson"]["endpoint_error"])
+
     # --- T12 failure table: tool-error recovery scored turn-2, not fatal
     def test_error_recovery(self):
         code, out, _ = run(["--models", "m", "--scenarios", str(SAMPLES)])

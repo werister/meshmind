@@ -166,24 +166,38 @@ def load_scenarios(scenarios_dir, catalog):
 
 # --- tool-call parsing ---------------------------------------------------
 
-def parse_tool_call(reply):
-    """Extract a tool call from a model reply.
+def _extract_braced(text, start):
+    """Balanced-brace substring starting at text[start] == '{'.
 
-    Returns one of:
-      ("call", {"tool": str, "args": dict})  -- a well-formed tool call
-      ("none", None)                          -- no fenced tool call present
-      ("bad_json", None)                      -- a fence was present but unparseable
+    String-aware (double quotes + backslash escapes). Returns the substring,
+    or None when the braces never balance.
     """
-    if reply is None:
-        return "none", None
-    match = _FENCE_RE.search(reply)
-    if match is None:
-        return "none", None
-    body = match.group(1).strip()
-    try:
-        parsed = json.loads(body)
-    except ValueError:
-        return "bad_json", None
+    depth = 0
+    in_string = False
+    escaped = False
+    for idx in range(start, len(text)):
+        char = text[idx]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:idx + 1]
+    return None
+
+
+def _coerce_call(parsed):
+    """Validate a parsed candidate the same way for fenced and bare JSON."""
     if not isinstance(parsed, dict) or "tool" not in parsed:
         return "bad_json", None
     if parsed.get("tool") is None:
@@ -194,6 +208,55 @@ def parse_tool_call(reply):
     if not isinstance(args, dict):
         return "bad_json", None
     return "call", {"tool": parsed["tool"], "args": args}
+
+
+def _parse_bare_call(reply):
+    """Bare-JSON fallback: a tool object without a code fence.
+
+    Only a balanced object containing a "tool" key counts as an attempted
+    call (anything else is plain text as far as scoring is concerned).
+    """
+    pos = 0
+    while True:
+        start = reply.find("{", pos)
+        if start < 0:
+            return "none", None
+        chunk = _extract_braced(reply, start)
+        if chunk is None:
+            return "none", None
+        if '"tool"' in chunk:
+            try:
+                parsed = json.loads(chunk)
+            except ValueError:
+                return "bad_json", None
+            if isinstance(parsed, dict) and "tool" in parsed:
+                return _coerce_call(parsed)
+            return "bad_json", None
+        pos = start + 1
+
+
+def parse_tool_call(reply):
+    """Extract a tool call from a model reply.
+
+    A fenced JSON block wins when present; otherwise a bare JSON object
+    with a "tool" key is accepted (some models emit valid calls unfenced).
+
+    Returns one of:
+      ("call", {"tool": str, "args": dict})  -- a well-formed tool call
+      ("none", None)                          -- no tool call present
+      ("bad_json", None)                      -- an attempted call, unparseable
+    """
+    if reply is None:
+        return "none", None
+    match = _FENCE_RE.search(reply)
+    if match is not None:
+        body = match.group(1).strip()
+        try:
+            parsed = json.loads(body)
+        except ValueError:
+            return "bad_json", None
+        return _coerce_call(parsed)
+    return _parse_bare_call(reply)
 
 
 def _types_match(expected, actual):
