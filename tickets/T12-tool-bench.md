@@ -79,3 +79,11 @@ turns covering pass/fail/abstain). No live calls.
   failure is genuine arg reasoning. p3/p4 unregressed proves the gating works.
   Next: full per-tool schema/GBNF grammar (Kiro drafting) in a two-arm
   grammar/no-grammar comparison.
+- Schema arm (2026-10-31, `--schema per-tool`, gated): artemis **12/12 then
+  11/12 on replication** (p2 2/2 both runs; only unconstrained p3 wobbles
+  1-2/2), 2507 **8/12** (p2 still 0/2 = genuine value errors), phi4-mini **7/12**
+  unchanged. Artemis's failures were ~entirely structural (schema fixes them);
+  2507's p2 is semantic. **ADOPTED: artemis-0.8B + per-tool schema for the
+  tools lane** (11-12/12 at 0.85 GB, 27.7 tok/s). Caveats: temperature unpinned
+  (±1 variance observed on p3); schema passes partly test the grammar, so the
+  no-grammar 7/12 arm stays as the honest baseline.

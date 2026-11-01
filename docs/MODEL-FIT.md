@@ -22,8 +22,8 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | qwen3.5:0.8b | 1.3 GB | Newest Qwen small |
 | nomic-embed-text:v1.5 | ~274 MB | **Pulled 2026-10-28** — first embeddings lane (probed live, 768-dim vector OK) |
 | bge-m3 | 1.2 GB | Optional multilingual follow-up (verify CPU tok/s first) |
-| Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools-lane candidate (BFCL 163/258); validate on-box via T11/T12 (see addendum) |
-| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools lane: live 7/12 tied three-way (parser fixed); p1/p4/p6 strong, p2 args weak; see T12 |
+| Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools lane: ADOPTED with per-tool schema (11-12/12 live, 27.7 tok/s); see T12 |
+| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools lane: 7/12 plain, 8/12 schema arm — p2 value errors persist (semantic, not format); see T12 |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 
@@ -71,3 +71,7 @@ no weights; laya needs Apple-Silicon MLX anyway).
 - Update (parser fixed, re-bench): artemis now **7/12 in a three-way tie**
   (p1 fixed 0→2/2; p2 args still 0/2). Efficiency-best at equal score (0.85 GB,
   27.7 tok/s) but no outright winner — tied within noise. See T12 findings.
+- Update (schema arm): artemis **12/12 then 11/12 replicated** with per-tool
+  schema — its errors were structural, not reasoning. ADOPTED for the tools
+  lane with schema (only p3 abstain wobbles 1-2/2). The vendor BFCL did
+  transfer after all; the harness was the blocker twice over.
