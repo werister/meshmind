@@ -59,7 +59,11 @@ deadline** (e.g. 20 s) so a slow DNS + redirect chain can't pin a worker. Cap re
 2. **Resolve the host to IPs and block non-public ranges** (stdlib `socket.getaddrinfo` +
    `ipaddress`): reject loopback (`127.0.0.0/8`, `::1`), link-local (`169.254.0.0/16`,
    `fe80::/10`) — **this blocks cloud metadata `169.254.169.254`** — private (`10/8`,
-   `172.16/12`, `192.168/16`, `fc00::/7`), unspecified (`0.0.0.0`), and multicast/reserved.
+   `172.16/12`, `192.168/16`, `fc00::/7`), **carrier-grade NAT `100.64.0.0/10` (= the Tailscale
+   tailnet — blocking it stops `/fetch` pivoting to any tailnet node)**, **IPv4-mapped IPv6
+   (`::ffff:a.b.c.d`, a bypass form)**, unspecified (`0.0.0.0`), and multicast/reserved.
+   (Update 2026-11-01: CGN + IPv4-mapped-IPv6 added to the shipped `scripts/ssrf_guard.py`;
+   recorded here so the design matches what is live. See `FETCH-infra-protection`.)
    Also block the literal hostnames `localhost`, `metadata.google.internal`.
 3. **Re-check on every redirect hop.** urllib's default opener follows redirects *without*
    re-applying the guard — a public URL can 302 to `http://169.254.169.254/`. Options:
