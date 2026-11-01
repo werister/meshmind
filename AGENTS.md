@@ -43,6 +43,17 @@ Never send `"think": true` to instruct-only models (`gemma3:4b`, `qwen2.5:*`,
 budget return empty answers, so always pair `"think": true` with a generous
 `num_predict` (>= 900).
 
+## Web tools
+
+Models reach the live web through the sidecar (metered into `/calls`):
+
+    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/fetch -H "Content-Type: application/json" -d "{\"op\":\"fetch\",\"url\":\"https://example.com\"}"
+    curl https://mac-mini-von-hugo-1.taild73e38.ts.net/fetch -H "Content-Type: application/json" -d "{\"op\":\"search\",\"query\":\"Mixture of Experts\"}"
+
+- `{"op":"fetch","url":...}` returns page text (256 KB cap, SSRF-guarded: no localhost, LAN, tailnet, metadata, or non-80/443 ports)
+- `{"op":"search","query":...}` returns up to 5 Wikipedia title/url pairs (keyless; general web search needs a key)
+- HTTP 200 means the endpoint ran; check the `ok` field. 30 fetches/min per `X-Agent` (429 over)
+
 ## Leave feedback
 
 After a run, POST one line so the lab log shows real usage:

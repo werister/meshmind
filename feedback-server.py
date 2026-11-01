@@ -2,6 +2,7 @@
 """Local AI lab sidecar: feedback receiver plus status/dashboard showcase.
 
 POST /feedback {"agent","model","ok","note","tokens"} -> feedback.log (JSONL)
+POST /fetch {"op":"fetch","url":...} | {"op":"search","query":...} -> web text
 GET  /status    -> live JSON: availability, token totals, models, feedback
 GET  /dashboard -> auto-refreshing HTML showcase page (mml Apple-light styling)
 GET  /agents.md -> the agent quickstart doc, served over HTTPS
@@ -23,6 +24,13 @@ from collections import deque
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "scripts"))
+try:
+    import web_tools
+except ImportError:
+    web_tools = None  # old deploy without scripts/: /fetch answers 501
 
 LAB = os.path.join(os.path.expanduser("~"), "local-ai-lab")
 FB = os.path.join(LAB, "feedback.log")
@@ -50,6 +58,11 @@ PROXY_PATHS = {"/api/chat", "/api/generate", "/api/embeddings", "/v1/chat/comple
 CALLS_RING = deque(maxlen=RING_SIZE)
 METER_LOCK = threading.Lock()
 PROXY_SEM = threading.BoundedSemaphore(16)
+FETCH_SEM = threading.BoundedSemaphore(4)
+FETCH_RATE = 30
+FETCH_WINDOW = 60.0
+_FETCH_BUCKETS = {}
+_FETCH_LOCK = threading.Lock()
 UNMETERED_STREAM_CALLS = 0
 BACKEND_UP = False
 STARTED = time.time()
@@ -1621,8 +1634,88 @@ class H(BaseHTTPRequestHandler):
             if metered:
                 call["duration_ms"] = int((time.time() - started) * 1000)
                 _record_call(call)
+    def _fetch_allowed(self, agent):
+        now = time.monotonic()
+        with _FETCH_LOCK:
+            count, start = _FETCH_BUCKETS.get(agent, (0, now))
+            if now - start >= FETCH_WINDOW:
+                count, start = 0, now
+            if count >= FETCH_RATE:
+                return False, max(0, int(start + FETCH_WINDOW - now))
+            _FETCH_BUCKETS[agent] = (count + 1, start)
+            if len(_FETCH_BUCKETS) > 256:
+                _FETCH_BUCKETS.pop(next(iter(_FETCH_BUCKETS)))
+            return True, 0
+
+    def _fetch(self):
+        agent = (self.headers.get("X-Agent") or "unknown")[:64]
+        try:
+            n = int(self.headers.get("Content-Length", 0))
+            if n < 0 or n > 8192:
+                raise ValueError("bad length")
+            d = json.loads(self.rfile.read(n) or b"{}")
+            if not isinstance(d, dict):
+                raise ValueError("not an object")
+            op = d.get("op", "fetch")
+            if op not in ("fetch", "search"):
+                raise ValueError("bad op")
+        except Exception:
+            self.send_json({"ok": False, "error": "bad-request"}, 400)
+            return
+        if web_tools is None:
+            self.send_json({"ok": False, "error": "fetch backend unavailable"},
+                           501)
+            return
+        allowed, retry = self._fetch_allowed(agent)
+        if not allowed:
+            self.send_json({"ok": False, "error": "rate_limited",
+                            "retry_after_s": retry}, 429)
+            return
+        if not FETCH_SEM.acquire(blocking=False):
+            self.send_json({"ok": False, "error": "busy"}, 429)
+            return
+        try:
+            start = time.monotonic()
+            if op == "fetch":
+                url = d.get("url", "")
+                if not isinstance(url, str) or not url:
+                    self.send_json({"ok": False, "error": "url required"},
+                                   400)
+                    return
+                res = web_tools.fetch_url(url[:2000])
+                model = "web_fetch"
+            else:
+                query = d.get("query", "")
+                if not isinstance(query, str) or not query:
+                    self.send_json({"ok": False, "error": "query required"},
+                                   400)
+                    return
+                res = web_tools.web_search(query[:500])
+                model = "web_search"
+            elapsed_ms = int((time.monotonic() - start) * 1000)
+        finally:
+            FETCH_SEM.release()
+        ok = bool(res.get("ok"))
+        text = res.get("text", "") if isinstance(res.get("text"), str) else ""
+        _record_call({"ts": utcnow(), "path": "/fetch",
+                      "status": 200 if ok else "fetch-failed",
+                      "agent": agent, "model": model,
+                      "prompt_tokens": None, "eval_tokens": None, "ok": ok,
+                      "stream": False, "partial": False,
+                      "truncated": len(text) >= 8000,
+                      "duration_ms": elapsed_ms,
+                      "bytes": len(text.encode("utf-8", "replace"))})
+        out = {"ok": ok, "op": op, "elapsed_ms": elapsed_ms}
+        for key in ("url", "text", "error", "query", "source", "results"):
+            if key in res:
+                out[key] = res[key]
+        self.send_json(out)
+
     def do_POST(self):
         path = urlsplit(self.path).path
+        if self.path.split("?")[0].rstrip("/") == "/fetch":
+            self._fetch()
+            return
         if path in PROXY_PATHS:
             self._proxy(True)
             return

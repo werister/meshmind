@@ -10,6 +10,7 @@ import json
 import subprocess
 import sys
 import unittest
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,6 +50,41 @@ class WebToolsTests(unittest.TestCase):
         out = web_tools.fetch_url("http://")
         self.assertEqual(set(out) >= {"ok", "url", "error"}, True)
         self.assertFalse(out["ok"])
+
+    # --- SSRF blocklist: all offline (numeric IPs, no DNS) --------------
+    def test_ssrf_blocklist(self):
+        blocked = [
+            "http://127.0.0.1/",
+            "http://127.0.0.1:11434/api/tags",
+            "http://[::1]/",
+            "http://10.0.0.1/",
+            "http://192.168.1.1/",
+            "http://169.254.169.254/latest/meta-data/",
+            "http://100.100.100.100/",  # CGN range = the tailnet itself
+            "http://localhost:8080/",
+            "http://metadata.google.internal/",
+            "http://example.com:22/",
+            "http://example.com:6379/",
+            "file:///etc/passwd",
+            "ftp://example.com/x",
+        ]
+        for url in blocked:
+            with self.subTest(url=url):
+                out = web_tools.fetch_url(url)
+                self.assertFalse(out["ok"])
+                self.assertTrue(
+                    any(k in out["error"]
+                        for k in ("blocked", "http(s)", "port", "hostname")))
+
+    def test_ssrf_redirect_hop(self):
+        handler = web_tools._GuardedRedirectHandler()
+        req = urllib.request.Request("https://example.com/")
+        with self.assertRaises(ValueError):
+            handler.redirect_request(req, None, 302, "Found", {},
+                                     "http://169.254.169.254/x")
+        with self.assertRaises(ValueError):
+            handler.redirect_request(req, None, 302, "Found", {},
+                                     "http://100.100.100.100/x")
 
 
 if __name__ == "__main__":
