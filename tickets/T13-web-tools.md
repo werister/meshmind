@@ -18,9 +18,17 @@ from here; Wikipedia search is the honest keyless scope. General web search
 needs a Brave/Bing key (open follow-up, not built).
 
 ## Non-goals
-- No sidecar `/fetch` endpoint yet (the models call tools through an agent
-  loop; serving fetch is a separate deploy with blast radius).
 - No reader-mode quality (crude tag strip), no JS pages.
+
+## Outcome (coordinator, 2026-11-01): sidecar endpoint LIVE
+- `POST /fetch` (`fetch`/`search` ops) deployed on the Mini + Caddy route;
+  SSRF guard (incl. CGN/tailnet 100.64/10 + redirect re-check + port allowlist),
+  30/min/agent rate limit, FETCH_SEM(4), metering as `model:"web_fetch"` with
+  null tokens. Tests: `test_fetch_endpoint.py` 6/6, `test_web_tools.py` 6/6.
+- Live acceptance passed: example.com ok:true; metadata + loopback blocked at
+  0 ms; search ok; 30x200 then 429s; `/calls` shows fetch rows, token totals
+  unpolluted. One finding during deploy: Caddy needed an explicit `/fetch`
+  route (fallback goes to Ollama) — added.
 
 ## Behavior
 JSON to stdout, exit 0 = ran (per-call ok/error lives in the JSON),
