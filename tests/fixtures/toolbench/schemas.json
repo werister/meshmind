@@ -1,0 +1,68 @@
+{
+  "_note": "Per-tool JSON-Schema map for tool_bench --schema per-tool (Ollama format=structured-output). Shapes mirror catalog.json exactly; outer tool/args envelope matches parse_tool_call(). Drafted from docs/GBNF-tools-draft-2026-11-01.md.",
+  "get_weather": {
+    "type": "object",
+    "properties": {
+      "tool": {"const": "get_weather"},
+      "args": {
+        "type": "object",
+        "properties": {
+          "city": {"type": "string", "minLength": 1},
+          "unit": {"type": "string", "enum": ["c", "f"]}
+        },
+        "required": ["city"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["tool", "args"],
+    "additionalProperties": false
+  },
+  "calc": {
+    "type": "object",
+    "properties": {
+      "tool": {"const": "calc"},
+      "args": {
+        "type": "object",
+        "properties": {"expression": {"type": "string", "minLength": 1}},
+        "required": ["expression"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["tool", "args"],
+    "additionalProperties": false
+  },
+  "file_read": {
+    "type": "object",
+    "properties": {
+      "tool": {"const": "file_read"},
+      "args": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "max_bytes": {"type": "integer"}
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["tool", "args"],
+    "additionalProperties": false
+  },
+  "send_message": {
+    "type": "object",
+    "properties": {
+      "tool": {"const": "send_message"},
+      "args": {
+        "type": "object",
+        "properties": {
+          "to": {"type": "string", "minLength": 1},
+          "body": {"type": "string", "minLength": 1}
+        },
+        "required": ["to", "body"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["tool", "args"],
+    "additionalProperties": false
+  }
+}

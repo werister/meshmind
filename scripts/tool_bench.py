@@ -45,6 +45,7 @@ from pathlib import Path
 DEFAULT_OLLAMA = "http://127.0.0.1:11434"
 DEFAULT_SCENARIOS = "tests/fixtures/toolbench/scenarios"
 DEFAULT_CATALOG = "tests/fixtures/toolbench/catalog.json"
+DEFAULT_SCHEMAS = "tests/fixtures/toolbench/schemas.json"
 DEFAULT_TIMEOUT = 120
 X_AGENT = "tool_bench"
 EXIT_RAN = 0
@@ -332,11 +333,11 @@ def score_turn(expect, reply):
 
 # --- driving a scenario --------------------------------------------------
 
-def ask_ollama(ollama_url, model, messages, timeout, json_mode=False):
+def ask_ollama(ollama_url, model, messages, timeout, fmt=None):
     """One /api/chat turn (stream:false). Returns the message content string.
 
     Transport failures are raised to the caller (endpoint error handling).
-    json_mode adds Ollama's format:json constraint (shape only, not values).
+    fmt None | "json" | per-tool JSON-Schema dict -> Ollama format field.
     """
     url = ollama_url.rstrip("/") + "/api/chat"
     body = {
@@ -345,8 +346,8 @@ def ask_ollama(ollama_url, model, messages, timeout, json_mode=False):
         "stream": False,
         "think": False,
     }
-    if json_mode:
-        body["format"] = "json"
+    if fmt is not None:
+        body["format"] = fmt
     payload = json.dumps(body).encode("utf-8")
     request = urllib.request.Request(
         url, data=payload,
@@ -368,13 +369,28 @@ def _system_prompt(catalog):
 
 _JSON_GATED_KINDS = ("tool_call", "recover")
 
+def _format_for_turn(expect, json_mode, schemas):
+    """format value for one live turn, or None.
+
+    Only tool-expected turns are ever constrained (prose turns stay
+    free-form); a per-tool schema wins over bare format:json.
+    """
+    if expect.get("kind") not in _JSON_GATED_KINDS:
+        return None
+    if schemas is not None:
+        return schemas.get(expect.get("tool"))
+    if json_mode:
+        return "json"
+    return None
+
 def run_scenario(scenario, model, catalog, live, ollama_url, timeout,
-                 json_mode=False):
+                 json_mode=False, schemas=None):
     """Drive one scenario for one model. Returns a result dict:
        {name, point, pass, note, endpoint_error, turns:[{expect,note,pass}]}.
 
-    json_mode constrains tool-expected turns to format:json; prose turns
-    (abstain/no_tool/use_result) are never constrained.
+    json_mode constrains tool-expected turns to format:json; schemas (a
+    tool->schema map) constrains them to the per-tool schema instead.
+    Prose turns (abstain/no_tool/use_result) are never constrained.
     """
     messages = [{"role": "system", "content": _system_prompt(catalog)}]
     turn_rows = []
@@ -386,10 +402,10 @@ def run_scenario(scenario, model, catalog, live, ollama_url, timeout,
         messages.append({"role": "user", "content": turn["user"]})
         reply = turn.get("canned_reply")
         if live:
-            gated = json_mode and turn["expect"]["kind"] in _JSON_GATED_KINDS
+            fmt = _format_for_turn(turn["expect"], json_mode, schemas)
             try:
                 reply = ask_ollama(ollama_url, model, messages, timeout,
-                                   json_mode=gated)
+                                   fmt=fmt)
             except (urllib.error.URLError, OSError) as exc:
                 # A per-turn transport/template failure is an ENDPOINT failure,
                 # recorded separately from reasoning. The host being entirely
@@ -486,6 +502,10 @@ def build_parser():
                         help="constrain tool-expected turns to Ollama format:json "
                              "when --live (default %(default)s; prose turns never "
                              "constrained)")
+    parser.add_argument("--schema", choices=("off", "per-tool"), default="off",
+                        help="constrain tool-expected turns to the per-tool JSON "
+                             "schema when --live (default %(default)s; mutually "
+                             "exclusive with --format json)")
     return parser
 
 
@@ -505,8 +525,20 @@ def main(argv=None):
     models = [m.strip() for m in args.models.split(",") if m.strip()]
     if not models:
         fail_infra("--models parsed to an empty list")
+    if args.format != "off" and args.schema != "off":
+        fail_infra("--format and --schema are mutually exclusive")
     catalog = load_catalog(args.catalog)
     scenarios = load_scenarios(args.scenarios, catalog)
+    schemas = None
+    if args.schema == "per-tool":
+        schemas = load_json_file(ROOT / DEFAULT_SCHEMAS, "schemas file")
+        if not isinstance(schemas, dict) or not schemas:
+            fail_infra("schemas file must carry a non-empty tool->schema object")
+        for tool, schema in schemas.items():
+            if tool.startswith("_"):
+                continue
+            if not isinstance(schema, dict):
+                fail_infra("schema for %s must be an object" % tool)
     if args.live:
         _preflight_live(args.ollama, args.timeout)
 
@@ -514,7 +546,8 @@ def main(argv=None):
     json_mode = args.format == "json"
     for model in models:
         results = [run_scenario(s, model, catalog, args.live, args.ollama,
-                                args.timeout, json_mode=json_mode)
+                                args.timeout, json_mode=json_mode,
+                                schemas=schemas)
                    for s in scenarios]
         model_blocks.append({
             "model": model,

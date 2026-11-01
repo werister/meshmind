@@ -260,6 +260,83 @@ class ToolBenchTests(unittest.TestCase):
         self.assertTrue(seen)
         self.assertFalse(any("format" in p for p in seen))
 
+    # --- --schema per-tool: tool turns carry their schema dict --------
+    def test_schema_per_tool_gating(self):
+        seen = []
+
+        class _SchemaCaptureHandler(BaseHTTPRequestHandler):
+            def log_message(self, *_a):
+                return
+
+            def do_GET(self):
+                if self.path.endswith("/api/tags"):
+                    body = b'{"models": []}'
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+
+            def do_POST(self):
+                length = int(self.headers.get("Content-Length", 0))
+                raw = self.rfile.read(length) if length else b"{}"
+                try:
+                    payload = json.loads(raw.decode("utf-8", "replace"))
+                except ValueError:
+                    payload = {}
+                seen.append(payload)
+                body = b'{"message": {"content": "just a plain answer"}}'
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        server = HTTPServer(("127.0.0.1", 0), _SchemaCaptureHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            code, _, _ = run(["--models", "m", "--live",
+                              "--ollama", "http://127.0.0.1:%d" % port,
+                              "--scenarios", str(SAMPLES), "--timeout", "5",
+                              "--schema", "per-tool"])
+            self.assertEqual(code, 0)
+        finally:
+            server.shutdown()
+            thread.join()
+        with_fmt = [p for p in seen if "format" in p]
+        without_fmt = [p for p in seen if "format" not in p]
+        self.assertTrue(with_fmt)
+        self.assertTrue(without_fmt)
+        for payload in with_fmt:
+            fmt = payload["format"]
+            self.assertIsInstance(fmt, dict)
+            tool_spec = (fmt.get("properties") or {}).get("tool") or {}
+            self.assertIn(tool_spec.get("const"), EXPECTED_TOOLS)
+
+    # --- schemas fixture covers exactly the fixed catalog ----------------
+    def test_schemas_match_catalog(self):
+        schemas = json.loads((TB / "schemas.json").read_text(encoding="utf-8"))
+        tools = sorted(k for k in schemas if not k.startswith("_"))
+        self.assertEqual(tools, EXPECTED_TOOLS)
+        for tool in tools:
+            schema = schemas[tool]
+            self.assertEqual(schema["properties"]["tool"]["const"], tool)
+            self.assertEqual(schema["required"], ["tool", "args"])
+            self.assertFalse(schema["additionalProperties"])
+
+    # --- --format and --schema are mutually exclusive --------------------
+    def test_format_schema_mutually_exclusive(self):
+        code, out, err = run(["--models", "m", "--format", "json",
+                              "--schema", "per-tool"])
+        self.assertEqual(code, 2)
+        self.assertIsNone(out)
+        self.assertIn("mutually exclusive", err)
+
     # --- T12 failure table: host down mid-suite -> exit 2 ---------------
     def test_host_down(self):
         port = dead_port()
