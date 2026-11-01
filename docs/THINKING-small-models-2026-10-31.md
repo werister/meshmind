@@ -21,7 +21,7 @@ models, so capability is not guesswork:
 | **qwen3:1.7b** | 2.0B Q4_K_M | **Yes** (dual-mode) | `think:true/false`; `/no_think` style |
 | **smollm3-3b** (`huggingfacetb-smollm3-3b-q4-k-m:bakeoff`) | 3.1B Q4_K_M | **Yes** (dual-mode) | HF SmolLM3 `/think` `/no_think` |
 | **granite4.2:3b-q4_K_M** | 3.7B Q4_K_M | **Yes** (dual-mode) | IBM Granite 4 thinking toggle |
-| granite4:micro-h | 3.2B Q4_K_M | Yes (family) | untested here; hybrid Granite |
+| granite4:micro-h | 3.2B Q4_K_M | **No** — tested 2026-10-31, Ollama: "does not support thinking" (this tag) | instruct-only; a thinking-capable micro tag may exist separately (untested) |
 | gemma3:4b | 3.9B Q4_K_M | **No** — "does not support thinking" | instruct-only |
 | qwen2.5:3b | 3.1B Q4_K_M | **No** — "does not support thinking" | instruct-only |
 | qwen2.5-coder:3b | 3.1B Q4_K_M | No (qwen2 family) | instruct/code |
@@ -30,8 +30,9 @@ models, so capability is not guesswork:
 | athena-slm (lfm2 1.2B), functiongemma (268M) | — | No | specialist/tiny |
 
 **So the only "proper thinking" small models on the box are the three dual-mode ones:
-qwen3:1.7b, smollm3-3b, granite4.2:3b** (plus granite4:micro-h, same family). Everything
-else is instruct-only and should never be sent `think:true` (it errors).
+qwen3:1.7b, smollm3-3b, granite4.2:3b.** (granite4:micro-h was retested 2026-10-31:
+this tag is instruct-only.) Everything else is instruct-only and should never be
+sent `think:true` (it errors).
 
 ## Measured thinking behavior (the important part)
 
@@ -91,8 +92,9 @@ else is instruct-only and should never be sent `think:true` (it errors).
 - Two problems, one quant each (Q4_K_M), greedy-ish defaults; this maps *behavior and
   cost*, not a full accuracy benchmark — the T11/T12 + weekly-eval harness is the place
   to score accuracy at scale. KV cache was the server default (not forced q8_0).
-- granite4:micro-h and phi-reasoning tags were not pulled/tested; worth a follow-up if a
-  faster reliable reasoner is wanted (granite-micro is smaller than granite4.2:3b).
+- granite4:micro-h (this tag) tested 2026-10-31: no thinking channel — the faster-
+  reasoner candidate is dead unless a different thinking-capable micro tag is found.
+  phi-reasoning tags still unpulled/untested.
 
 ### Sources
 Live Mini `POST /api/chat` and `/api/tags` (2026-10-31); Ollama 0.32.1 thinking channel.
