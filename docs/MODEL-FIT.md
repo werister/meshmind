@@ -23,8 +23,9 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | nomic-embed-text:v1.5 | ~274 MB | **Pulled 2026-10-28** — first embeddings lane (probed live, 768-dim vector OK) |
 | bge-m3 | 1.2 GB | Optional multilingual follow-up (verify CPU tok/s first) |
 | Qwen3.5-0.8B-Artemis (TurinTech) | 0.57 GB (Q5_K_M) | Tools lane: ADOPTED with per-tool schema (11-12/12 live, 27.7 tok/s); see T12 |
-| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools lane: 7/12 plain, 8/12 schema arm — p2 value errors persist (semantic, not format); see T12 |
+| qwen3:4b-instruct-2507 | 2.5 GB (Q4_K_M) | Tools lane: 7/12 plain, 8/12 schema arm — p2 value errors persist (semantic, not format); 9.8 tok/s CPU, 3.18 GB resident; see T12 |
 | qwen3:4b-thinking-2507 | 2.5 GB (Q4_K_M) | Reasoning: rejected — correct but 4-5x slower than granite (75s vs 16s trap); over-thinks on CPU |
+| phi4-mini | 3.8B (Q4_K_M) | Tools lane: 7/12 plain + schema (recovery 2/2, drifts run to run); 10.0 tok/s CPU, 3.09 GB resident; fallback behind artemis+schema |
 | LFM3-1.7B (LiquidAI) | ~1 GB (Q4_K_M) | BLOCKED: pulled OK but Ollama 0.32.1 cannot load it (unknown arch 'lfm3'); needs Ollama upgrade, not judged on merit |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
