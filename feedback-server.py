@@ -55,6 +55,23 @@ RING_SIZE = 256
 BODY_CAP = 2 * 1024 * 1024
 TAIL_SIZE = 64 * 1024
 PROXY_PATHS = {"/api/chat", "/api/generate", "/api/embeddings", "/v1/chat/completions", "/v1/completions", "/v1/embeddings"}
+# --- rerank endpoint (T10, additive) ----------------------------------------
+# POST /rerank {query, passages:[{id,text}], top_k?} -> {scores, model, latency_s}.
+# Served + metered like the proxy paths (agent tag `rerank`). The endpoint shells
+# out to scripts/rerank_worker.py (subprocess list-args, never shell) which runs
+# under the Mini's onnxruntime venv; worker missing/slow/garbage -> HTTP 503.
+RERANK_MAX_PASSAGES = 20
+RERANK_MAX_CHARS = 2000
+RERANK_MAX_TOP_K = 20
+RERANK_TIMEOUT_S = int(os.environ.get("RERANK_TIMEOUT_S", "60"))
+RERANK_MAX_BODY = 1024 * 1024  # request body hard cap (20 x 2000 chars + overhead)
+RERANK_MODEL = os.environ.get("RERANK_MODEL", "ettin-17m")
+RERANK_MODEL_DIR = os.environ.get("RERANK_MODEL_DIR", os.path.join(LAB, "ettin-17m"))
+RERANK_WORKER = os.environ.get(
+    "RERANK_WORKER",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "rerank_worker.py"),
+)
+RERANK_PYTHON = os.environ.get("RERANK_PYTHON", os.path.join(LAB, ".venv-rerank", "bin", "python3"))
 CALLS_RING = deque(maxlen=RING_SIZE)
 METER_LOCK = threading.Lock()
 PROXY_SEM = threading.BoundedSemaphore(16)
@@ -1487,6 +1504,111 @@ def build_dashboard(st):
     return render_dashboard(st)
 
 
+def validate_rerank_request(payload):
+    """Validate a /rerank body against the input caps.
+
+    Returns (query, passages, top_k). Raises ValueError with a caller-safe
+    reason string on any cap violation or malformed field -> HTTP 400.
+    """
+    if not isinstance(payload, dict):
+        raise ValueError("body must be a JSON object")
+    query = payload.get("query", "")
+    if not isinstance(query, str):
+        raise ValueError("query must be a string")
+    passages = payload.get("passages", [])
+    if not isinstance(passages, list):
+        raise ValueError("passages must be a list")
+    if len(passages) > RERANK_MAX_PASSAGES:
+        raise ValueError("too many passages: %d > %d" % (len(passages), RERANK_MAX_PASSAGES))
+    clean = []
+    for i, item in enumerate(passages):
+        if not isinstance(item, dict):
+            raise ValueError("passage %d must be an object" % i)
+        text = item.get("text", "")
+        if not isinstance(text, str):
+            raise ValueError("passage %d text must be a string" % i)
+        if len(text) > RERANK_MAX_CHARS:
+            raise ValueError("passage %d too long: %d > %d chars" % (i, len(text), RERANK_MAX_CHARS))
+        clean.append({"id": item.get("id"), "text": text})
+    top_k = payload.get("top_k")
+    if top_k is not None:
+        if not isinstance(top_k, int) or isinstance(top_k, bool):
+            raise ValueError("top_k must be an integer")
+        if top_k < 0:
+            raise ValueError("top_k must be non-negative")
+        if top_k > RERANK_MAX_TOP_K:
+            raise ValueError("top_k too large: %d > %d" % (top_k, RERANK_MAX_TOP_K))
+    return query, clean, top_k
+
+
+def run_rerank_worker(query, passages, worker_argv=None, timeout=RERANK_TIMEOUT_S):
+    """Shell out to the rerank worker (list-args, never shell=True).
+
+    Returns the parsed {"scores": [...]} dict. Raises RuntimeError on any
+    failure (missing worker, timeout, nonzero exit, unparseable stdout) so the
+    endpoint maps every failure to a single clean 503 and never crashes.
+    """
+    if worker_argv is None:
+        runner = RERANK_PYTHON if os.path.exists(RERANK_PYTHON) else sys.executable
+        worker_argv = [runner, RERANK_WORKER, "--model-dir", RERANK_MODEL_DIR]
+    request = json.dumps({"query": query, "passages": passages})
+    try:
+        proc = subprocess.run(
+            worker_argv,
+            input=request.encode("utf-8"),
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        raise RuntimeError("rerank worker timed out after %ss" % timeout)
+    except (OSError, ValueError) as exc:
+        raise RuntimeError("rerank worker could not be launched: %s" % (exc,))
+    if proc.returncode != 0:
+        detail = proc.stderr.decode("utf-8", "replace").strip()[:200]
+        try:
+            err = json.loads(proc.stdout.decode("utf-8", "replace") or "{}")
+            if isinstance(err, dict) and err.get("error"):
+                detail = str(err["error"])[:200]
+        except (ValueError, TypeError):
+            pass
+        raise RuntimeError("rerank worker failed (exit %s): %s" % (proc.returncode, detail))
+    try:
+        result = json.loads(proc.stdout.decode("utf-8", "replace"))
+    except (ValueError, TypeError) as exc:
+        raise RuntimeError("rerank worker returned unparseable output: %s" % (exc,))
+    if not isinstance(result, dict) or not isinstance(result.get("scores"), list):
+        raise RuntimeError("rerank worker returned malformed result")
+    norm = []
+    for row in result["scores"]:
+        if not isinstance(row, dict) or "score" not in row:
+            raise RuntimeError("rerank worker returned a malformed score row")
+        try:
+            score = float(row["score"])
+        except (TypeError, ValueError):
+            raise RuntimeError("rerank worker returned a non-numeric score")
+        norm.append({"id": row.get("id"), "score": score})
+    return {"scores": norm}
+
+
+def rerank(query, passages, top_k, worker_argv=None, timeout=RERANK_TIMEOUT_S):
+    """Score passages via the worker, then stable-sort descending and apply top_k.
+
+    Empty passages short-circuit to {"scores": []} without touching the worker.
+    """
+    if not passages:
+        return {"scores": []}
+    result = run_rerank_worker(query, passages, worker_argv=worker_argv, timeout=timeout)
+    scores = result["scores"]
+    # Stable, descending by score: enumerate() index as tie-breaker keeps the
+    # original relative order for equal scores (Python's sort is stable).
+    ordered = sorted(enumerate(scores), key=lambda pair: -pair[1]["score"])
+    rows = [row for _, row in ordered]
+    if top_k is not None:
+        rows = rows[:top_k]
+    return {"scores": rows}
+
+
 class H(BaseHTTPRequestHandler):
     timeout = 30  # idle clients (e.g. Content-Length with no body) die here, not forever
     def log_message(self, *a):
@@ -1638,6 +1760,70 @@ class H(BaseHTTPRequestHandler):
             if metered:
                 call["duration_ms"] = int((time.time() - started) * 1000)
                 _record_call(call)
+    def _rerank(self):
+        """POST /rerank: validate -> worker -> metered row. 400 over-cap, 503 on worker failure."""
+        started = time.time()
+        call = {"ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "path": "/rerank", "status": None,
+                "agent": (self.headers.get("X-Agent") or "rerank")[:64],
+                "model": RERANK_MODEL,
+                "prompt_tokens": None, "eval_tokens": None, "ok": False,
+                "stream": False, "partial": False, "truncated": False}
+        try:
+            length = int(self.headers.get("Content-Length", "0") or 0)
+            if length < 0:
+                raise ValueError()
+        except ValueError:
+            self.send_json({"error": "invalid content length"}, 400)
+            return
+        if length > RERANK_MAX_BODY:
+            call["status"] = 400
+            call["truncated"] = True
+            self.send_json({"error": "request body too large"}, 400)
+            _record_call(call)
+            return
+        raw = self.rfile.read(length) if length else b""
+        try:
+            payload = json.loads(raw or b"{}")
+        except (ValueError, TypeError):
+            call["status"] = 400
+            self.send_json({"error": "body is not valid JSON"}, 400)
+            _record_call(call)
+            return
+        try:
+            query, passages, top_k = validate_rerank_request(payload)
+        except ValueError as exc:
+            call["status"] = 400
+            self.send_json({"error": str(exc)}, 400)
+            _record_call(call)
+            return
+        # Passage/score counts ride a dedicated field: token columns stay
+        # null so rerank traffic never pollutes the public token totals.
+        call["passages"] = len(passages)
+        if not passages:
+            call["status"] = 200
+            call["ok"] = True
+            call["duration_ms"] = int((time.time() - started) * 1000)
+            self.send_json({"scores": [], "model": RERANK_MODEL,
+                            "latency_s": round(time.time() - started, 4)})
+            _record_call(call)
+            return
+        try:
+            result = rerank(query, passages, top_k)
+        except RuntimeError as exc:
+            call["status"] = 503
+            call["error"] = str(exc)[:200]
+            self.send_json({"error": "rerank unavailable", "detail": str(exc)[:200]}, 503)
+            _record_call(call)
+            return
+        scores = result["scores"]
+        call["status"] = 200
+        call["ok"] = True
+        call["duration_ms"] = int((time.time() - started) * 1000)
+        self.send_json({"scores": scores, "model": RERANK_MODEL,
+                        "latency_s": round(time.time() - started, 4)})
+        _record_call(call)
+
     def _fetch_key(self):
         # Rate key is the network peer, never the self-declared X-Agent
         # header (caller-controlled: rotatable for unlimited rate, or
@@ -1746,6 +1932,9 @@ class H(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if self.path.split("?")[0].rstrip("/") == "/fetch":
             self._fetch()
+            return
+        if path == "/rerank":
+            self._rerank()
             return
         if path in PROXY_PATHS:
             self._proxy(True)
