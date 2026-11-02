@@ -47,7 +47,11 @@ and re-checked on **every redirect hop**, connecting only to a validated IP (no 
 falls in:
 - loopback `127.0.0.0/8`, `::1` → the box's own services (Ollama, sidecar, collectors, dev tools)
 - link-local + metadata `169.254.0.0/16` (= `169.254.169.254`), `fe80::/10` → cloud creds
-- **CGN `100.64.0.0/10` → the Tailscale tailnet** (the key one for this host)
+- **CGN `100.64.0.0/10` → the Tailscale tailnet** (the key one for this host). **Must be an
+  explicit blocklist entry:** Python's `ipaddress` reports `100.64.0.1` as **`is_private=False`
+  AND `is_global=False`** — so a guard that filters on `is_private` (or "block if not `is_global`"
+  done loosely) **silently lets the entire tailnet through.** The shipped `scripts/ssrf_guard.py`
+  therefore checks membership against an explicit list of blocked networks, *not* `is_private`.
 - RFC1918 private `10/8`, `172.16/12`, `192.168/16` → the LAN
 - IPv4-mapped IPv6 `::ffff:a.b.c.d` → bypass form of all the above
 - unspecified `0.0.0.0`/`::`, multicast, and RFC 6890 reserved
