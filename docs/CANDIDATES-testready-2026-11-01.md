@@ -34,6 +34,16 @@ pending the lab's own harness.
   under llama-server `--reranking` but scores degenerate (~1.0 vs ~1e-12,
   wrong winners, order-sensitive) with and without `--pooling rank` —
   bad conversion. T10 is served by Ettin-17m instead (live, verified).
+- **RWKV-7 1.5B (G1g Q5_K_M): PROMOTED TO GO (arch loads + benched).**
+  The doc's gate is passed: `ollama create` + chat work on 0.32.1
+  (architecture `rwkv7`, clean reply, embedded template fine) — the model
+  cards' "REQUIRES 0.33.2" proved conservative; the pre-0.32.1 "supported"
+  issue comments were right. Tools bench: **10/12** (p1-p5 perfect, p6
+  turn-2 discipline fails: thinks aloud about the answer instead of giving
+  it; `think:false` required and fixes single-turn cleanliness).
+  **20.1 tok/s** decode, **72 tok/s** prefill, **1.27 GB** resident.
+  Strong fallback behind artemis (11-12/12); the attention-free CPU prefill
+  lead is real. Full prep: `docs/RWKV-load-proof-2026-11-02.md` (Claude).
 
 ## Go/no-go table (test-priority order)
 

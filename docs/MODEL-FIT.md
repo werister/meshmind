@@ -30,6 +30,7 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | LFM3-1.7B (LiquidAI) | ~1 GB (Q4_K_M) | BLOCKED: pulled OK but Ollama 0.32.1 cannot load it (unknown arch 'lfm3'); needs Ollama upgrade, not judged on merit |
 | granite4:1b-h | 1.56 GB (Q4_K_M) | Tools lane: NO-GO — 8/12 schema (p3 abstain 0/2, semantic), 13.8 tok/s, 1.7 GB resident; loses to artemis+schema on every axis; see CANDIDATES |
 | opencoder:1.5b | 1.42 GB (Q4_K_M) | Coder lane: ADOPT (measured 9/10 executables vs qwen2.5-coder:3b 7/10; sole fail = multi-fence harness strictness on correct code), 18.5 tok/s, 2.36 GB resident; custom INF license cleared for local use; AGENTS.md routing = proposal, see CANDIDATES |
+| RWKV-7-G1g-1.5B (Q5_K_M) | 1.18 GB | GO: loads on 0.32.1 (arch rwkv7, cards' 0.33.2 floor was conservative); tools 10/12 (p1-p5 perfect, p6 turn-2 discipline), think:false required; 20.1 tok/s, 72 tok/s prefill, 1.27 GB resident; strong tools fallback, see CANDIDATES |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 
