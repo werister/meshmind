@@ -87,3 +87,8 @@ turns covering pass/fail/abstain). No live calls.
   tools lane** (11-12/12 at 0.85 GB, 27.7 tok/s). Caveats: temperature unpinned
   (±1 variance observed on p3); schema passes partly test the grammar, so the
   no-grammar 7/12 arm stays as the honest baseline.
+- Overnight reps A+B (2026-11-01, on-Mini): identical 11/8/8 and 11/8/8.
+  Artemis now 12,11,11,11 across 4 runs (adoption solid); 2507 8,8,8 (p2
+  semantic wall confirmed stable); phi4-mini 7,8,8 (±1 drift as known).
+  (First overnight attempt ran zero scenarios: the Mini's harness predated
+  --schema — fixed by redeploying scripts/ before these reps.)
