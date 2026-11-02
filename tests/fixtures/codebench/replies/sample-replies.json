@@ -36,6 +36,44 @@
         "prompt_tokens": 60,
         "eval_tokens": 30
       }
+    },
+    "good-model-2": {
+      "01-median": {
+        "reply": "Here you go:\n\n```python\ndef median(nums):\n    ordered = sorted(nums)\n    n = len(ordered)\n    mid = n // 2\n    if n % 2 == 1:\n        return ordered[mid]\n    return (ordered[mid - 1] + ordered[mid]) / 2\n```\n",
+        "prompt_tokens": 64,
+        "eval_tokens": 58
+      },
+      "02-dedup": {
+        "reply": "```python\ndef dedup(items):\n    seen = set()\n    out = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            out.append(item)\n    return out\n```",
+        "prompt_tokens": 60,
+        "eval_tokens": 52
+      }
+    },
+    "list-model": {
+      "01-median": [
+        {
+          "reply": "Here you go:\n\n```python\ndef median(nums):\n    ordered = sorted(nums)\n    n = len(ordered)\n    mid = n // 2\n    if n % 2 == 1:\n        return ordered[mid]\n    return (ordered[mid - 1] + ordered[mid]) / 2\n```\n",
+          "prompt_tokens": 64,
+          "eval_tokens": 58
+        },
+        {
+          "reply": "```python\ndef median(nums):\n    # bug: returns the mean, not the median\n    return sum(nums) / len(nums)\n```\n",
+          "prompt_tokens": 64,
+          "eval_tokens": 25
+        }
+      ],
+      "02-dedup": [
+        {
+          "reply": "```python\ndef dedup(items):\n    seen = set()\n    out = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            out.append(item)\n    return out\n```",
+          "prompt_tokens": 60,
+          "eval_tokens": 52
+        },
+        {
+          "reply": "```python\ndef dedup(items):\n    seen = set()\n    out = []\n    for item in items:\n        if item not in seen:\n            seen.add(item)\n            out.append(item)\n    return out\n```",
+          "prompt_tokens": 60,
+          "eval_tokens": 52
+        }
+      ]
     }
   }
 }

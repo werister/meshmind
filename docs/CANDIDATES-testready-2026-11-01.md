@@ -18,17 +18,16 @@ pending the lab's own harness.
   lane stays artemis. Next in line per bench order: `opencoder:1.5b`
   (coder lane) and the Qwen3-Reranker arch-load proof on raw llama-server;
   `granite4:1b` (3.27 GB) only if a bigger granite is explicitly wanted.
-- **`opencoder:1.5b`: ADOPT for coder lane (measured).** Pulled (1.42 GB) and
-  A/B'd live: **9/10** code executables vs incumbent qwen2.5-coder:3b **7/10**
-  (incumbent fails 04-brackets, 06-datetime, 09-edge-trap with real assert/
-  NameError errors). The single opencoder fail (01-median) is harness
-  strictness, not wrong code: correct function + extra example fence, clipped
-  at the token cap. Effectively 10/10 on correctness. **18.5 tok/s**,
-  **2.36 GB** resident (note: slightly MORE than the 3B incumbent's 2.16 GB).
-  License checked from HF source: custom INF Technology license (permissive
-  grant incl. derivatives, revocable, no trademarks) — cleared for local
-  eval/use, not OSI-approved; redistribution would need the agreement copy.
-  Routing change (AGENTS.md coder lane) left as a proposal for owner review.
+- **`opencoder:1.5b`: ADOPT SUSPENDED — sequential verdict did not replicate
+  under controls (T14 gate).** Was: 9/10 vs incumbent 7/10 sequential.
+  Paired rerun (interleave AB/BA, 2 reps, shared seeds 7/8, unload-between):
+  **16/20 vs 19/20** descriptive; inferential (T14 v2 rules): 3 decisive
+  split 1-2 after artifact exclusion, task favor 1-2-7, **p=1.0** — no
+  evidence of difference. Opencoder's paired fails: 2 assert + 2 systematic
+  no_fence (10-refactor both reps). License still cleared for local use.
+  Next: pre-registered gate run per T14 (more discriminating tasks and/or
+  temp-0 single rep), then SHIP / NO DECISION. The AGENTS.md routing change
+  stays a proposal.
 - **Qwen3-Reranker-0.6B: lane CLOSED (measured).** mradermacher Q8_0
   (correct file; the doc's ggml-org/pdurugyan names 404) loads and serves
   under llama-server `--reranking` but scores degenerate (~1.0 vs ~1e-12,
