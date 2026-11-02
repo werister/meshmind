@@ -56,17 +56,42 @@ def read_request(stream):
     return query, clean
 
 
+def _gelu_exact(x):
+    """Exact GELU (torch default) via erf; x is a numpy array."""
+    import math
+
+    import numpy as _np
+
+    erf = _np.vectorize(lambda v: math.erf(v / math.sqrt(2.0)))
+    return 0.5 * x * (1.0 + erf(x))
+
+
+def _layer_norm(x, weight, bias, eps=1e-5):
+    """LayerNorm with PyTorch-default eps (sentence-transformers passes
+    the torch default through; the module config carries no eps)."""
+    mean = x.mean(axis=-1, keepdims=True)
+    var = ((x - mean) ** 2).mean(axis=-1, keepdims=True)
+    return (x - mean) / ((var + eps) ** 0.5) * weight + bias
+
+
 class _OnnxReranker:
     """Thin wrapper over a tokenizer + ONNX session that yields one score/passage.
 
     The session is injected by the tests (a fake object exposing .run); in
     production _load_session builds a real onnxruntime.InferenceSession and a
     tokenizer, both loaded from model_dir with no hardcoded cache path.
+
+    The Ettin onnx/model.onnx file is the transformer encoder only (it emits
+    last_hidden_state [batch, seq, 256]), so the sentence-transformers head
+    (CLS pool -> Dense+GELU -> LayerNorm -> Dense->1, per modules.json and the
+    per-module configs) is applied here in numpy from the per-module
+    model.safetensors files. `head=None` selects the fake-session test path.
     """
 
-    def __init__(self, session, tokenizer=None):
+    def __init__(self, session, tokenizer=None, head=None):
         self.session = session
         self.tokenizer = tokenizer
+        self.head = head
 
     def score(self, query, passages):
         if not passages:
@@ -86,6 +111,8 @@ class _OnnxReranker:
             # through so the injected object fully controls the returned logits.
             feeds = {"query": query, "passages": [p["text"] for p in passages]}
         outputs = self.session.run(None, feeds)
+        if self.head is not None:
+            return self._score_head(outputs[0], len(passages))
         logits = outputs[0]
         scores = []
         for row in logits:
@@ -96,6 +123,19 @@ class _OnnxReranker:
         if len(scores) != len(passages):
             raise ValueError("session returned %d scores for %d passages" % (len(scores), len(passages)))
         return scores
+
+    def _score_head(self, hidden, n):
+        """Ettin head: CLS pool -> Dense+GELU -> LayerNorm -> Dense->1."""
+        import numpy as _np
+
+        vec = _np.asarray(hidden, dtype=_np.float64)[:, 0, :]
+        if vec.shape[0] != n:
+            raise ValueError("session returned %d rows for %d passages"
+                             % (vec.shape[0], n))
+        vec = _gelu_exact(vec @ self.head["dense2"].T)
+        vec = _layer_norm(vec, self.head["ln_w"], self.head["ln_b"])
+        logits = vec @ self.head["dense4"].T + self.head["dense4_b"]
+        return [float(v) for v in logits.reshape(-1)]
 
 
 def _load_session(model_dir):
@@ -110,7 +150,33 @@ def _load_session(model_dir):
     onnx_path = os.path.join(model_dir, "model.onnx")
     session = onnxruntime.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
-    return _OnnxReranker(session, tokenizer)
+    head = _load_head(model_dir)
+    return _OnnxReranker(session, tokenizer, head=head)
+
+
+def _load_head(model_dir):
+    """Load the sentence-transformers head weights (per-module safetensors).
+
+    Layout (from the Ettin repo): 2_Dense/model.safetensors (linear.weight,
+    no bias), 3_LayerNorm/model.safetensors (norm.weight/bias),
+    4_Dense/model.safetensors (linear.weight/bias). Shapes are asserted so a
+    wrong model_dir fails loudly here, not as silent score garbage.
+    """
+    from safetensors.numpy import load_file
+
+    def one(subdir):
+        return load_file(os.path.join(model_dir, subdir, "model.safetensors"))
+
+    d2 = one("2_Dense")["linear.weight"]
+    ln = one("3_LayerNorm")
+    d4 = one("4_Dense")
+    assert d2.shape == (256, 256), d2.shape
+    assert ln["norm.weight"].shape == (256,), ln["norm.weight"].shape
+    assert ln["norm.bias"].shape == (256,), ln["norm.bias"].shape
+    assert d4["linear.weight"].shape == (1, 256), d4["linear.weight"].shape
+    assert d4["linear.bias"].shape == (1,), d4["linear.bias"].shape
+    return {"dense2": d2, "ln_w": ln["norm.weight"], "ln_b": ln["norm.bias"],
+            "dense4": d4["linear.weight"], "dense4_b": d4["linear.bias"]}
 
 
 def run(reranker, query, passages):

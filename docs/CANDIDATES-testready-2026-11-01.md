@@ -29,6 +29,11 @@ pending the lab's own harness.
   grant incl. derivatives, revocable, no trademarks) — cleared for local
   eval/use, not OSI-approved; redistribution would need the agreement copy.
   Routing change (AGENTS.md coder lane) left as a proposal for owner review.
+- **Qwen3-Reranker-0.6B: lane CLOSED (measured).** mradermacher Q8_0
+  (correct file; the doc's ggml-org/pdurugyan names 404) loads and serves
+  under llama-server `--reranking` but scores degenerate (~1.0 vs ~1e-12,
+  wrong winners, order-sensitive) with and without `--pooling rank` —
+  bad conversion. T10 is served by Ettin-17m instead (live, verified).
 
 ## Go/no-go table (test-priority order)
 

@@ -43,6 +43,28 @@ but no served, metered rerank path exists.
 scoring order, worker-down, worker-garbage. Worker itself tested
 against a fake ONNX session object (injected), never real weights.
 
+## Outcome (coordinator, 2026-11-02): LIVE
+- Merged from `wt-lab-r10` (Kiro-crew build, coordinator review + Kiro
+  merge-readiness review: approve-with-conditions). One coordinator change
+  at merge: token columns stay null (passage counts ride `call["passages"]`).
+- The builder's worker assumed ONNX `[n,1]` logits, but Ettin's
+  `onnx/model.onnx` is the encoder only (`last_hidden_state [b,s,256]`).
+  Coordinator recovered the head recipe live on the Mini: ST module stack
+  Transformer -> CLS-Pooling -> Dense(256,GELU,no-bias) -> LayerNorm ->
+  Dense(1,bias), weights from per-module `model.safetensors` (shapes
+  asserted; LayerNorm eps=1e-5 = torch default, documented assumption).
+  Implemented in numpy in `scripts/rerank_worker.py`.
+- Live acceptance (Mini, real weights): Paris/quantum/Eiffel probe scores
+  11.22/-1.30/8.03 (correct order), endpoint 200 + top_k in 2.2 s (inside
+  the 5 s budget), 21-passage body -> 400 with reason, empty -> []. Tests:
+  `test_rerank_endpoint.py` 16/16. Deployed: weights + tokenizer + head in
+  `~/local-ai-lab/ettin-17m/`, `.venv-rerank` (onnxruntime 1.23.2), Caddy
+  `/rerank` route, sidecar restarted.
+- Qwen3-Reranker GGUF lane CLOSED: mradermacher Q8_0 under llama-server
+  `--reranking` returned degenerate scores (one doc ~1.0, rest ~1e-12)
+  with wrong, order-sensitive winners, insensitive to `--pooling rank`
+  and query instruction — a bad conversion, and T10 no longer needs it.
+
 ## Ticket fields
 - Door: build two-way; deploy is a sidecar restart (two-way, backup).
 - Blast radius: small at build / medium at deploy (new endpoint).
