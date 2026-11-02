@@ -134,7 +134,13 @@ plus direct `paired_summary` units (`test_summary_task_level_sign`,
   challenger). If NO DECISION, the question stays open pending harder
   tasks (rule: scale tasks, not reps).
 - Decision: SHIP iff all six rule clauses hold, else NO DECISION.
-- Outcome: _(filled after the run)_
+- Outcome (2026-11-02): **NO DECISION.** 10 cells, 1 decisive (06-datetime
+  favors opencoder — qwen's recurring `timedelta` NameError), 9 ties, task
+  favor 1-0-9, p=1.0. Fails rules 1-4. Both models pass 9/10 identically:
+  the task set is saturated for this pair (90% tie rate). Two systematic
+  weaknesses confirmed for the third run in a row: qwen's datetime bug,
+  opencoder's 10-refactor no_fence. Journal: /tmp/paired-p1.jsonl (20 rows).
+  Next: harder discriminating tasks before any re-run (rule 4).
 
 ## Ticket fields
 - Door: two-way (harness additive; AGENTS.md edits gated, never direct).
