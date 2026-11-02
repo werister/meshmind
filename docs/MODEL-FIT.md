@@ -28,6 +28,7 @@ fresh on the Mini. Effective context: 4k for most, 8k gemma2:2b,
 | phi4-mini | 3.8B (Q4_K_M) | Tools lane: 7/12 plain + schema (recovery 2/2, drifts run to run); 10.0 tok/s CPU, 3.09 GB resident; fallback behind artemis+schema |
 | qwen3:8b | ~5.2 GB (Q4_K_M) | REJECTED for all lanes: runs + reasons correctly (trap ok) but 4.3-4.8 tok/s, 747-tok think burns, swap 2.5->4.7/6 GB — drowns the box; llmfit marginal confirmed |
 | LFM3-1.7B (LiquidAI) | ~1 GB (Q4_K_M) | BLOCKED: pulled OK but Ollama 0.32.1 cannot load it (unknown arch 'lfm3'); needs Ollama upgrade, not judged on merit |
+| granite4:1b-h | 1.56 GB (Q4_K_M) | Tools lane: NO-GO — 8/12 schema (p3 abstain 0/2, semantic), 13.8 tok/s, 1.7 GB resident; loses to artemis+schema on every axis; see CANDIDATES |
 
 ## Tier 2 — quality A/Bs (pick 2–3, ~8 GB)
 

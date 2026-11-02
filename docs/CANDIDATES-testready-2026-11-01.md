@@ -8,7 +8,16 @@ arch whose Ollama/llama.cpp support merged after mid-July 2026 is a no-go on the
 
 All sizes are from the **Ollama registry manifests** or HF repos (not the scout's secondhand
 numbers — several of those were wrong, corrected below). All benchmark numbers remain hypotheses
-pending the lab's own harness. **No pulls made; Mini untouched.**
+pending the lab's own harness.
+
+## Measured results (coordinator, 2026-11-02)
+- **`granite4:1b-h`: NO-GO (measured).** Pulled (1.56 GB confirmed) and benched
+  live on the Mini: **8/12** with per-tool schema (p3 abstain 0/2, p2 1/2 —
+  semantic fails, not structural), **13.8 tok/s**, **1.7 GB** resident. Loses
+  to artemis-0.8B+schema (11-12/12, 27.7 tok/s, ~1 GB) on every axis. Tools
+  lane stays artemis. Next in line per bench order: `opencoder:1.5b`
+  (coder lane) and the Qwen3-Reranker arch-load proof on raw llama-server;
+  `granite4:1b` (3.27 GB) only if a bigger granite is explicitly wanted.
 
 ## Go/no-go table (test-priority order)
 

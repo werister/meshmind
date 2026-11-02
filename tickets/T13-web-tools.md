@@ -23,12 +23,33 @@ needs a Brave/Bing key (open follow-up, not built).
 ## Outcome (coordinator, 2026-11-01): sidecar endpoint LIVE
 - `POST /fetch` (`fetch`/`search` ops) deployed on the Mini + Caddy route;
   SSRF guard (incl. CGN/tailnet 100.64/10 + redirect re-check + port allowlist),
-  30/min/agent rate limit, FETCH_SEM(4), metering as `model:"web_fetch"` with
-  null tokens. Tests: `test_fetch_endpoint.py` 6/6, `test_web_tools.py` 6/6.
+  30/min rate limit, FETCH_SEM(4), metering as `model:"web_fetch"` with
+  null tokens. Tests: `test_fetch_endpoint.py` 6/6, `test_web_tools.py` 14/14.
 - Live acceptance passed: example.com ok:true; metadata + loopback blocked at
   0 ms; search ok; 30x200 then 429s; `/calls` shows fetch rows, token totals
   unpolluted. One finding during deploy: Caddy needed an explicit `/fetch`
   route (fallback goes to Ollama) — added.
+
+## Hardening round 2 (red-team driven, 2026-11-01/02)
+Independent Claude red-team (report: `docs/REDTEAM-fetch-2026-11-01.md`,
+12 findings, all PoC'd) + coordinator verification of every claim. Fixes:
+- Resolve-once pin-IP connect (checked IP = connected IP; Host/SNI/certs keep
+  the name): closes DNS rebinding AND the %-encoded check/connect mismatch.
+- Linear `html.parser` text extraction: the old regex strip was verified
+  quadratic on unclosed tags (0.40 s -> 1.59 s per doubling at 32/64 KB).
+- 30 s total deadline shared across hops + chunked reads + DNS worker thread
+  with timeout: slow-drip servers can't pin the 4 fetch slots.
+- Host hygiene (`%`, userinfo, backslash, controls rejected pre-DNS),
+  9 more blocked nets (NAT64/6to4/Teredo/site-local/benchmark/IANA-special),
+  env proxies ignored, one `blocked` error string (no existence oracle).
+- Sidecar: `timeout=30` on handlers, rate key = peer IP + global 120/min
+  (X-Agent was rotatable/spoofable), sem->rate->body order (busy 429s don't
+  spend budget), numeric status + `blocked` flag excluded from failure rollups.
+- Already-fixed-in-repo at review time (verified, not re-fixed): HTTPException
+  catch + sidecar safety net (ab0fb0d); the live 502 the red-team saw was a
+  stale deployed sidecar, fixed by redeploying.
+- Accepted as designed: fetch rows share the 256-entry calls ring; global
+  burst cap 120/min; Wikipedia-only search (Brave/Bing key still open).
 
 ## Behavior
 JSON to stdout, exit 0 = ran (per-call ok/error lives in the JSON),

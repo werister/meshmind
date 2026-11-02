@@ -83,14 +83,165 @@ class WebToolsTests(unittest.TestCase):
                         for k in ("blocked", "http(s)", "port", "hostname")))
 
     def test_ssrf_redirect_hop(self):
+        # Pre-check rejections (no DNS by design; IP answers are enforced
+        # at connect time by _resolve_checked, covered below and live).
         handler = web_tools._GuardedRedirectHandler()
         req = urllib.request.Request("https://example.com/")
-        with self.assertRaises(ValueError):
-            handler.redirect_request(req, None, 302, "Found", {},
-                                     "http://169.254.169.254/x")
-        with self.assertRaises(ValueError):
-            handler.redirect_request(req, None, 302, "Found", {},
-                                     "http://100.100.100.100/x")
+        for target in ("ftp://example.com/x",
+                       "http://localhost:8080/x",
+                       "http://user@example.com/"):
+            with self.subTest(target=target):
+                with self.assertRaises(web_tools._GuardBlock):
+                    handler.redirect_request(req, None, 302, "Found", {},
+                                             target)
+
+    def test_ssrf_pct_host_and_userinfo(self):
+        # urllib unquotes % at connect time: a %-host must die pre-DNS so
+        # the checked string and the resolved string cannot differ.
+        for url in ("http://a%2eb.example.com/",
+                    "http://a%252e.example.com/",
+                    "http://user@example.com/",
+                    "http://user:pass@example.com/",
+                    "http://exam\\ple.com/"):
+            with self.subTest(url=url):
+                out = web_tools.fetch_url(url)
+                self.assertFalse(out["ok"])
+                self.assertEqual(out["error"], "blocked")
+                self.assertTrue(out["blocked"])
+
+    def test_ssrf_gap_nets_connect_time(self):
+        # Numeric literals: getaddrinfo parses offline, no network touched.
+        gap = ["::7f00:1", "64:ff9b::7f00:1", "64:ff9b:1::1",
+               "2002:7f00:1::", "2001::1", "fec0::1",
+               "198.18.0.1", "192.0.0.170", "192.88.99.1",
+               "169.254.169.254", "100.100.100.100", "127.0.0.1"]
+        for host in gap:
+            with self.subTest(host=host):
+                with self.assertRaises(web_tools._GuardBlock):
+                    web_tools._resolve_checked(host, 80)
+
+    def test_rebind_pinned_single_lookup(self):
+        # Hooked resolver answers public once, then loopback (rebinding):
+        # exactly one lookup happens and the socket goes to the checked IP.
+        import socket as _socket
+        answers = iter(["93.184.216.34", "127.0.0.1", "127.0.0.1"])
+        calls = []
+        seen = []
+        real_gai = _socket.getaddrinfo
+        real_conn = _socket.create_connection
+
+        def fake_gai(host, port, *a, **k):
+            calls.append(host)
+            return [(_socket.AF_INET, _socket.SOCK_STREAM, 6, "",
+                     (next(answers), port))]
+
+        def fake_conn(addr, *a, **k):
+            seen.append(addr)
+            raise OSError("stop")
+
+        _socket.getaddrinfo = fake_gai
+        _socket.create_connection = fake_conn
+        try:
+            opener = urllib.request.build_opener(
+                urllib.request.ProxyHandler({}),
+                web_tools._GuardedRedirectHandler(),
+                web_tools._PinHTTPHandler(), web_tools._PinHTTPSHandler())
+            with self.assertRaises(OSError):
+                opener.open("http://rebind.test/", timeout=2)
+        finally:
+            _socket.getaddrinfo = real_gai
+            _socket.create_connection = real_conn
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(seen, [("93.184.216.34", 80)])
+
+    def test_oracle_normalized(self):
+        # Host/IP decisions collapse to one string; malformed input keeps
+        # its message (it reveals nothing about names).
+        for url in ("http://169.254.169.254/",
+                    "http://10.0.0.1/",
+                    "http://0177.0.0.1/",
+                    "http://",
+                    "http://localhost:8080/"):
+            with self.subTest(url=url):
+                out = web_tools.fetch_url(url)
+                self.assertFalse(out["ok"])
+                self.assertEqual(out["error"], "blocked")
+                self.assertTrue(out["blocked"])
+
+    def test_html_pathological_fast(self):
+        # Red-team round 2: unclosed openers went quadratic under the old
+        # regex strip (1.6 s at 64 KB, ~4x per doubling). The parser is O(n).
+        import time as _time
+        bodies = (b"<script>" * 8192, b"<" * 65536, b"<!--" * 16384)
+        for body in bodies:
+            start = _time.monotonic()
+            web_tools.html_to_text(body)
+            self.assertLess(_time.monotonic() - start, 2.0,
+                            "pathological HTML too slow")
+
+    def test_http_exceptions_are_ok_false(self):
+        # InvalidURL/BadStatusLine from the stack must surface as ok:false
+        # with a fixed string, never escape and never leak socket text.
+        import http.client as _hc
+        real_get = web_tools._get
+        for exc in (_hc.InvalidURL("bad"), _hc.BadStatusLine("garbage"),
+                    OSError("boom"), ValueError("refusing non-text: x")):
+            web_tools._get = lambda url, _e=exc: (_ for _ in ()).throw(_e)
+            try:
+                out = web_tools.fetch_url("http://example.com/")
+            finally:
+                web_tools._get = real_get
+            self.assertFalse(out["ok"])
+            self.assertNotIn("boom", out["error"])
+            self.assertNotIn("garbage", out["error"])
+
+    def test_total_deadline_slow_body(self):
+        # A server dribbling 8 KB every 5 s never trips the 15 s per-op
+        # timeout, but the total deadline (patched short here) must end
+        # the fetch instead of pinning the slot indefinitely.
+        import os
+        import socket
+        import threading
+        import time as _time
+        srv = socket.socket()
+        srv.bind(("127.0.0.1", 0))
+        srv.listen(1)
+        port = srv.getsockname()[1]
+
+        def serve():
+            conn, _ = srv.accept()
+            conn.recv(4096)
+            conn.sendall(b"HTTP/1.1 200 OK\r\n"
+                         b"Content-Type: text/plain\r\n\r\n")
+            try:
+                for _ in range(12):
+                    conn.sendall(b"x" * 8192)
+                    _time.sleep(5)
+            except OSError:
+                pass
+            finally:
+                conn.close()
+
+        thread = threading.Thread(target=serve, daemon=True)
+        thread.start()
+        old = os.environ.get("FETCH_ALLOWLOOPBACK")
+        os.environ["FETCH_ALLOWLOOPBACK"] = "1"
+        real_deadline = web_tools.TOTAL_DEADLINE
+        web_tools.TOTAL_DEADLINE = 3.0
+        try:
+            start = _time.monotonic()
+            out = web_tools.fetch_url("http://127.0.0.1:%d/" % port)
+            elapsed = _time.monotonic() - start
+        finally:
+            web_tools.TOTAL_DEADLINE = real_deadline
+            if old is None:
+                del os.environ["FETCH_ALLOWLOOPBACK"]
+            else:
+                os.environ["FETCH_ALLOWLOOPBACK"] = old
+            srv.close()
+        self.assertFalse(out["ok"])
+        self.assertEqual(out["error"], "fetch failed")
+        self.assertLess(elapsed, 12.0)
 
     def test_garbage_status_is_ok_false(self):
         # A non-HTTP speaker must yield ok:false, never an escaped exception.

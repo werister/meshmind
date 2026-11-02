@@ -60,6 +60,7 @@ METER_LOCK = threading.Lock()
 PROXY_SEM = threading.BoundedSemaphore(16)
 FETCH_SEM = threading.BoundedSemaphore(4)
 FETCH_RATE = 30
+FETCH_GLOBAL_RATE = 120
 FETCH_WINDOW = 60.0
 _FETCH_BUCKETS = {}
 _FETCH_LOCK = threading.Lock()
@@ -278,8 +279,10 @@ def _bucket(table, key):
 
 
 def _is_failure(call):
-    # A client hanging up mid-stream (partial) is not a backend failure.
-    return not call.get("ok") and not call.get("partial")
+    # A client hanging up mid-stream (partial) is not a backend failure;
+    # neither is a guard-blocked fetch (policy outcome, not an outage).
+    return (not call.get("ok") and not call.get("partial")
+            and not call.get("blocked"))
 
 
 def _bump_counts(e, call):
@@ -1485,6 +1488,7 @@ def build_dashboard(st):
 
 
 class H(BaseHTTPRequestHandler):
+    timeout = 30  # idle clients (e.g. Content-Length with no body) die here, not forever
     def log_message(self, *a):
         pass
     def send_json(self, obj, code=200):
@@ -1634,47 +1638,64 @@ class H(BaseHTTPRequestHandler):
             if metered:
                 call["duration_ms"] = int((time.time() - started) * 1000)
                 _record_call(call)
-    def _fetch_allowed(self, agent):
+    def _fetch_key(self):
+        # Rate key is the network peer, never the self-declared X-Agent
+        # header (caller-controlled: rotatable for unlimited rate, or
+        # spoofable to lock a victim's name out). X-Forwarded-For is
+        # honored only from loopback (Caddy on the same box).
+        peer = self.client_address[0]
+        fwd = self.headers.get("X-Forwarded-For")
+        if fwd and peer in ("127.0.0.1", "::1"):
+            peer = fwd.split(",")[0].strip()[:64] or peer
+        return "ip:" + peer
+
+    def _fetch_allowed(self, key):
         now = time.monotonic()
         with _FETCH_LOCK:
-            count, start = _FETCH_BUCKETS.get(agent, (0, now))
-            if now - start >= FETCH_WINDOW:
-                count, start = 0, now
-            if count >= FETCH_RATE:
-                return False, max(0, int(start + FETCH_WINDOW - now))
-            _FETCH_BUCKETS[agent] = (count + 1, start)
-            if len(_FETCH_BUCKETS) > 256:
-                _FETCH_BUCKETS.pop(next(iter(_FETCH_BUCKETS)))
+            for known, (_, start) in list(_FETCH_BUCKETS.items()):
+                if now - start >= FETCH_WINDOW:
+                    del _FETCH_BUCKETS[known]
+            for bucket, cap in (("*global*", FETCH_GLOBAL_RATE),
+                                (key, FETCH_RATE)):
+                count, start = _FETCH_BUCKETS.get(bucket, (0, now))
+                if count >= cap:
+                    return False, max(0, int(start + FETCH_WINDOW - now))
+            for bucket in ("*global*", key):
+                count, start = _FETCH_BUCKETS.get(bucket, (0, now))
+                _FETCH_BUCKETS[bucket] = (count + 1, start)
             return True, 0
 
     def _fetch(self):
+        # Metering label only; the rate key is the peer IP (_fetch_key).
         agent = (self.headers.get("X-Agent") or "unknown")[:64]
-        try:
-            n = int(self.headers.get("Content-Length", 0))
-            if n < 0 or n > 8192:
-                raise ValueError("bad length")
-            d = json.loads(self.rfile.read(n) or b"{}")
-            if not isinstance(d, dict):
-                raise ValueError("not an object")
-            op = d.get("op", "fetch")
-            if op not in ("fetch", "search"):
-                raise ValueError("bad op")
-        except Exception:
-            self.send_json({"ok": False, "error": "bad-request"}, 400)
-            return
         if web_tools is None:
             self.send_json({"ok": False, "error": "fetch backend unavailable"},
                            501)
             return
-        allowed, retry = self._fetch_allowed(agent)
-        if not allowed:
-            self.send_json({"ok": False, "error": "rate_limited",
-                            "retry_after_s": retry}, 429)
-            return
+        # Order: semaphore first (a busy 429 must not spend rate budget),
+        # then the rate check, then the body read (cheap rejects first).
         if not FETCH_SEM.acquire(blocking=False):
             self.send_json({"ok": False, "error": "busy"}, 429)
             return
         try:
+            allowed, retry = self._fetch_allowed(self._fetch_key())
+            if not allowed:
+                self.send_json({"ok": False, "error": "rate_limited",
+                                "retry_after_s": retry}, 429)
+                return
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                if n < 0 or n > 8192:
+                    raise ValueError("bad length")
+                d = json.loads(self.rfile.read(n) or b"{}")
+                if not isinstance(d, dict):
+                    raise ValueError("not an object")
+                op = d.get("op", "fetch")
+                if op not in ("fetch", "search"):
+                    raise ValueError("bad op")
+            except Exception:
+                self.send_json({"ok": False, "error": "bad-request"}, 400)
+                return
             start = time.monotonic()
             try:
                 if op == "fetch":
@@ -1703,16 +1724,20 @@ class H(BaseHTTPRequestHandler):
             FETCH_SEM.release()
         ok = bool(res.get("ok"))
         text = res.get("text", "") if isinstance(res.get("text"), str) else ""
+        # Numeric status (we always reply 200 here); guard blocks ride the
+        # blocked flag so failure rollups don't count policy as outage.
         _record_call({"ts": utcnow(), "path": "/fetch",
-                      "status": 200 if ok else "fetch-failed",
+                      "status": 200,
                       "agent": agent, "model": model,
                       "prompt_tokens": None, "eval_tokens": None, "ok": ok,
+                      "blocked": bool(res.get("blocked")),
                       "stream": False, "partial": False,
                       "truncated": len(text) >= 8000,
                       "duration_ms": elapsed_ms,
                       "bytes": len(text.encode("utf-8", "replace"))})
         out = {"ok": ok, "op": op, "elapsed_ms": elapsed_ms}
-        for key in ("url", "text", "error", "query", "source", "results"):
+        for key in ("url", "text", "error", "query", "source", "results",
+                    "blocked"):
             if key in res:
                 out[key] = res[key]
         self.send_json(out)

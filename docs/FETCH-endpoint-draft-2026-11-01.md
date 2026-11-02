@@ -220,3 +220,13 @@ BING_SEARCH_KEY=...    # else if set -> Bing Web Search v7
 `test_catalog_fixed_four` fixed-4-tools assertion), `tickets/T13` (web fetch+search tools),
 `README.md`/`AGENTS.md` (`/feedback` block style, endpoint list). All a design proposal; no
 code written.
+
+## Shipped + hardening round 2 (coordinator, 2026-11-01/02)
+Shipped as designed (T13 outcome), then hardened under an independent Claude
+red-team (`docs/REDTEAM-fetch-2026-11-01.md`, every claim coordinator-verified):
+resolve-once pin-IP connect (no rebind, no %-mismatch), linear `html.parser`
+strip (old regexes were verified quadratic), 30 s total deadline, host hygiene,
+9 more blocked nets, one `blocked` error string, sidecar `timeout=30`, peer-IP
++ global rate keys, sem->rate->body order, numeric status + `blocked` flag kept
+out of failure rollups. Tests: `test_web_tools.py` 14/14,
+`test_fetch_endpoint.py` 6/6. See `tickets/T13-web-tools.md`.

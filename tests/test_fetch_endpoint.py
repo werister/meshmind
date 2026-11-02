@@ -81,10 +81,13 @@ class FetchEndpointTests(unittest.TestCase):
         env.update({"FEEDBACK_SERVER_PORT": str(cls.port),
                     "METER_DIR": cls.tmp.name,
                     "FETCH_ALLOWLOOPBACK": "1"})
+        cls.stderr_path = str(
+            __import__("pathlib").Path(cls.tmp.name) / "sidecar-stderr.log")
+        cls.stderr_fh = open(cls.stderr_path, "wb")
         cls.sidecar = subprocess.Popen(
             [sys.executable, str(ROOT / "feedback-server.py")],
             cwd=ROOT, env=env, stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL)
+            stderr=cls.stderr_fh)
         deadline = time.time() + 20
         while time.time() < deadline:
             try:
@@ -105,6 +108,7 @@ class FetchEndpointTests(unittest.TestCase):
         except subprocess.TimeoutExpired:
             cls.sidecar.kill()
         cls.origin.shutdown()
+        cls.stderr_fh.close()
         cls.tmp.cleanup()
 
     def test_fetch_ok_via_stub(self):
@@ -150,15 +154,22 @@ class FetchEndpointTests(unittest.TestCase):
         code, _ = post_json(self.port, "/fetch", {"op": "fetch"})
         self.assertEqual(code, 400)
 
-    def test_fetch_rate_limit(self):
+    def test_fetch_zz_rate_limit_and_clean_stderr(self):
+        # Runs last (zz): exhausts the shared per-IP budget, so nothing
+        # may run after it. Rotating X-Agent must NOT dodge the limit
+        # (the key is the peer IP); then the captured stderr must show
+        # no handler traceback for the whole session.
         codes = []
-        for _ in range(32):
+        for i in range(32):
             code, _ = post_json(
                 self.port, "/fetch",
                 {"op": "fetch", "url": "http://169.254.169.254/"},
-                agent="burst-test")
+                agent="burst-test-%d" % i)
             codes.append(code)
         self.assertIn(429, codes)
+        with open(self.stderr_path, "rb") as f:
+            err = f.read().decode("utf-8", "replace")
+        self.assertNotIn("Traceback", err)
 
     def test_fetch_metered(self):
         post_json(self.port, "/fetch",
