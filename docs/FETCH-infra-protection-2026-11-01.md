@@ -50,8 +50,9 @@ falls in:
 - **CGN `100.64.0.0/10` → the Tailscale tailnet** (the key one for this host). **Must be an
   explicit blocklist entry:** Python's `ipaddress` reports `100.64.0.1` as **`is_private=False`
   AND `is_global=False`** — so a guard that filters on `is_private` (or "block if not `is_global`"
-  done loosely) **silently lets the entire tailnet through.** The shipped `scripts/ssrf_guard.py`
-  therefore checks membership against an explicit list of blocked networks, *not* `is_private`.
+  done loosely) **silently lets the entire tailnet through.** The shipped guard in
+  `scripts/web_tools.py` therefore checks membership against an explicit list of
+  blocked networks, *not* `is_private`.
 - RFC1918 private `10/8`, `172.16/12`, `192.168/16` → the LAN
 - IPv4-mapped IPv6 `::ffff:a.b.c.d` → bypass form of all the above
 - unspecified `0.0.0.0`/`::`, multicast, and RFC 6890 reserved
