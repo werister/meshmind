@@ -67,6 +67,12 @@ class WebToolsTests(unittest.TestCase):
             "http://example.com:6379/",
             "file:///etc/passwd",
             "ftp://example.com/x",
+            # Non-canonical IP literals: resolvers disagree on these, so they
+            # die pre-DNS (offline-safe, no network touched).
+            "http://0177.0.0.1/",
+            "http://0x7f.0.0.1/",
+            "http://2130706433/",
+            "http://127.1/",
         ]
         for url in blocked:
             with self.subTest(url=url):
@@ -85,6 +91,36 @@ class WebToolsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             handler.redirect_request(req, None, 302, "Found", {},
                                      "http://100.100.100.100/x")
+
+    def test_garbage_status_is_ok_false(self):
+        # A non-HTTP speaker must yield ok:false, never an escaped exception.
+        import os
+        import socket
+        import threading
+        srv = socket.socket()
+        srv.bind(("127.0.0.1", 0))
+        srv.listen(1)
+        port = srv.getsockname()[1]
+
+        def serve():
+            conn, _ = srv.accept()
+            conn.recv(4096)
+            conn.sendall(b"THIS IS NOT HTTP\r\n\r\n")
+            conn.close()
+
+        thread = threading.Thread(target=serve, daemon=True)
+        thread.start()
+        old = os.environ.get("FETCH_ALLOWLOOPBACK")
+        os.environ["FETCH_ALLOWLOOPBACK"] = "1"
+        try:
+            out = web_tools.fetch_url("http://127.0.0.1:%d/" % port)
+        finally:
+            if old is None:
+                del os.environ["FETCH_ALLOWLOOPBACK"]
+            else:
+                os.environ["FETCH_ALLOWLOOPBACK"] = old
+            srv.close()
+        self.assertFalse(out["ok"])
 
 
 if __name__ == "__main__":

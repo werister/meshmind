@@ -7,13 +7,15 @@ Stdlib only. No API keys. Two tools the T12-style agent loop can call:
   web_search(query) -> {"ok": True, "results": [{"title":..., "url":...}]}
 
 Limits (safety): https/http only, 15 s timeout, 256 KB cap per fetch,
-SSRF guard (scheme + port allowlist, resolved-IP blocklist incl. the
-100.64/10 CGN range that carries Tailscale, per-redirect-hop re-check).
-Search is Wikipedia-backed (keyless API; general web search would need a
-Brave/Bing key). HTML -> text is a crude strip (scripts/styles/comments
-removed); good enough for a model to read, not a reader-mode replacement.
+SSRF guard (scheme + port allowlist, canonical-literal check, resolved-IP
+blocklist incl. the 100.64/10 CGN range that carries Tailscale,
+per-redirect-hop re-check). Search is Wikipedia-backed (keyless API;
+general web search would need a Brave/Bing key). HTML -> text is a crude
+strip (scripts/styles/comments removed); good enough for a model to read,
+not a reader-mode replacement.
 """
 import html as _html
+import http.client
 import ipaddress
 import json
 import os
@@ -34,6 +36,7 @@ _STRIP_RE = re.compile(r"(?is)<(script|style|noscript|template)[^>]*>.*?</\1>")
 _TAG_RE = re.compile(r"(?s)<[^>]*>")
 _WS_RE = re.compile(r"[ \t\xa0]+")
 _BLANK_RE = re.compile(r"\n\s*\n+")
+_IPISH_RE = re.compile(r"^[0-9a-fA-F.:]+$")
 
 # Explicit blocklist (checked with `in`, never is_private/is_global, so the
 # CGN range that carries Tailscale cannot slip through on any interpreter).
@@ -58,6 +61,10 @@ _BLOCKED_NETS = [
 ]
 _BLOCKED_HOSTS = ("localhost", "metadata.google.internal")
 _BLOCKED_SUFFIXES = (".localhost", ".internal", ".local")
+
+# Network-layer failures that become ok:false (never escape to the caller).
+_NET_ERRORS = (urllib.error.URLError, OSError, ValueError,
+               http.client.HTTPException)
 
 
 def _is_blocked_ip(addr):
@@ -92,6 +99,14 @@ def check_url(url):
     if (not host or host in _BLOCKED_HOSTS
             or host.endswith(_BLOCKED_SUFFIXES)):
         return "blocked: local hostname"
+    if _IPISH_RE.match(host):
+        try:
+            ipaddress.ip_address(host)
+        except ValueError:
+            # Looks like an IP but isn't canonical (0177.0.0.1, 0x7f...,
+            # 2130706433, 127.1): resolvers disagree on these, so refuse
+            # before any resolver gets a vote. No public DNS name matches.
+            return "blocked: non-canonical IP literal"
     try:
         port = parts.port or (443 if parts.scheme.lower() == "https" else 80)
     except ValueError:
@@ -171,7 +186,7 @@ def fetch_url(url):
         if len(body) > MAX_BYTES:
             return {"ok": False, "url": url, "error": "page over size cap"}
         return {"ok": True, "url": final, "text": html_to_text(body)}
-    except (urllib.error.URLError, OSError, ValueError) as exc:
+    except _NET_ERRORS as exc:
         return {"ok": False, "url": url, "error": str(exc)[:160]}
 
 
@@ -192,7 +207,7 @@ def web_search(query):
                 out.append({"title": title[:160], "url": link[:300]})
         return {"ok": True, "query": query, "source": "wikipedia",
                 "results": out}
-    except (urllib.error.URLError, OSError, ValueError) as exc:
+    except _NET_ERRORS as exc:
         return {"ok": False, "query": query, "error": str(exc)[:160]}
 
 

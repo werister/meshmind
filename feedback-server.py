@@ -1676,22 +1676,28 @@ class H(BaseHTTPRequestHandler):
             return
         try:
             start = time.monotonic()
-            if op == "fetch":
-                url = d.get("url", "")
-                if not isinstance(url, str) or not url:
-                    self.send_json({"ok": False, "error": "url required"},
-                                   400)
-                    return
-                res = web_tools.fetch_url(url[:2000])
-                model = "web_fetch"
-            else:
-                query = d.get("query", "")
-                if not isinstance(query, str) or not query:
-                    self.send_json({"ok": False, "error": "query required"},
-                                   400)
-                    return
-                res = web_tools.web_search(query[:500])
-                model = "web_search"
+            try:
+                if op == "fetch":
+                    url = d.get("url", "")
+                    if not isinstance(url, str) or not url:
+                        self.send_json({"ok": False, "error": "url required"},
+                                       400)
+                        return
+                    res = web_tools.fetch_url(url[:2000])
+                    model = "web_fetch"
+                else:
+                    query = d.get("query", "")
+                    if not isinstance(query, str) or not query:
+                        self.send_json({"ok": False, "error": "query required"},
+                                       400)
+                        return
+                    res = web_tools.web_search(query[:500])
+                    model = "web_search"
+            except Exception:
+                # Belt-and-braces: a backend escape must drop one request as
+                # ok:false, never kill the connection with a traceback.
+                res = {"ok": False, "error": "fetch failed"}
+                model = "web_fetch" if op == "fetch" else "web_search"
             elapsed_ms = int((time.monotonic() - start) * 1000)
         finally:
             FETCH_SEM.release()
