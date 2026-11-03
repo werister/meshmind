@@ -4,6 +4,7 @@
 POST /feedback {"agent","model","ok","note","tokens"} -> feedback.log (JSONL)
 POST /fetch {"op":"fetch","url":...} | {"op":"search","query":...} -> web text
 GET  /status    -> live JSON: availability, token totals, models, feedback
+GET  /tools     -> machine-readable tool registry (T12 schema format)
 GET  /dashboard -> auto-refreshing HTML showcase page (mml Apple-light styling)
 GET  /agents.md -> the agent quickstart doc, served over HTTPS
 """
@@ -55,6 +56,22 @@ RING_SIZE = 256
 BODY_CAP = 2 * 1024 * 1024
 TAIL_SIZE = 64 * 1024
 PROXY_PATHS = {"/api/chat", "/api/generate", "/api/embeddings", "/v1/chat/completions", "/v1/completions", "/v1/embeddings"}
+# Machine-readable tool registry for lab-provided tools (GET /tools).
+# Same {name, description, parameters} schema FORMAT as the T12 bench
+# catalog -- not the same file: T12's fixture stays a fixed fake-backend
+# set, this is the live registry agents auto-wire against.
+TOOLS_CATALOG = [
+    {"name": "web_fetch",
+     "description": "Fetch a public web page and return its text "
+                    "(256 KB cap, SSRF-guarded: no localhost, LAN, tailnet, "
+                    "metadata, or non-80/443 ports).",
+     "parameters": {"url": {"type": "string", "required": True}},
+     "endpoint": "/fetch", "method": "POST", "op": "fetch"},
+    {"name": "web_search",
+     "description": "Keyless web search; returns up to 5 title/url pairs.",
+     "parameters": {"query": {"type": "string", "required": True}},
+     "endpoint": "/fetch", "method": "POST", "op": "search"},
+]
 # --- rerank endpoint (T10, additive) ----------------------------------------
 # POST /rerank {query, passages:[{id,text}], top_k?} -> {scores, model, latency_s}.
 # Served + metered like the proxy paths (agent tag `rerank`). The endpoint shells
@@ -2000,6 +2017,8 @@ class H(BaseHTTPRequestHandler):
             self._proxy(False)
         elif p == "/status":
             self.send_json(build_status())
+        elif p == "/tools":
+            self.send_json({"tools": TOOLS_CATALOG})
         elif p == "" or p == "/dashboard":
             body = build_dashboard(build_status()).encode()
             self.send_response(200)
