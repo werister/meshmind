@@ -24,7 +24,7 @@ import urllib.request
 from collections import deque
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "scripts"))
@@ -39,6 +39,8 @@ HEALTH = os.path.join(LAB, "health.log")
 STATE = os.path.join(LAB, "monitor-state")
 AGENTS_MD = os.path.join(LAB, "AGENTS.md")
 EVAL_LOG = os.path.join(LAB, "eval-weekly.jsonl")
+VOTER_BOARD = os.path.join(LAB, "voter-board.json")
+CMP_SCHEMA_VERSION = 1
 OLLAMA = "http://127.0.0.1:11434"
 UPSTREAM = urlsplit(os.environ.get("OLLAMA_URL", OLLAMA))
 PROXY_PORT = int(os.environ.get("FEEDBACK_SERVER_PORT", "8081"))
@@ -483,6 +485,61 @@ def read_eval_summary():
     out = dict(run)
     out["per_model"] = tail_models
     return out
+
+
+def _score_block(d):
+    if not isinstance(d, dict):
+        return None
+    p, t = _intval(d.get("p")), _intval(d.get("t"))
+    if p is None or t is None:
+        return None
+    return (p, t)
+
+
+def _floatval(v):
+    return v if isinstance(v, (int, float)) and not isinstance(v, bool) else None
+
+
+def read_comparisons(path=None):
+    """Dated voter-board snapshot for the comparison panel (read-only).
+
+    Missing file -> None ("no snapshot yet"). Corrupt JSON ->
+    {"unparseable": True}. Unknown schema -> {"mismatch": True, ...}.
+    Anything else is validated defensively: bad blocks become empty/None,
+    never a crash, so a half-written snapshot cannot 500 the dashboard.
+    """
+    try:
+        with open(path or VOTER_BOARD, encoding="utf-8") as f:
+            d = json.load(f)
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError):
+        return {"unparseable": True}
+    if not isinstance(d, dict):
+        return {"unparseable": True}
+    if d.get("version") != CMP_SCHEMA_VERSION:
+        return {"mismatch": True, "version": d.get("version"), "expected": CMP_SCHEMA_VERSION}
+    lanes = []
+    for lane in (d.get("lanes") if isinstance(d.get("lanes"), list) else []):
+        if not isinstance(lane, dict):
+            continue
+        lanes.append({"model": str(lane.get("model", "?")), "easy": _score_block(lane.get("easy")),
+                      "hard": _score_block(lane.get("hard")), "ms": _floatval(lane.get("ms_per_q")),
+                      "tok": _floatval(lane.get("tok_per_q"))})
+    pairs = []
+    for pr in (d.get("pairs") if isinstance(d.get("pairs"), list) else []):
+        if not isinstance(pr, dict):
+            continue
+        wa, wb = _intval(pr.get("wa")), _intval(pr.get("wb"))
+        if wa is None or wb is None:
+            continue
+        pairs.append({"a": str(pr.get("a", "?")), "b": str(pr.get("b", "?")), "wa": wa, "wb": wb})
+    easy_n = d.get("easy") if isinstance(d.get("easy"), dict) else {}
+    hard_n = d.get("hard") if isinstance(d.get("hard"), dict) else {}
+    return {"version": CMP_SCHEMA_VERSION, "date": str(d.get("date", "?")),
+            "note": str(d.get("note")) if d.get("note") is not None else None,
+            "easy_n": _intval(easy_n.get("n")), "hard_n": _intval(hard_n.get("n")),
+            "lanes": lanes, "pairs": pairs}
 
 
 def streaks(daily):
@@ -1384,6 +1441,109 @@ def _empty(text):
     return '<p class="fine">%s</p>' % text
 
 
+def parse_cmp_filter(qs):
+    """Zero-JS comparison filters from a parsed query dict (parse_qs shape).
+
+    Unknown lane values are ignored (all columns render); family values are
+    checked against the snapshot at render time, not here.
+    """
+    fam = (qs.get("family", [""])[0] or "").strip().lower()
+    lane = (qs.get("lane", [""])[0] or "").strip().lower()
+    return {"family": fam or None, "lane": lane if lane in ("easy", "hard") else None}
+
+
+def _pair_record(pairs, model):
+    """Head-to-head W-L-T over pairs involving model; None when it has none."""
+    w = l = t = 0
+    seen = False
+    for pr in pairs:
+        mine, theirs = (pr["wa"], pr["wb"]) if pr["a"] == model else (
+            (pr["wb"], pr["wa"]) if pr["b"] == model else (None, None))
+        if mine is None:
+            continue
+        seen = True
+        w += mine > theirs
+        l += mine < theirs
+        t += mine == theirs
+    return (w, l, t) if seen else None
+
+
+def _cmp_href(family, lane):
+    q = {}
+    if family:
+        q["family"] = family
+    if lane:
+        q["lane"] = lane
+    return "/dashboard" + ("?" + urlencode(q) if q else "")
+
+
+def comparisons_section(cmp, filt):
+    """Model-comparison panel. Pure dict -> html; file I/O stays in read_comparisons.
+
+    Figures: Easy/Hard are the snapshot lane's p/t verbatim; ms/q and tok/q are
+    the snapshot's means per question, rounded to int; Pairs counts opponents
+    beaten head-to-head (more questions right, ties ignored for W/L). Lanes
+    render in snapshot order. No cross-lane averages or totals are rendered
+    (lanes have different n), and comparison figures are never added to the
+    live metering totals above.
+    """
+    h = ['  <section class="panel s12" aria-labelledby="h-cmp">\n    <div class="ph"><h2 id="h-cmp">Model comparisons</h2>']
+    if cmp is None:
+        h.append('</div>\n    <div class="pb">' + _empty("No comparison snapshot yet — the writer has not produced voter-board.json.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    if cmp.get("unparseable"):
+        h.append('</div>\n    <div class="pb">' + _empty("Comparison snapshot is corrupt (not JSON) — showing nothing rather than guessing.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    if cmp.get("mismatch"):
+        h.append('<span class="meta num">snapshot v%s · reader expects v%s</span></div>\n    <div class="pb">' % (esc(cmp.get("version")), esc(cmp.get("expected"))) +
+                 _empty("This snapshot uses a schema the dashboard cannot read. Update the sidecar, not the snapshot.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    filt = filt or {}
+    fam, lane = filt.get("family"), filt.get("lane")
+    lanes = cmp.get("lanes") or []
+    present = sorted({provider_of(x["model"]) for x in lanes} - {None})
+    note = ""
+    if fam and fam not in MAKERS:
+        note = _empty('Unknown family "%s" — showing all.' % esc(fam))
+        fam = None
+    rows = [x for x in lanes if not fam or provider_of(x["model"]) == fam]
+    en, hn = cmp.get("easy_n"), cmp.get("hard_n")
+    stale = ("Recorded %s · n=%d (easy %d + hard %d)" % (esc(cmp.get("date", "?")), en + hn, en, hn)
+             if en is not None and hn is not None else
+             "Recorded %s · n=? (lane sizes missing)" % esc(cmp.get("date", "?")))
+    h.append('<span class="meta num">%s</span></div>\n    <div class="pb">' % stale + note)
+    fam_links = ['<a href="%s">All</a>' % _cmp_href(None, lane)]
+    fam_links += ['<a href="%s">%s</a>' % (_cmp_href(f, lane), esc(MAKERS[f])) for f in present]
+    lane_links = ['<a href="%s">%s</a>' % (_cmp_href(fam, v), w)
+                  for v, w in ((None, "All"), ("easy", "Easy"), ("hard", "Hard"))]
+    h.append('<p class="fine" style="margin-top:0"><span class="muted">Family:</span> %s &nbsp; <span class="muted">Lane:</span> %s</p>'
+             % (" · ".join(fam_links), " · ".join(lane_links)))
+    if cmp.get("note"):
+        h.append(_empty("Snapshot note: %s" % esc(cmp["note"])))
+    if not rows:
+        h.append(_empty('No lanes match family=%s. <a href="/dashboard">Show all</a>' % esc(fam)) + '</div>\n  </section>\n\n')
+        return "".join(h)
+    show_easy, show_hard = lane in (None, "easy"), lane in (None, "hard")
+    dash = '<span class="dash" aria-label="unscored">—</span>'
+    thead = "<thead><tr><th>Model</th>" + ("<th class=\"r\">Easy</th>" if show_easy else "") + ("<th class=\"r\">Hard</th>" if show_hard else "") + '<th class="r">Pairs</th><th class="r">ms/q</th><th class="r">tok/q</th></tr></thead>'
+    body = []
+    for x in rows:
+        rec = _pair_record(cmp.get("pairs") or [], x["model"])
+        cells = ['<td><span class="mc">%s<span>%s</span></span></td>' % (logo(x["model"], 16, "logo"), esc(x["model"]))]
+        if show_easy:
+            cells.append('<td class="r num">%s</td>' % (dash if x["easy"] is None else "%d/%d" % x["easy"]))
+        if show_hard:
+            cells.append('<td class="r num">%s</td>' % (dash if x["hard"] is None else "%d/%d" % x["hard"]))
+        cells.append('<td class="r num">%s</td>' % (dash if rec is None else "%d–%d–%d" % rec))
+        cells.append('<td class="r num">%s</td>' % (dash if x["ms"] is None else n(round(x["ms"]))))
+        cells.append('<td class="r num">%s</td>' % (dash if x["tok"] is None else n(round(x["tok"]))))
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    h.append('<div class="scroll" role="region" aria-labelledby="h-cmp" tabindex="0"><table>' + thead + "<tbody>" + "".join(body) + "</tbody></table></div>")
+    h.append(_empty("Lane scores are pass counts from the dated snapshot, in the writer's order. ms/q and tok/q are means per question over each lane's scored questions. "
+                    "Pairs are head-to-head question wins. Comparison figures are never averaged across lanes or added to the live metering totals above.") + '</div>\n  </section>\n\n')
+    return "".join(h)
+
+
 def render_dashboard(st, mockup=False, extra_models=(), too_big_count=None):
     """The round-4b dashboard. mockup=True reproduces mockups/dashboard-round4b.html."""
     m = st.get("metering")
@@ -1513,7 +1673,10 @@ def render_dashboard(st, mockup=False, extra_models=(), too_big_count=None):
     ev = st.get("eval")
     h.append('  <section class="panel s4" aria-labelledby="h-eval">\n    <div class="ph"><h2 id="h-eval">Weekly eval</h2><span class="meta num">%s</span></div>\n' % (esc(str(ev.get("ts", ""))[:10]) if ev else "—"))
     h.append(('    <ul class="evals">' + eval_rows(ev) + '</ul>\n') if ev else ('    <div class="pb">' + _empty("No weekly eval run recorded yet.") + '</div>\n'))
-    h.append('  </section>\n\n</main>\n<nav class="links" aria-label="Endpoints">\n  <a href="/status"><code>/status</code><span>live JSON</span></a>\n  <a href="/calls"><code>/calls</code><span>metered ring</span></a>\n'
+    h.append('  </section>\n\n')
+    if "comparisons" in st:
+        h.append(comparisons_section(st.get("comparisons"), st.get("cmp_filter")))
+    h.append('</main>\n<nav class="links" aria-label="Endpoints">\n  <a href="/status"><code>/status</code><span>live JSON</span></a>\n  <a href="/calls"><code>/calls</code><span>metered ring</span></a>\n'
              '  <a href="/agents.md"><code>/agents.md</code><span>agent guide</span></a>\n  <a href="/api/tags"><code>/api/tags</code><span>models</span></a>\n  <a href="/api/ps"><code>/api/ps</code><span>loaded now</span></a>\n</nav>\n'
              '<footer>Provider marks: lobehub/lobe-icons (MIT); trademarks of their owners. Zero JavaScript.</footer>\n</div>\n</body>\n</html>\n')
     return "".join(h)
@@ -2035,7 +2198,11 @@ class H(BaseHTTPRequestHandler):
         elif p == "/tools":
             self.send_json({"tools": TOOLS_CATALOG})
         elif p == "" or p == "/dashboard":
-            body = build_dashboard(build_status()).encode()
+            qs = parse_qs(urlsplit(self.path).query)
+            st = build_status()
+            st["comparisons"] = read_comparisons()
+            st["cmp_filter"] = parse_cmp_filter(qs)
+            body = build_dashboard(st).encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))

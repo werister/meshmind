@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "date": "2026-11-04",
+  "note": "SYNTHETIC fixture: partial snapshot; missing cells must render as unscored.",
+  "easy": {"n": 20},
+  "hard": {"n": 10},
+  "lanes": [
+    {"model": "qwen3:4b", "easy": {"p": 17, "t": 20}, "hard": {"p": 6, "t": 10}, "ms_per_q": 18432.6, "tok_per_q": 312.4},
+    {"model": "llama3.2:3b", "easy": {"p": 15, "t": 20}},
+    {"model": "gemma2:2b", "easy": {"p": 14, "t": 20}, "hard": {"p": 4, "t": 10}, "tok_per_q": 141.7}
+  ],
+  "pairs": [
+    {"a": "qwen3:4b", "b": "llama3.2:3b", "wa": 18, "wb": 12, "ties": 0}
+  ]
+}
