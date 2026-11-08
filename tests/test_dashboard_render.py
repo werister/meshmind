@@ -109,11 +109,14 @@ def test_metered_fixture(mod):
     check(chip_count(html, "est") >= 2, "estimated tag on cost figures")
     check(">445<" in html and "7 reports" in html, "self-reported tokens shown on their own")
 
-    # never summed: no cross-source total may appear anywhere
+    # never summed: no cross-source total may appear anywhere in DATA-DRIVEN
+    # content. The static SVG sprite (logo path coordinates) is excluded: it is
+    # fixed art, not computed output, and digit runs in path data are not sums.
+    page = re.sub(r'<svg width="0" height="0".*?</defs></svg>', "", html, flags=re.S)
     t, m = st["tokens"], st["metering"]
     for bad in (t["grand_total"], m["eval_tokens_total"] + t["feedback_total"],
                 m["eval_tokens_total"] + t["probe_total"], m["eval_tokens_total"] + t["grand_total"]):
-        check("{:,}".format(bad) not in html and ">%d<" % bad not in html, "no mixed-source sum %d on the page" % bad)
+        check("{:,}".format(bad) not in page and ">%d<" % bad not in page, "no mixed-source sum %d on the page" % bad)
 
     # no breakdown in this snapshot -> the per-model panels are honest Samples
     check(chip_count(html, "sample") == 2, "both split panels tagged Sample")

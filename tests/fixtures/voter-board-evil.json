@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "date": "2026-11-05<script>alert(1)</script>",
+  "note": "SYNTHETIC fixture: injection strings in every snapshot string field.",
+  "easy": {"n": 2},
+  "hard": {"n": 1},
+  "lanes": [
+    {"model": "<script>alert(\"x\")</script>", "easy": {"p": 1, "t": 2}, "hard": {"p": 0, "t": 1}, "ms_per_q": 100.0, "tok_per_q": 10.0},
+    {"model": "qwen3:4b", "easy": {"p": 2, "t": 2}, "hard": {"p": 1, "t": 1}, "ms_per_q": 200.0, "tok_per_q": 20.0}
+  ],
+  "pairs": [
+    {"a": "<script>alert(\"x\")</script>", "b": "qwen3:4b", "wa": 1, "wb": 1, "ties": 1}
+  ]
+}

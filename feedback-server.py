@@ -4,6 +4,7 @@
 POST /feedback {"agent","model","ok","note","tokens"} -> feedback.log (JSONL)
 POST /fetch {"op":"fetch","url":...} | {"op":"search","query":...} -> web text
 GET  /status    -> live JSON: availability, token totals, models, feedback
+GET  /tools     -> machine-readable tool registry (T12 schema format)
 GET  /dashboard -> auto-refreshing HTML showcase page (mml Apple-light styling)
 GET  /agents.md -> the agent quickstart doc, served over HTTPS
 """
@@ -23,7 +24,7 @@ import urllib.request
 from collections import deque
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "scripts"))
@@ -38,6 +39,8 @@ HEALTH = os.path.join(LAB, "health.log")
 STATE = os.path.join(LAB, "monitor-state")
 AGENTS_MD = os.path.join(LAB, "AGENTS.md")
 EVAL_LOG = os.path.join(LAB, "eval-weekly.jsonl")
+VOTER_BOARD = os.path.join(LAB, "voter-board.json")
+CMP_SCHEMA_VERSION = 1
 OLLAMA = "http://127.0.0.1:11434"
 UPSTREAM = urlsplit(os.environ.get("OLLAMA_URL", OLLAMA))
 PROXY_PORT = int(os.environ.get("FEEDBACK_SERVER_PORT", "8081"))
@@ -55,6 +58,22 @@ RING_SIZE = 256
 BODY_CAP = 2 * 1024 * 1024
 TAIL_SIZE = 64 * 1024
 PROXY_PATHS = {"/api/chat", "/api/generate", "/api/embeddings", "/v1/chat/completions", "/v1/completions", "/v1/embeddings"}
+# Machine-readable tool registry for lab-provided tools (GET /tools).
+# Same {name, description, parameters} schema FORMAT as the T12 bench
+# catalog -- not the same file: T12's fixture stays a fixed fake-backend
+# set, this is the live registry agents auto-wire against.
+TOOLS_CATALOG = [
+    {"name": "web_fetch",
+     "description": "Fetch a public web page and return its text "
+                    "(256 KB cap, SSRF-guarded: no localhost, LAN, tailnet, "
+                    "metadata, or non-80/443 ports).",
+     "parameters": {"url": {"type": "string", "required": True}},
+     "endpoint": "/fetch", "method": "POST", "op": "fetch"},
+    {"name": "web_search",
+     "description": "Keyless web search; returns up to 5 title/url pairs.",
+     "parameters": {"query": {"type": "string", "required": True}},
+     "endpoint": "/fetch", "method": "POST", "op": "search"},
+]
 # --- rerank endpoint (T10, additive) ----------------------------------------
 # POST /rerank {query, passages:[{id,text}], top_k?} -> {scores, model, latency_s}.
 # Served + metered like the proxy paths (agent tag `rerank`). The endpoint shells
@@ -468,6 +487,61 @@ def read_eval_summary():
     return out
 
 
+def _score_block(d):
+    if not isinstance(d, dict):
+        return None
+    p, t = _intval(d.get("p")), _intval(d.get("t"))
+    if p is None or t is None:
+        return None
+    return (p, t)
+
+
+def _floatval(v):
+    return v if isinstance(v, (int, float)) and not isinstance(v, bool) else None
+
+
+def read_comparisons(path=None):
+    """Dated voter-board snapshot for the comparison panel (read-only).
+
+    Missing file -> None ("no snapshot yet"). Corrupt JSON ->
+    {"unparseable": True}. Unknown schema -> {"mismatch": True, ...}.
+    Anything else is validated defensively: bad blocks become empty/None,
+    never a crash, so a half-written snapshot cannot 500 the dashboard.
+    """
+    try:
+        with open(path or VOTER_BOARD, encoding="utf-8") as f:
+            d = json.load(f)
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError):
+        return {"unparseable": True}
+    if not isinstance(d, dict):
+        return {"unparseable": True}
+    if d.get("version") != CMP_SCHEMA_VERSION:
+        return {"mismatch": True, "version": d.get("version"), "expected": CMP_SCHEMA_VERSION}
+    lanes = []
+    for lane in (d.get("lanes") if isinstance(d.get("lanes"), list) else []):
+        if not isinstance(lane, dict):
+            continue
+        lanes.append({"model": str(lane.get("model", "?")), "easy": _score_block(lane.get("easy")),
+                      "hard": _score_block(lane.get("hard")), "ms": _floatval(lane.get("ms_per_q")),
+                      "tok": _floatval(lane.get("tok_per_q"))})
+    pairs = []
+    for pr in (d.get("pairs") if isinstance(d.get("pairs"), list) else []):
+        if not isinstance(pr, dict):
+            continue
+        wa, wb = _intval(pr.get("wa")), _intval(pr.get("wb"))
+        if wa is None or wb is None:
+            continue
+        pairs.append({"a": str(pr.get("a", "?")), "b": str(pr.get("b", "?")), "wa": wa, "wb": wb})
+    easy_n = d.get("easy") if isinstance(d.get("easy"), dict) else {}
+    hard_n = d.get("hard") if isinstance(d.get("hard"), dict) else {}
+    return {"version": CMP_SCHEMA_VERSION, "date": str(d.get("date", "?")),
+            "note": str(d.get("note")) if d.get("note") is not None else None,
+            "easy_n": _intval(easy_n.get("n")), "hard_n": _intval(hard_n.get("n")),
+            "lanes": lanes, "pairs": pairs}
+
+
 def streaks(daily):
     """current + longest consecutive-active-day streaks from daily buckets."""
     cur = 0
@@ -684,7 +758,7 @@ SAMPLE_BEND = [lambda i: 0.45 + i / 13,
                lambda i: 1.6 - i / 11,
                lambda i: 1.0 if i < 9 else 0.35,
                lambda i: 1.0 if i >= 10 else 0.0]
-MAKERS = {"qwen": "Qwen", "meta": "Meta", "gemma": "Google", "microsoft": "Microsoft"}
+MAKERS = {"qwen": "Qwen", "meta": "Meta", "gemma": "Google", "microsoft": "Microsoft", "nvidia": "Nvidia", "ibm": "IBM", "liquid": "Liquid AI", "rwkv": "RWKV", "huggingface": "Hugging Face"}
 
 # Mono marks from lobehub/lobe-icons (MIT, packages/static-svg/icons/*.svg), fill=currentColor.
 # Logos remain trademarks of their owners; used only to identify each model's maker.
@@ -693,6 +767,11 @@ LOGOS = {
     "meta": ("Meta", "M6.897 4c1.915 0 3.516.932 5.43 3.376l.282-.373c.19-.246.383-.484.58-.71l.313-.35C14.588 4.788 15.792 4 17.225 4c1.273 0 2.469.557 3.491 1.516l.218.213c1.73 1.765 2.917 4.71 3.053 8.026l.011.392.002.25c0 1.501-.28 2.759-.818 3.7l-.14.23-.108.153c-.301.42-.664.758-1.086 1.009l-.265.142-.087.04a3.493 3.493 0 01-.302.118 4.117 4.117 0 01-1.33.208c-.524 0-.996-.067-1.438-.215-.614-.204-1.163-.56-1.726-1.116l-.227-.235c-.753-.812-1.534-1.976-2.493-3.586l-1.43-2.41-.544-.895-1.766 3.13-.343.592C7.597 19.156 6.227 20 4.356 20c-1.21 0-2.205-.42-2.936-1.182l-.168-.184c-.484-.573-.837-1.311-1.043-2.189l-.067-.32a8.69 8.69 0 01-.136-1.288L0 14.468c.002-.745.06-1.49.174-2.23l.1-.573c.298-1.53.828-2.958 1.536-4.157l.209-.34c1.177-1.83 2.789-3.053 4.615-3.16L6.897 4zm-.033 2.615l-.201.01c-.83.083-1.606.673-2.252 1.577l-.138.199-.01.018c-.67 1.017-1.185 2.378-1.456 3.845l-.004.022a12.591 12.591 0 00-.207 2.254l.002.188c.004.18.017.36.04.54l.043.291c.092.503.257.908.486 1.208l.117.137c.303.323.698.492 1.17.492 1.1 0 1.796-.676 3.696-3.641l2.175-3.4.454-.701-.139-.198C9.11 7.3 8.084 6.616 6.864 6.616zm10.196-.552l-.176.007c-.635.048-1.223.359-1.82.933l-.196.198c-.439.462-.887 1.064-1.367 1.807l.266.398c.18.274.362.56.55.858l.293.475 1.396 2.335.695 1.114c.583.926 1.03 1.6 1.408 2.082l.213.262c.282.326.529.54.777.673l.102.05c.227.1.457.138.718.138.176.002.35-.023.518-.073.338-.104.61-.32.813-.637l.095-.163.077-.162c.194-.459.29-1.06.29-1.785l-.006-.449c-.08-2.871-.938-5.372-2.2-6.798l-.176-.189c-.67-.683-1.444-1.074-2.27-1.074z"),
     "gemma": ("Gemma", "M12.34 5.953a8.233 8.233 0 01-.247-1.125V3.72a8.25 8.25 0 015.562 2.232H12.34zm-.69 0c.113-.373.199-.755.257-1.145V3.72a8.25 8.25 0 00-5.562 2.232h5.304zm-5.433.187h5.373a7.98 7.98 0 01-.267.696 8.41 8.41 0 01-1.76 2.65L6.216 6.14zm-.264-.187H2.977v.187h2.915a8.436 8.436 0 00-2.357 5.767H0v.186h3.535a8.436 8.436 0 002.357 5.767H2.977v.186h2.976v2.977h.187v-2.915a8.436 8.436 0 005.767 2.357V24h.186v-3.535a8.436 8.436 0 005.767-2.357v2.915h.186v-2.977h2.977v-.186h-2.915a8.436 8.436 0 002.357-5.767H24v-.186h-3.535a8.436 8.436 0 00-2.357-5.767h2.915v-.187h-2.977V2.977h-.186v2.915a8.436 8.436 0 00-5.767-2.357V0h-.186v3.535A8.436 8.436 0 006.14 5.892V2.977h-.187v2.976zm6.14 14.326a8.25 8.25 0 005.562-2.233H12.34c-.108.367-.19.743-.247 1.126v1.107zm-.186-1.087a8.015 8.015 0 00-.258-1.146H6.345a8.25 8.25 0 005.562 2.233v-1.087zm-8.186-7.285h1.107a8.23 8.23 0 001.125-.247V6.345a8.25 8.25 0 00-2.232 5.562zm1.087.186H3.72a8.25 8.25 0 002.232 5.562v-5.304a8.012 8.012 0 00-1.145-.258zm15.47-.186a8.25 8.25 0 00-2.232-5.562v5.315c.367.108.743.19 1.126.247h1.107zm-1.086.186c-.39.058-.772.144-1.146.258v5.304a8.25 8.25 0 002.233-5.562h-1.087zm-1.332 5.69V12.41a7.97 7.97 0 00-.696.267 8.409 8.409 0 00-2.65 1.76l3.346 3.346zm0-6.18v-5.45l-.012-.013h-5.451c.076.235.162.468.26.696a8.698 8.698 0 001.819 2.688 8.698 8.698 0 002.688 1.82c.228.097.46.183.696.259zM6.14 17.848V12.41c.235.078.468.167.696.267a8.403 8.403 0 012.688 1.799 8.404 8.404 0 011.799 2.688c.1.228.19.46.267.696H6.152l-.012-.012zm0-6.245V6.326l3.29 3.29a8.716 8.716 0 01-2.594 1.728 8.14 8.14 0 01-.696.259zm6.257 6.257h5.277l-3.29-3.29a8.716 8.716 0 00-1.728 2.594 8.135 8.135 0 00-.259.696zm-2.347-7.81a9.435 9.435 0 01-2.88 1.96 9.14 9.14 0 012.88 1.94 9.14 9.14 0 011.94 2.88 9.435 9.435 0 011.96-2.88 9.14 9.14 0 012.88-1.94 9.435 9.435 0 01-2.88-1.96 9.434 9.434 0 01-1.96-2.88 9.14 9.14 0 01-1.94 2.88z"),
     "microsoft": ("Microsoft", "M11.49 2H2v9.492h9.492V2h-.002zM22 2h-9.492v9.492H22V2zM11.49 12.508H2V22h9.492v-9.492h-.002zM22 12.508h-9.492V22H22v-9.492z"),
+    "nvidia": ("Nvidia", "M10.212 8.976V7.62c.127-.01.256-.017.388-.021 3.596-.117 5.957 3.184 5.957 3.184s-2.548 3.647-5.282 3.647a3.227 3.227 0 01-1.063-.175v-4.109c1.4.174 1.681.812 2.523 2.258l1.873-1.627a4.905 4.905 0 00-3.67-1.846 6.594 6.594 0 00-.729.044m0-4.476v2.025c.13-.01.259-.019.388-.024 5.002-.174 8.261 4.226 8.261 4.226s-3.743 4.69-7.643 4.69c-.338 0-.675-.031-1.007-.092v1.25c.278.038.558.057.838.057 3.629 0 6.253-1.91 8.794-4.169.421.347 2.146 1.193 2.501 1.564-2.416 2.083-8.048 3.763-11.24 3.763-.308 0-.603-.02-.894-.048V19.5H24v-15H10.21zm0 9.756v1.068c-3.356-.616-4.287-4.21-4.287-4.21a7.173 7.173 0 014.287-2.138v1.172h-.005a3.182 3.182 0 00-2.502 1.178s.615 2.276 2.507 2.931m-5.961-3.3c1.436-1.935 3.604-3.148 5.961-3.336V6.523C5.81 6.887 2 10.723 2 10.723s2.158 6.427 8.21 7.015v-1.166C5.77 16 4.25 10.958 4.25 10.958h-.002z"),
+    "ibm": ("IBM", "M24 16.333V17h-3.158v-.667H24zm-7.579 0V17h-3.158v-.667h3.158zm2.464 0L18.63 17l-.25-.667h.504zm-7.075 0a2.528 2.528 0 01-1.717.667h-5.04v-.667h6.757zm-7.389 0V17H0v-.667h4.421zm12-1.333v.667h-3.158V15h3.158zm2.958 0l-.246.667h-1L17.885 15h1.494zm-6.937 0c-.057.237-.148.46-.265.667H5.053V15h7.39zm-8.02 0v.667H0V15h4.421zM24 15v.667h-3.158V15H24zm-1.263-1.333v.666h-1.895v-.666h1.895zm-6.316 0v.666h-1.895v-.666h1.895zm3.453 0l-.248.666h-1.989l-.25-.666h2.487zm-7.52 0c.056.212.088.435.088.666h-2.337v-.666h2.249zm-4.143 0v.666H6.316v-.666H8.21zm-5.053 0v.666H1.263v-.666h1.895zm19.579-1.334V13h-1.895v-.667h1.895zm-6.316 0V13h-1.895v-.667h1.895zm3.948 0l-.247.667h-2.987l-.245-.667h3.48zm-8.792 0c.218.188.405.414.55.667H6.315v-.667h5.26zm-8.42 0V13H1.264v-.667h1.895zM18.456 11l.177.539.176-.539h3.929v.667h-1.895v-.613l-.215.613H16.63l-.209-.613v.613h-1.895V11h3.929zM3.158 11v.667H1.263V11h1.895zm8.968 0a2.555 2.555 0 01-.55.667h-5.26V11h5.81zm10.61-1.333v.666h-3.709l.224-.666h3.486zm-4.722 0l.224.666h-3.712v-.666h3.488zm-5.572 0c0 .23-.032.454-.088.666h-2.249v-.666h2.337zm-4.231 0v.666H6.316v-.666H8.21zm-5.053 0v.666H1.263v-.666h1.895zm14.419-1.334l.22.667h-4.534v-.667h4.314zm6.423 0V9h-4.536l.229-.667H24zm-11.823 0c.117.206.208.43.265.667h-7.39v-.667h7.125zm-7.756 0V9H0v-.667h4.421zM17.133 7l.224.667h-4.094V7h3.87zM24 7v.667h-4.089L20.13 7H24zM10.093 7c.662 0 1.264.253 1.717.667H5.053V7h5.04zM4.42 7v.667H0V7h4.421z"),
+    "liquid": ("Liquid AI", "M12.028 8.546l-.008.005 3.03 5.25a3.94 3.94 0 01.643 2.162c0 .754-.212 1.46-.58 2.062l6.173-1.991L11.63 0 9.304 3.872l2.724 4.674zM6.837 24l4.85-4.053h-.013c-2.219 0-4.017-1.784-4.017-3.984 0-.794.235-1.534.64-2.156l2.865-4.976-2.381-4.087L2 16.034 6.83 24h.007zM13.737 19.382h-.001L8.222 24h8.182l4.148-6.769-6.815 2.151z"),
+    "rwkv": ("RWKV", "M15.127 21.824c.093.299.339.553.345.896.022.107-.051.417-.168.21-.249-.832-.33-.035-1.065-1.184-.158-.313-.429-.055-.663-.04-.694-.228-.49-.293-.905.3-.315.088-.049-.643.101-.724.29-.248.749-.086.917-.356.282-1.143-.64-2.567-1.158-3.55-.169-.264.013-.577-.025-.862-.15-.408-.188-.302-.049-.734-.227-.473-.863.266-1.22.255-.285.004-.523-.45-.893-.48-1.335.004-2.581.808-3.926.671a1.228 1.228 0 00-.681.215c-.414.222-.909.203-1.288.522-.119.095-.27.104-.414.098-.27.04-.477.37-.784.34-.312-.109-.566.079-.86.057-.34-.285-.781-.057-1.174.008a.286.286 0 01-.308-.05c-.09-.072-.264-.082-.324-.177-.03-.059.028-.145.1-.204.527-.405 1.137-.666 1.72-.974 1.146-.594 2.118-1.463 3.16-2.218.066-.05.085-.12-.035-.119-1.612.135-3.146 1.048-4.74 1.012-.176.023-.339.127-.522.15-.876-.185.65-1.16.954-1.261 1.704-.711 3.598-.843 5.184-1.836.188-.132-.17-.268-.004-.53.39-1.29 1.576-1.805 2.735-2.184.594-.231 1.137-.672 1.797-.679.325.016.634-.113.852-.36 1.163-1.071 2.442-2.012 3.674-2.999 1.413-1.783 2.282-5.175 5.216-3.656.92.395 1.974.365 2.807.976.297.189.857.765.236.85-1.702.291-2.552-.23-2.63 1.454-.03.39.064.75-.158 1.086-.014.694.352 1.508-.084 2.129-.364.63-.078 1.413-.38 2.047-.22.534-.65.93-1.049 1.323-1.304 1.63-2.266 3.476-2.589 5.572-.122.627-.478 1.56.097 2.056.607.612 1.25 1.458 2.18 1.012.306-.14.884-.189.84.274-.05.083-.258-.098-.371-.056-.16.102.072.316.029.465-.022.14-.134.12-.23.054-.281-.112-.685.002-1.005-.01-.258.045-.512.162-.762.05-.116-.049-.229-.1-.356-.103-.39-.022-.884.182-1.103-.147-.242-.454-.293-.104-.532.048-.235-.015-.067-.35.014-.46.249-.57 1.846.517 1.183-.432-2.29-2.01-.777-2.686-1.646-2.69-.17-.089-.103-.405-.366-.173-.335.35-.46-.098-.46-.4-.04-.175-.177-.3-.125-.479.022-.39-.496.085-.38.41.057.616-.132 1.225-.102 1.833.24 1.276.41 2.897 1.864 3.276.177.076.463.432.253.565-.093-.01-.16-.11-.243-.153-.116-.078-.257.009-.378.018-.034.008-.088.007-.1.046l-.003.002z"),
+    "huggingface": ("Hugging Face", "M16.781 3.277c2.997 1.704 4.844 4.851 4.844 8.258 0 .995-.155 1.955-.443 2.857a1.332 1.332 0 011.125.4 1.41 1.41 0 01.2 1.723c.204.165.352.385.428.632l.017.062c.06.222.12.69-.2 1.166.244.37.279.836.093 1.236-.255.57-.893 1.018-2.128 1.5l-.202.078-.131.048c-.478.173-.89.295-1.061.345l-.086.024c-.89.243-1.808.375-2.732.394-1.32 0-2.3-.36-2.923-1.067a9.852 9.852 0 01-3.18.018C9.778 21.647 8.802 22 7.494 22a11.249 11.249 0 01-2.541-.343l-.221-.06-.273-.08a16.574 16.574 0 01-1.175-.405c-1.237-.483-1.875-.93-2.13-1.501-.186-.4-.151-.867.093-1.236a1.42 1.42 0 01-.2-1.166c.069-.273.226-.516.447-.694a1.41 1.41 0 01.2-1.722c.233-.248.557-.391.917-.407l.078-.001a9.385 9.385 0 01-.44-2.85c0-3.407 1.847-6.554 4.844-8.258a9.822 9.822 0 019.687 0zM4.188 14.758c.125.687 2.357 2.35 2.14 2.707-.19.315-.796-.239-.948-.386l-.041-.04-.168-.147c-.561-.479-2.304-1.9-2.74-1.432-.43.46.119.859 1.055 1.42l.784.467.136.083c1.045.643 1.12.84.95 1.113-.188.295-3.07-2.1-3.34-1.083-.27 1.011 2.942 1.304 2.744 2.006-.2.7-2.265-1.324-2.685-.537-.425.79 2.913 1.718 2.94 1.725l.16.04.175.042c1.227.284 3.565.65 4.435-.604.673-.973.64-1.709-.248-2.61l-.057-.057c-.945-.928-1.495-2.288-1.495-2.288l-.017-.058-.025-.072c-.082-.22-.284-.639-.63-.584-.46.073-.798 1.21.12 1.933l.05.038c.977.721-.195 1.21-.573.534l-.058-.104-.143-.25c-.463-.799-1.282-2.111-1.739-2.397-.532-.332-.907-.148-.782.541zm14.842-.541c-.533.335-1.563 2.074-1.94 2.751a.613.613 0 01-.687.302.436.436 0 01-.176-.098.303.303 0 01-.049-.06l-.014-.028-.008-.02-.007-.019-.003-.013-.003-.017a.289.289 0 01-.004-.048c0-.12.071-.266.25-.427.026-.024.054-.047.084-.07l.047-.036c.022-.016.043-.032.063-.049.883-.71.573-1.81.131-1.917l-.031-.006-.056-.004a.368.368 0 00-.062.006l-.028.005-.042.014-.039.017-.028.015-.028.019-.036.027-.023.02c-.173.158-.273.428-.31.542l-.016.054s-.53 1.309-1.439 2.234l-.054.054c-.365.358-.596.69-.702 1.018-.143.437-.066.868.21 1.353.055.097.117.195.187.296.882 1.275 3.282.876 4.494.59l.286-.07.25-.074c.276-.084.736-.233 1.2-.42l.188-.077.065-.028.064-.028.124-.056.081-.038c.529-.252.964-.543.994-.827l.001-.036a.299.299 0 00-.037-.139c-.094-.176-.271-.212-.491-.168l-.045.01c-.044.01-.09.024-.136.04l-.097.035-.054.022c-.559.23-1.238.705-1.607.745h.006a.452.452 0 01-.05.003h-.024l-.024-.003-.023-.005c-.068-.016-.116-.06-.14-.142a.22.22 0 01-.005-.1c.062-.345.958-.595 1.713-.91l.066-.028c.528-.224.97-.483.985-.832v-.04a.47.47 0 00-.016-.098c-.048-.18-.175-.251-.36-.251-.785 0-2.55 1.36-2.92 1.36-.025 0-.048-.007-.058-.024a.6.6 0 01-.046-.088c-.1-.238.068-.462 1.06-1.066l.209-.126c.538-.32 1.01-.588 1.341-.831.29-.212.475-.406.503-.6l.003-.028c.008-.113-.038-.227-.147-.344a.266.266 0 00-.07-.054l-.034-.015-.013-.005a.403.403 0 00-.13-.02c-.162 0-.369.07-.595.18-.637.313-1.431.952-1.826 1.285l-.249.215-.033.033c-.08.078-.288.27-.493.386l-.071.037-.041.019a.535.535 0 01-.122.036h.005a.346.346 0 01-.031.003l.01-.001-.013.001c-.079.005-.145-.021-.19-.095a.113.113 0 01-.014-.065c.027-.465 2.034-1.991 2.152-2.642l.009-.048c.1-.65-.271-.817-.791-.493zM11.938 2.984c-4.798 0-8.688 3.829-8.688 8.55 0 .692.083 1.364.24 2.008l.008-.009c.252-.298.612-.46 1.017-.46.355.008.699.117.993.312.22.14.465.384.715.694.261-.372.69-.598 1.15-.605.852 0 1.367.728 1.562 1.383l.047.105.06.127c.192.396.595 1.139 1.143 1.68 1.06 1.04 1.324 2.115.8 3.266a8.865 8.865 0 002.024-.014c-.505-1.12-.26-2.17.74-3.186l.066-.066c.695-.684 1.157-1.69 1.252-1.912.195-.655.708-1.383 1.56-1.383.46.007.889.233 1.15.605.25-.31.495-.553.718-.694a1.87 1.87 0 01.99-.312c.357 0 .682.126.925.36.14-.61.215-1.245.215-1.898 0-4.722-3.89-8.55-8.687-8.55zm1.857 8.926l.439-.212c.553-.264.89-.383.89.152 0 1.093-.771 3.208-3.155 3.262h-.184c-2.325-.052-3.116-2.06-3.156-3.175l-.001-.087c0-1.107 1.452.586 3.25.586.716 0 1.379-.272 1.917-.526zm4.017-3.143c.45 0 .813.358.813.8 0 .441-.364.8-.813.8a.806.806 0 01-.812-.8c0-.442.364-.8.812-.8zm-11.624 0c.448 0 .812.358.812.8 0 .441-.364.8-.812.8a.806.806 0 01-.813-.8c0-.442.364-.8.813-.8zm7.79-.841c.32-.384.846-.54 1.33-.394.483.146.83.564.878 1.06.048.495-.212.97-.659 1.203-.322.168-.447-.477-.767-.585l.002-.003c-.287-.098-.772.362-.925.079a1.215 1.215 0 01.14-1.36zm-4.323 0c.322.384.377.92.14 1.36-.152.283-.64-.177-.925-.079l.003.003c-.108.036-.194.134-.273.24l-.118.165c-.11.15-.22.262-.377.18a1.226 1.226 0 01-.658-1.204c.048-.495.395-.913.878-1.059a1.262 1.262 0 011.33.394z"),
 }
 OLLAMA_MARK = "M7.905 1.09c.216.085.411.225.588.41.295.306.544.744.734 1.263.191.522.315 1.1.362 1.68a5.054 5.054 0 012.049-.636l.051-.004c.87-.07 1.73.087 2.48.474.101.053.2.11.297.17.05-.569.172-1.134.36-1.644.19-.52.439-.957.733-1.264a1.67 1.67 0 01.589-.41c.257-.1.53-.118.796-.042.401.114.745.368 1.016.737.248.337.434.769.561 1.287.23.934.27 2.163.115 3.645l.053.04.026.019c.757.576 1.284 1.397 1.563 2.35.435 1.487.216 3.155-.534 4.088l-.018.021.002.003c.417.762.67 1.567.724 2.4l.002.03c.064 1.065-.2 2.137-.814 3.19l-.007.01.01.024c.472 1.157.62 2.322.438 3.486l-.006.039a.651.651 0 01-.747.536.648.648 0 01-.54-.742c.167-1.033.01-2.069-.48-3.123a.643.643 0 01.04-.617l.004-.006c.604-.924.854-1.83.8-2.72-.046-.779-.325-1.544-.8-2.273a.644.644 0 01.18-.886l.009-.006c.243-.159.467-.565.58-1.12a4.229 4.229 0 00-.095-1.974c-.205-.7-.58-1.284-1.105-1.683-.595-.454-1.383-.673-2.38-.61a.653.653 0 01-.632-.371c-.314-.665-.772-1.141-1.343-1.436a3.288 3.288 0 00-1.772-.332c-1.245.099-2.343.801-2.67 1.686a.652.652 0 01-.61.425c-1.067.002-1.893.252-2.497.703-.522.39-.878.935-1.066 1.588a4.07 4.07 0 00-.068 1.886c.112.558.331 1.02.582 1.269l.008.007c.212.207.257.53.109.785-.36.622-.629 1.549-.673 2.44-.05 1.018.186 1.902.719 2.536l.016.019a.643.643 0 01.095.69c-.576 1.236-.753 2.252-.562 3.052a.652.652 0 01-1.269.298c-.243-1.018-.078-2.184.473-3.498l.014-.035-.008-.012a4.339 4.339 0 01-.598-1.309l-.005-.019a5.764 5.764 0 01-.177-1.785c.044-.91.278-1.842.622-2.59l.012-.026-.002-.002c-.293-.418-.51-.953-.63-1.545l-.005-.024a5.352 5.352 0 01.093-2.49c.262-.915.777-1.701 1.536-2.269.06-.045.123-.09.186-.132-.159-1.493-.119-2.73.112-3.67.127-.518.314-.95.562-1.287.27-.368.614-.622 1.015-.737.266-.076.54-.059.797.042zm4.116 9.09c.936 0 1.8.313 2.446.855.63.527 1.005 1.235 1.005 1.94 0 .888-.406 1.58-1.133 2.022-.62.375-1.451.557-2.403.557-1.009 0-1.871-.259-2.493-.734-.617-.47-.963-1.13-.963-1.845 0-.707.398-1.417 1.056-1.946.668-.537 1.55-.849 2.485-.849zm0 .896a3.07 3.07 0 00-1.916.65c-.461.37-.722.835-.722 1.25 0 .428.21.829.61 1.134.455.347 1.124.548 1.943.548.799 0 1.473-.147 1.932-.426.463-.28.7-.686.7-1.257 0-.423-.246-.89-.683-1.256-.484-.405-1.14-.643-1.864-.643zm-5.04-1.919c.478 0 .867.39.867.871a.87.87 0 01-.868.871.87.87 0 01-.867-.87.87.87 0 01.867-.872zm8.706 0c.48 0 .868.39.868.871a.87.87 0 01-.868.871.87.87 0 01-.867-.87.87.87 0 01.867-.872z"
 
@@ -946,6 +1025,16 @@ def provider_of(model):
         return "meta"
     if m.startswith("phi"):
         return "microsoft"
+    if m.startswith("nemotron"):
+        return "nvidia"
+    if "granite" in m:
+        return "ibm"
+    if "liquid" in m or "lfm" in m or m.startswith("athena"):
+        return "liquid"
+    if "rwkv" in m:
+        return "rwkv"
+    if "smollm" in m:
+        return "huggingface"
     return None
 
 
@@ -1352,6 +1441,109 @@ def _empty(text):
     return '<p class="fine">%s</p>' % text
 
 
+def parse_cmp_filter(qs):
+    """Zero-JS comparison filters from a parsed query dict (parse_qs shape).
+
+    Unknown lane values are ignored (all columns render); family values are
+    checked against the snapshot at render time, not here.
+    """
+    fam = (qs.get("family", [""])[0] or "").strip().lower()
+    lane = (qs.get("lane", [""])[0] or "").strip().lower()
+    return {"family": fam or None, "lane": lane if lane in ("easy", "hard") else None}
+
+
+def _pair_record(pairs, model):
+    """Head-to-head W-L-T over pairs involving model; None when it has none."""
+    w = l = t = 0
+    seen = False
+    for pr in pairs:
+        mine, theirs = (pr["wa"], pr["wb"]) if pr["a"] == model else (
+            (pr["wb"], pr["wa"]) if pr["b"] == model else (None, None))
+        if mine is None:
+            continue
+        seen = True
+        w += mine > theirs
+        l += mine < theirs
+        t += mine == theirs
+    return (w, l, t) if seen else None
+
+
+def _cmp_href(family, lane):
+    q = {}
+    if family:
+        q["family"] = family
+    if lane:
+        q["lane"] = lane
+    return "/dashboard" + ("?" + urlencode(q) if q else "")
+
+
+def comparisons_section(cmp, filt):
+    """Model-comparison panel. Pure dict -> html; file I/O stays in read_comparisons.
+
+    Figures: Easy/Hard are the snapshot lane's p/t verbatim; ms/q and tok/q are
+    the snapshot's means per question, rounded to int; Pairs counts opponents
+    beaten head-to-head (more questions right, ties ignored for W/L). Lanes
+    render in snapshot order. No cross-lane averages or totals are rendered
+    (lanes have different n), and comparison figures are never added to the
+    live metering totals above.
+    """
+    h = ['  <section class="panel s12" aria-labelledby="h-cmp">\n    <div class="ph"><h2 id="h-cmp">Model comparisons</h2>']
+    if cmp is None:
+        h.append('</div>\n    <div class="pb">' + _empty("No comparison snapshot yet — the writer has not produced voter-board.json.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    if cmp.get("unparseable"):
+        h.append('</div>\n    <div class="pb">' + _empty("Comparison snapshot is corrupt (not JSON) — showing nothing rather than guessing.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    if cmp.get("mismatch"):
+        h.append('<span class="meta num">snapshot v%s · reader expects v%s</span></div>\n    <div class="pb">' % (esc(cmp.get("version")), esc(cmp.get("expected"))) +
+                 _empty("This snapshot uses a schema the dashboard cannot read. Update the sidecar, not the snapshot.") + '</div>\n  </section>\n\n')
+        return "".join(h)
+    filt = filt or {}
+    fam, lane = filt.get("family"), filt.get("lane")
+    lanes = cmp.get("lanes") or []
+    present = sorted({provider_of(x["model"]) for x in lanes} - {None})
+    note = ""
+    if fam and fam not in MAKERS:
+        note = _empty('Unknown family "%s" — showing all.' % esc(fam))
+        fam = None
+    rows = [x for x in lanes if not fam or provider_of(x["model"]) == fam]
+    en, hn = cmp.get("easy_n"), cmp.get("hard_n")
+    stale = ("Recorded %s · n=%d (easy %d + hard %d)" % (esc(cmp.get("date", "?")), en + hn, en, hn)
+             if en is not None and hn is not None else
+             "Recorded %s · n=? (lane sizes missing)" % esc(cmp.get("date", "?")))
+    h.append('<span class="meta num">%s</span></div>\n    <div class="pb">' % stale + note)
+    fam_links = ['<a href="%s">All</a>' % _cmp_href(None, lane)]
+    fam_links += ['<a href="%s">%s</a>' % (_cmp_href(f, lane), esc(MAKERS[f])) for f in present]
+    lane_links = ['<a href="%s">%s</a>' % (_cmp_href(fam, v), w)
+                  for v, w in ((None, "All"), ("easy", "Easy"), ("hard", "Hard"))]
+    h.append('<p class="fine" style="margin-top:0"><span class="muted">Family:</span> %s &nbsp; <span class="muted">Lane:</span> %s</p>'
+             % (" · ".join(fam_links), " · ".join(lane_links)))
+    if cmp.get("note"):
+        h.append(_empty("Snapshot note: %s" % esc(cmp["note"])))
+    if not rows:
+        h.append(_empty('No lanes match family=%s. <a href="/dashboard">Show all</a>' % esc(fam)) + '</div>\n  </section>\n\n')
+        return "".join(h)
+    show_easy, show_hard = lane in (None, "easy"), lane in (None, "hard")
+    dash = '<span class="dash" aria-label="unscored">—</span>'
+    thead = "<thead><tr><th>Model</th>" + ("<th class=\"r\">Easy</th>" if show_easy else "") + ("<th class=\"r\">Hard</th>" if show_hard else "") + '<th class="r">Pairs</th><th class="r">ms/q</th><th class="r">tok/q</th></tr></thead>'
+    body = []
+    for x in rows:
+        rec = _pair_record(cmp.get("pairs") or [], x["model"])
+        cells = ['<td><span class="mc">%s<span>%s</span></span></td>' % (logo(x["model"], 16, "logo"), esc(x["model"]))]
+        if show_easy:
+            cells.append('<td class="r num">%s</td>' % (dash if x["easy"] is None else "%d/%d" % x["easy"]))
+        if show_hard:
+            cells.append('<td class="r num">%s</td>' % (dash if x["hard"] is None else "%d/%d" % x["hard"]))
+        cells.append('<td class="r num">%s</td>' % (dash if rec is None else "%d–%d–%d" % rec))
+        cells.append('<td class="r num">%s</td>' % (dash if x["ms"] is None else n(round(x["ms"]))))
+        cells.append('<td class="r num">%s</td>' % (dash if x["tok"] is None else n(round(x["tok"]))))
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    h.append('<div class="scroll" role="region" aria-labelledby="h-cmp" tabindex="0"><table>' + thead + "<tbody>" + "".join(body) + "</tbody></table></div>")
+    h.append(_empty("Lane scores are pass counts from the dated snapshot, in the writer's order. ms/q and tok/q are means per question over each lane's scored questions. "
+                    "Pairs are head-to-head question wins. Comparison figures are never averaged across lanes or added to the live metering totals above.") + '</div>\n  </section>\n\n')
+    return "".join(h)
+
+
 def render_dashboard(st, mockup=False, extra_models=(), too_big_count=None):
     """The round-4b dashboard. mockup=True reproduces mockups/dashboard-round4b.html."""
     m = st.get("metering")
@@ -1481,7 +1673,10 @@ def render_dashboard(st, mockup=False, extra_models=(), too_big_count=None):
     ev = st.get("eval")
     h.append('  <section class="panel s4" aria-labelledby="h-eval">\n    <div class="ph"><h2 id="h-eval">Weekly eval</h2><span class="meta num">%s</span></div>\n' % (esc(str(ev.get("ts", ""))[:10]) if ev else "—"))
     h.append(('    <ul class="evals">' + eval_rows(ev) + '</ul>\n') if ev else ('    <div class="pb">' + _empty("No weekly eval run recorded yet.") + '</div>\n'))
-    h.append('  </section>\n\n</main>\n<nav class="links" aria-label="Endpoints">\n  <a href="/status"><code>/status</code><span>live JSON</span></a>\n  <a href="/calls"><code>/calls</code><span>metered ring</span></a>\n'
+    h.append('  </section>\n\n')
+    if "comparisons" in st:
+        h.append(comparisons_section(st.get("comparisons"), st.get("cmp_filter")))
+    h.append('</main>\n<nav class="links" aria-label="Endpoints">\n  <a href="/status"><code>/status</code><span>live JSON</span></a>\n  <a href="/calls"><code>/calls</code><span>metered ring</span></a>\n'
              '  <a href="/agents.md"><code>/agents.md</code><span>agent guide</span></a>\n  <a href="/api/tags"><code>/api/tags</code><span>models</span></a>\n  <a href="/api/ps"><code>/api/ps</code><span>loaded now</span></a>\n</nav>\n'
              '<footer>Provider marks: lobehub/lobe-icons (MIT); trademarks of their owners. Zero JavaScript.</footer>\n</div>\n</body>\n</html>\n')
     return "".join(h)
@@ -2000,8 +2195,14 @@ class H(BaseHTTPRequestHandler):
             self._proxy(False)
         elif p == "/status":
             self.send_json(build_status())
+        elif p == "/tools":
+            self.send_json({"tools": TOOLS_CATALOG})
         elif p == "" or p == "/dashboard":
-            body = build_dashboard(build_status()).encode()
+            qs = parse_qs(urlsplit(self.path).query)
+            st = build_status()
+            st["comparisons"] = read_comparisons()
+            st["cmp_filter"] = parse_cmp_filter(qs)
+            body = build_dashboard(st).encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))

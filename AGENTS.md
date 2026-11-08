@@ -53,6 +53,7 @@ Models reach the live web through the sidecar (metered into `/calls`):
 - `{"op":"fetch","url":...}` returns page text (256 KB cap, SSRF-guarded: no localhost, LAN, tailnet, metadata, or non-80/443 ports)
 - `{"op":"search","query":...}` returns up to 5 Wikipedia title/url pairs (keyless; general web search needs a key)
 - HTTP 200 means the endpoint ran; check the `ok` field. 30 fetches/min per `X-Agent` (429 over)
+- `GET /tools` returns the machine-readable tool catalog (same `{name, description, parameters}` schema format as the tool bench) so harnesses can auto-wire these tools
 
 ## Leave feedback
 

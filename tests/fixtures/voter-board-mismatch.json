@@ -1,0 +1,9 @@
+{
+  "version": 99,
+  "date": "2026-11-05",
+  "note": "SYNTHETIC fixture: schema version the reader does not speak.",
+  "easy": {"n": 20},
+  "hard": {"n": 10},
+  "lanes": [],
+  "pairs": []
+}
