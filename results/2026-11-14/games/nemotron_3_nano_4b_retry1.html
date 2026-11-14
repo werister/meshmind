@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head><title>Flappy Bird</title></head>
+<body>
+<canvas id="game" width="400" height="600"></canvas>
+<script>
+let birdY=0,birdVelocity=0,score=0,over=false,pipes=[],birdX=50,birdHeight=20,groundY=580,pipeWidth=20;
+function createPipes(){
+pipes=[{x:400,y:0,passed:false},{x:400,y:100,passed:false}];
+}
+createPipes();
+function update(){
+if(over)return;
+birdVelocity+=0.4;
+birdY+=birdVelocity;
+if(birdY<0||birdY+birdHeight>groundY)over=true;
+pipes.forEach(p=>{
+p.x-=2;
+if(!p.passed&&p.x+pipeWidth<birdX){
+score++;
+p.passed=true;
+}
+if(p.x+pipeWidth<0)pipes.splice(pipes.indexOf(p),1);
+});
+window.__flappy={y:birdY,number:score,over:over};
+requestAnimationFrame(update);
+}
+function flap(){birdVelocity=-6;}
+document.addEventListener('keydown',e=>{if(e.code==='Space')flap();});
+canvas.addEventListener('click',()=>flap());
+function draw(){
+clearRect(0,0,canvas.width,canvas.height);
+fill(0,255,0);
+rect(birdX,birdY,20,birdHeight);
+for(let p of pipes){
+fill(0,0,255);
+rect(p.x,p.y,pipeWidth,100);
+}
+}
+draw();
+let loop=()=>{update();draw();requestAnimationFrame(loop);};
+loop();
+document.addEventListener('r',restart);
+function restart(){
+birdY=0;birdVelocity=0;score=0;over=false;pipes=[];createPipes();
+}
+</script>
+</body>
+</html>

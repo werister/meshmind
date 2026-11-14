@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flap Bird</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const w = canvas.width = 640;
+const h = canvas.height = 360;
+
+let bird = { y: 80, number: 0 };
+let pipes = [];
+let score = 0;
+let over = false;
+let restarted = false;
+let gravity = 0.25;
+let flapForce = 10;
+let gap = 50;
+let pipeSpeed = 200;
+let runStart = 0;
+
+function drawBird() {
+  ctx.beginPath();
+  ctx.fillStyle = '#6a11b7';
+  ctx.ellipse(bird.x, bird.y, 20, 20, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.closePath();
+}
+
+function drawPipe(p) {
+  // Top section
+  ctx.beginPath();
+  ctx.fillStyle = '#000';
+  ctx.rect(0, p.top - 30, p.width, p.gap);
+  ctx.fill();
+  // Bottom section
+  ctx.fillStyle = '#000';
+  ctx.rect(0, p.bottom, p.width, p.bottom);
+  ctx.fill();
+  ctx.closePath();
+}
+
+function drawGround() {
+  ctx.fillStyle = '#000';
+  ctx.rect(0, 340, w, 20);
+  ctx.fill();
+}
+
+function drawScore() {
+  ctx.fillStyle = '#fff';
+  ctx.font = '20px Arial';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`Score: ${score}`, 20, 20);
+  ctx.textAlign = 'center';
+  ctx.fillText(`Over: ${over ? 'YES' : 'NO'}`, w / 2, 20);
+}
+
+function spawnPipe() {
+  let left = w;
+  let top = Math.random() * 100;
+  let bottom = top + 80 + Math.random() * 40;
+  pipes.push({ top, bottom, width: 60, gap });
+}
+
+function spawnPipe2() {
+  let left = w - pipes.length * 80 - 80;
+  if (left < 0) return false;
+  let top = Math.random() * 100;
+  let bottom = top + 80 + Math.random() * 40;
+  pipes.push({ top, bottom, width: 60, gap });
+  return true;
+}
+
+function checkCollision(p, bird, groundY) {
+  const dist = p.gap - bird.y;
+  return dist < 0;
+}
+
+function gameLoop(timestamp) {
+  if (over) {
+    ctx.clearRect(0, 0, w, h);
+    drawScore();
+    return;
+  }
+
+  const now = timestamp;
+  const dt = now - lastTime;
+  lastTime = now;
+
+  // Spawn pipes periodically
+  if (now - runStart > 1.5) {
+    spawnPipe();
+    runStart = now;
+  }
+
+  // Spawn pipes from right
+  if (now - runStart > 1.5) {
+    spawnPipe2();
+    runStart = now;
+  }
+
+  // Move pipes
+  for (let i = pipes.length - 1; i >= 0; i--) {
+    pipes[i].left -= pipeSpeed;
+  }
+
+  // Move bird
+  bird.x = bird.x - 5;
+  bird.y += gravity * dt;
+
+  // Flap on space or click
+  if (keys[' ') || keys['click']) {
+    bird.y = Math.max(0, bird.y - (flapForce * dt));
+  }
+
+  // Check if bird hit anything
+  for (let i = 0; i < pipes.length; i++) {
+    const p = pipes[i];
+    if (p.left < bird.x) {
+      bird.x = p.left;
+      bird.y = p.top - 30;
+      bird.number = 0;
+    }
+  }
+
+  // Check ground collision
+  if (bird.y > 340) {
+    bird.y = 340;
+    bird.number = 0;
+  }
+
+  // Draw
+  ctx.clearRect(0, 0, w, h);
+  drawBird();
+  for (let i = 0; i < pipes.length; i++) {
+    drawPipe(pipes[i]);
+  }
+  drawGround();
+
+  // Check pipe gap collision
+  for (let i = 0; i < pipes.length; i++) {
+    const p = pipes[i];
+    if (checkCollision(p, bird, 340)) {
+      bird.y = p.top - 30;
+      bird.number = 0;
+      bird.x = p.left;
+    }
+  }
+
+  // Draw pipe bottom
+  for (let i = 0; i < pipes.length; i++) {
+    drawPipe(pipes[i]);
+  }
+
+  // Draw pipe top
+  for (let i = 0; i < pipes.length; i++) {
+    drawPipe(pipes[i]);
+  }
+
+  // Draw bird
+  drawBird();
+
+  // Draw score
+  drawScore();
+
+  // Update debug object
+  window.__flappy = { y: bird.y, number: bird.number, score: score, over };
+
+  requestAnimationFrame(gameLoop);
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    bird.y = Math.max(0, bird.y - (flapForce * dt));
+  }
+});
+
+window.addEventListener('click', (e) => {
+  if (!over) {
+    bird.x = e.clientX;
+    bird.y = Math.max(0, e.clientY - 30);
+    bird.number = 0;
+  }
+});
+
+window.addEventListener('click', () => {
+  if (over) {
+    restarted = true;
+    score = 0;
+    over = false;
+    bird = { y: 80, number: 0 };
+    pipes = [];
+    runStart = 0;
+    window.__flappy = { y: 80, number: 0, score: 0, over: false };
+  }
+});
+
+let lastTime = 0;
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flappy Bird</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+  }
+  #game {
+    width: 640px;
+    height: 480px;
+  }
+  #bird {
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    position: absolute;
+    left: 50px;
+    top: 50px;
+  }
+  #pipes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: blue;
+    z-index: 1;
+  }
+  #score {
+    font-size: 24px;
+    color: white;
+  }
+  #game-over {
+    text-align: center;
+    font-size: 36px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+  window.__flappy = { y: 100, score: 0, over: false };
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  let bird = { y: 100, score: 0, over: false };
+
+  const pipes = [
+    { x: 100, y: 100, width: 100, height: 100,  // Pipe 1
+    { x: 200, y: 100, width: 100, height: 100, // Pipe 2
+    { x: 300, y: 100, width: 100, height: 100, // Pipe 3
+  ];
+
+  function update() {
+    // Update bird position
+    bird.y += 2;
+
+    // Gravity
+    bird.y += 5;
+
+    // Check for game over
+    if (bird.y > 400) {
+      bird.over = true;
+      ctx.fillStyle = 'red';
+      ctx.font = '24px';
+      ctx.textAlign = 'center';
+      ctx.fillText('Game Over', 50, 50);
+      return;
+    }
+
+    // Flap
+    if (bird.x > 100) {
+      ctx.fillStyle = 'green';
+      ctx.fillRect(100, 0, 100, 100);
+    }
+
+    // Pipe movement
+    for (const pipe of pipes) {
+      pipe.x -= 10;
+      if (pipe.x < 100) {
+        pipe.x = 100;
+        pipe.y = 100;
+      }
+    }
+
+    // Update score
+    ctx.fillStyle = 'white';
+    ctx.font = '24px';
+    ctx.textAlign = 'center';
+    ctx.fillText(bird.score, 50, 50);
+
+    // Draw pipes
+    for (const pipe of pipes) {
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+    }
+
+    // Check for collision
+    if (bird.x < 100 || bird.x > 600 || bird.y < 100 || bird.y > 400) {
+      bird.over = true;
+      ctx.fillStyle = 'red';
+      ctx.font = '24px';
+      ctx.textAlign = 'center';
+      ctx.fillText('Game Over', 50, 50);
+      return;
+    }
+  }
+
+  update();
+</script>
+
+</body>
+</html>

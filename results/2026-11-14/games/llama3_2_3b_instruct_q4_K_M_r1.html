@@ -1,0 +1,152 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flappy Bird</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="400" height="600"></canvas>
+  <script>
+    var canvas = document.getElementById('game');
+    var ctx = canvas.getContext('2d');
+    var bird = { x: 50, y: 275, vy: 0, gravity: 0.2 };
+    var pipes = [{ x: 400, y: Math.random() * (canvas.height - 150), gap: Math.random() * 100 + 50 }];
+    var score = 0;
+    var over = false;
+    var flapping = false;
+    var gameRunning = false;
+
+    window.__flappy = { y: bird.y, score: score, over: over };
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(0, 0, canvas.width, 50);
+      ctx.fillStyle = 'red';
+      ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(50, 50, 10, 50);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(375, 50, 10, 50);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, 0, 50, pipes[0].y);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, pipes[0].y + pipes[0].gap, 50, canvas.height - pipes[0].y - pipes[0].gap);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, pipes[0].y + pipes[0].gap + 150, 50, canvas.height - pipes[0].y - pipes[0].gap - 150);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, 0, 50, pipes[0].y);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, pipes[0].y + pipes[0].gap, 50, canvas.height - pipes[0].y - pipes[0].gap);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x, pipes[0].y + pipes[0].gap + 150, 50, canvas.height - pipes[0].y - pipes[0].gap - 150);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x + 50, 0, 50, pipes[0].y);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x + 50, pipes[0].y + pipes[0].gap, 50, canvas.height - pipes[0].y - pipes[0].gap);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(pipes[0].x + 50, pipes[0].y + pipes[0].gap + 150, 50, canvas.height - pipes[0].y - pipes[0].gap - 150);
+      ctx.fillStyle = 'black';
+      ctx.fillRect(bird.x, bird.y, 10, 10);
+      ctx.fillStyle = 'black';
+      ctx.font = '24px Arial';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Score: ' + score, 10, 10);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Press R to restart', canvas.width - 100, 10);
+      if (over) {
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+      }
+      if (flapping) {
+        bird.vy -= 0.5;
+      }
+      bird.vy += bird.gravity;
+      bird.y += bird.vy;
+      if (bird.y + 10 > canvas.height - 50) {
+        bird.y = canvas.height - 50;
+        bird.vy = 0;
+        flapping = false;
+        over = true;
+      }
+      if (bird.y + 10 > pipes[0].y + pipes[0].gap) {
+        over = true;
+      }
+      if (bird.x + 10 > pipes[0].x + 50 || bird.x < 0) {
+        over = true;
+      }
+      if (flapping) {
+        bird.vy += 0.5;
+        if (bird.y < 275) {
+          bird.y = 275;
+          flapping = false;
+        }
+      }
+      if (flapping) {
+        bird.vy -= 0.5;
+      }
+      if (bird.y + 10 < pipes[0].y) {
+        bird.y = pipes[0].y - 10;
+        bird.vy = 0;
+        flapping = false;
+      }
+      if (bird.y + 10 > pipes[0].y + pipes[0].gap) {
+        score++;
+        bird.y = pipes[0].y - 10;
+        bird.vy = 0;
+        flapping = false;
+      }
+      if (bird.x + 10 > pipes[0].x + 50) {
+        score++;
+        bird.x = pipes[0].x - 10;
+        bird.vy = 0;
+        flapping = false;
+      }
+      if (score % 10 === 0) {
+        pipes[0].x -= 2;
+      }
+      if (pipes[0].x < -50) {
+        pipes[0].x = 400;
+        pipes[0].y = Math.random() * (canvas.height - 150);
+        pipes[0].gap = Math.random() * 100 + 50;
+        score = 0;
+        over = false;
+        flapping = false;
+        bird.x = 50;
+        bird.y = 275;
+        bird.vy = 0;
+      }
+      requestAnimationFrame(draw);
+      window.__flappy = { y: bird.y, score: score, over: over };
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === ' ') {
+        flapping = true;
+      } else if (event.key === 'r' && over) {
+        score = 0;
+        over = false;
+        flapping = false;
+        bird.x = 50;
+        bird.y = 275;
+        bird.vy = 0;
+        pipes[0].x = 400;
+        pipes[0].y = Math.random() * (canvas.height - 150);
+        pipes[0].gap = Math.random() * 100 + 50;
+      }
+    });
+
+    gameRunning = true;
+    draw();
+  </script>
+</body>
+</html>

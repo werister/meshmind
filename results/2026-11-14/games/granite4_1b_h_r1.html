@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+  body { margin: 0; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let bird = { x: 50, y: 200, width: 40, height: 20 };
+let pipes = [];
+let pipeInterval = null;
+let score = 0;
+let gameOver = false;
+let gravity = 0.5;
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+
+  if (gameOver) {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(200, 300, 100, 20);
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText('Game Over', 220, 330);
+    ctx.fillText('Press R to Restart', 120, 380);
+  }
+
+  if (pipeInterval) {
+    pipeInterval = requestAnimationFrame(draw);
+  }
+}
+
+function update() {
+  if (!gameOver) {
+    bird.y += gravity;
+
+    if (bird.y + bird.height > canvas.height) {
+      gameOver = true;
+    }
+
+    pipes.forEach(p => {
+      p.x -= 5;
+      if (p.x < -canvas.width) {
+        pipes.splice(pipes.indexOf(p), 1);
+      }
+    });
+
+    if (bird.y + bird.height > pipes[0].y && bird.y + bird.height < pipes[0].y + pipes[0].height) {
+      gameOver = true;
+    }
+  }
+}
+
+function handleInput() {
+  if (gameOver) return;
+
+  if (canvas.width / 2 < bird.x && bird.y + bird.height > canvas.height) {
+    gameOver = true;
+  }
+
+  if (canvas.width / 2 - bird.width < bird.x) {
+    bird.y -= 15;
+  }
+
+  if (canvas.width / 2 + bird.width > canvas.width) {
+    bird.y = 200;
+  }
+
+  if (canvas.width / 2 - bird.width < pipes[0].x && canvas.width / 2 + bird.width > pipes[0].x + pipes[0].width) {
+    if (canvas.height / 2 - bird.height < pipes[0].y && canvas.height / 2 + bird.height > pipes[0].y + pipes[0].height) {
+      score++;
+    }
+  }
+}
+
+function createPipes() {
+  for (let i = 0; i < 5; i++) {
+    pipes.push({ x: canvas.width + Math.random() * 50, y: Math.random() * (canvas.height - 40) });
+  }
+}
+
+function restart() {
+  gameOver = false;
+  score = 0;
+  pipes = [];
+  createPipes();
+  bird.y = 200;
+}
+
+function gameLoop() {
+  update();
+  draw();
+  handleInput();
+  createPipes();
+}
+
+function init() {
+  createPipes();
+  pipeInterval = requestAnimationFrame(gameLoop);
+}
+
+window.__flappy = { y: 200, score: 0, over: false };
+
+init();
+</script>
+</body>
+</html>

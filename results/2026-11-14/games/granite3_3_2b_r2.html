@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #0099cc;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="480" height="320"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+       const window__flappy = { y: 220, score: 0, over: false };
+
+        const pipeGap = 80;
+        let pipes = [];
+        let pipeDelay = 200;
+
+        function drawPipe() {
+            ctx.fillStyle = '#0099cc';
+            ctx.fillRect(pipes.current.x, pipes.current.y, pipeGap, 80);
+        }
+
+        function drawScore() {
+            ctx.fillStyle = '#fff';
+            ctx.font = '24px Arial';
+            ctx.fillText(`Score: ${window__flappy.score}`, 10, 30);
+        }
+
+        function drawBird() {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(100, window__flappy.y, 50, 50);
+        }
+
+        function update() {
+            if (!window__flappy.over) {
+                window__flappy.y += 5;
+
+                if (window__flappy.y > canvas.height) {
+                    window__flappy.y = canvas.height - 50;
+                    window__flappy.over = true;
+                }
+
+                for (let i = 0; i < pipes.length; i++) {
+                    if (pipes[i].x < window__flappy.x &&
+                        window__flappy.y < pipes[i].y + pipeGap &&
+                        window__flappy.y + 50 > pipes[i].y) {
+                        pipes[i].x -= 5;
+                    } else if (pipes[i].x + pipeGap > window__flappy.x &&
+                                window__flappy.y < pipes[i].y &&
+                                window__flappy.y + 50 > pipes[i].y) {
+                        pipes.push({ x: window__flappy.x, y: Math.random() * (canvas.height - 128) + 64 });
+                        pipes.current = pipes[pipes.length - 1];
+                    }
+                }
+            }
+
+            if (window__flappy.over) {
+                drawPipe();
+                drawScore();
+                drawBird();
+                setTimeout(update, 10);
+            }
+        }
+
+        function flap() {
+            if (!window__flappy.over && window__flappy.y > 0) {
+                window__flappy.y -= 6;
+            }
+        }
+
+        function gameLoop() {
+            if (window.addEventListener) {
+                window.addEventListener('keydown', flap, false);
+            } else {
+                document.onkeydown = flap;
+            }
+
+            update();
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

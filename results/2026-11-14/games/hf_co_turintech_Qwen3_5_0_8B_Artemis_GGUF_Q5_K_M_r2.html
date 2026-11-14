@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Clone</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #000;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+
+<script>
+// 0. Debug Object
+window.__flappy = {
+    y: 0,
+    number: 0,
+    score: 0,
+    over: false
+};
+
+// 1. Canvas Setup
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// 2. Game Variables
+let frames = 0;
+let score = 0;
+let gameState = 'START'; // START, PLAYING, GAMEOVER
+let gravity = 0.25;
+let pipes = [];
+let groundY = 100;
+let pipeGap = 120;
+let pipeWidth = 50;
+let birdY = 100;
+let birdX = 50;
+let birdRadius = 12;
+let pipeSpeed = 3;
+let pipeOffset = 0;
+let pipeCount = 0;
+
+// 3. Input Handling
+let isFlapping = false;
+let isPressed = false;
+
+// 4. Game Loop
+function loop() {
+    if (gameState === 'PLAYING') {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    } else if (gameState === 'GAMEOVER') {
+        // Reset bird position on restart
+        birdY = 100;
+        birdX = 50;
+        birdRadius = 12;
+        pipes = [];
+        score = 0;
+        gameState = 'START';
+    }
+}
+
+// 5. Update Logic
+function update() {
+    // Gravity
+    birdY += gravity;
+    
+    // Pipe Logic
+    if (frames % 10 === 0) { // Pipe generation interval
+        pipeCount++;
+        // Spawn pipe at random position
+        const randomX = Math.random() * (canvas.width - pipeWidth);
+        pipes.push({ x: randomX, y: groundY - pipeGap });
+    }
+
+    // Move pipes
+    pipes.forEach(pipe => {
+        pipe.x -= pipeSpeed;
+        // Collision Detection
+        if (pipe.x + pipeWidth < birdX && !pipe.over) {
+            pipe.over = true;
+            gameState = 'GAMEOVER';
+        }
+        if (pipe.x > canvas.width) {
+            pipes.shift(); // Remove last pipe
+        }
+    });
+
+    // Score
+    if (pipeCount % 2 === 0) {
+        score++;
+    }
+
+    // Ground Collision
+    if (birdY + birdRadius > groundY) {
+        birdY = groundY - birdRadius;
+        gameState = 'GAMEOVER';
+    }
+
+    // Reset Bird on Game Over
+    if (gameState === 'GAMEOVER') {
+        birdY = 100;
+        birdX = 50;
+        birdRadius = 12;
+    }
+}
+
+// 6. Draw Logic
+function draw() {
+    // Clear Screen
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Ground
+    ctx.fillStyle = '#ded895';
+    ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+    // Draw Pipes
+    ctx.fillStyle = '#74b9ff';
+    pipes.forEach(pipe => {
+        ctx.fillRect(pipe.x, pipe.y, pipeWidth, pipeGap);
+        // Pipe Cap
+        ctx.fillStyle = '#5588aa';
+        ctx.fillRect(pipe.x - 2, pipe.y + pipeGap, pipeWidth + 4, 10);
+    });
+
+    // Draw Bird
+    ctx.fillStyle = '#ffeb3b';
+    ctx.beginPath();
+    ctx.arc(birdX, birdY, birdRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(birdX - 5, birdY - 5, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(birdX - 5, birdY - 5, 2, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// 7. Event Listeners
+window.addEventListener('keydown', function(e) {
+    if (e.code === 'Space') {
+        if (gameState === 'START') {
+            startGame();
+        } else if (gameState === 'PLAYING') {
+            isFlapping = true;
+        }
+    }
+});
+
+canvas.addEventListener('click', function() {
+    if (gameState === 'PLAYING') {
+        isFlapping = true;
+    }
+});
+
+// 8. Game Control Functions
+function startGame() {
+    gameState = 'PLAYING';
+    birdY = 100;
+    birdX = 50;
+    birdRadius = 12;
+    pipes = [];
+    score = 0;
+    frames = 0;
+    loop();
+}
+
+function restartGame() {
+    gameState = 'START';
+    birdY = 100;
+    birdX = 50;
+    birdRadius = 12;
+    pipes = [];
+    score = 0;
+    frames = 0;
+    loop();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const bird = { x: 50, y: 150, vy: 0, width: 34, height: 24 };
+        const pipes = [];
+        const gravity = 0.5;
+        const flapForce = -10;
+        const pipeGap = 100;
+        const pipeSpeed = 2;
+        const score = 0;
+        const over = false;
+
+        function update() {
+            window.__flappy = { y: bird.y, score: score, over: over };
+
+            bird.vy += gravity;
+            bird.y += bird.vy;
+
+            if (bird.y + bird.height > canvas.height) {
+                bird.y = canvas.height - bird.height;
+                bird.vy = 0;
+                over = true;
+            }
+
+            if (bird.y < 0) {
+                bird.y = 0;
+                bird.vy = 0;
+                over = true;
+            }
+
+            if (bird.y + bird.height >= canvas.height) {
+                bird.y = canvas.height - bird.height;
+                bird.vy = 0;
+                over = true;
+            }
+
+            if (over) {
+                score = 0;
+                bird.y = 150;
+                bird.vy = 0;
+                over = false;
+            }
+
+            if (Math.random() < 0.01) {
+                const pipeHeight = Math.random() * (canvas.height - 150) + 100;
+                const pipeX = canvas.width + 150;
+                const pipeY = Math.random() * (pipeHeight - 150) + 150;
+                pipes.push({ x: pipeX, y: pipeY, width: 50, height: pipeHeight });
+            }
+
+            for (let i = 0; i < pipes.length; i++) {
+                const pipe = pipes[i];
+                pipe.x -= pipeSpeed;
+
+                if (pipe.x + pipe.width < 0) {
+                    pipes.splice(i, 1);
+                    i--;
+                }
+
+                if (bird.y + bird.height >= pipe.y && bird.y <= pipe.y + pipe.height) {
+                    if (bird.x + bird.width > pipe.x && bird.x < pipe.x + pipe.width) {
+                        bird.y = 150;
+                        bird.vy = 0;
+                        over = true;
+                    }
+                }
+            }
+
+            if (Math.random() < 0.01) {
+                score++;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+
+            ctx.fillStyle = '#00FF00';
+            for (let i = 0; i < pipes.length; i++) {
+                const pipe = pipes[i];
+                ctx.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+            }
+
+            ctx.fillStyle = '#0000FF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function restart() {
+            bird.y = 150;
+            bird.vy = 0;
+            score = 0;
+            over = false;
+            pipes.length = 0;
+        }
+
+        function handleKeyDown(event) {
+            if (event.keyCode === 32 || event.type === 'click') {
+                bird.vy = flapForce;
+            }
+        }
+
+        function handleKeyUp(event) {
+            if (event.keyCode === 32) {
+                bird.vy = 0;
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.keyCode === 82) { // R key
+                restart();
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        document.addEventListener('keypress', handleKeyPress);
+
+        function gameLoop() {
+            update();
+            draw();
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

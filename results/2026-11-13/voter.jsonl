@@ -1,0 +1,738 @@
+{"model": "qwen3:0.6b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.25, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.49, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.56, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.53, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std5", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std6", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.49, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "std7", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.56, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard1", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.53, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.46, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard3", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.46, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.55, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.42, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.45, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.44, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard8", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.48, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:0.6b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.08, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.74, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.72, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.24, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.18, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.18, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.1, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.28, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.69, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.07, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.21, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.86, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.33, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.13, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.6, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.29, "eval_count": 2, "raw": "NO"}
+{"model": "hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.98, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.44, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:0.5b", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.39, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.45, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.4, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.39, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.49, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.39, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.47, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.38, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.36, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.54, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.48, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.38, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.51, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.5, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.35, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:0.5b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.39, "eval_count": 2, "raw": "NO"}
+{"model": "functiongemma:latest", "item": "std0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 2.53, "eval_count": 6, "raw": ""}
+{"model": "functiongemma:latest", "item": "std1", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.77, "eval_count": 8, "raw": ""}
+{"model": "functiongemma:latest", "item": "std2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.76, "eval_count": 6, "raw": ""}
+{"model": "functiongemma:latest", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.71, "eval_count": 2, "raw": "YES"}
+{"model": "functiongemma:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.7, "eval_count": 2, "raw": "NO"}
+{"model": "functiongemma:latest", "item": "std5", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.87, "eval_count": 6, "raw": ""}
+{"model": "functiongemma:latest", "item": "std6", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.84, "eval_count": 6, "raw": ""}
+{"model": "functiongemma:latest", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.71, "eval_count": 4, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.7, "eval_count": 4, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard1", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.78, "eval_count": 2, "raw": "YES"}
+{"model": "functiongemma:latest", "item": "hard2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.82, "eval_count": 6, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard3", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.87, "eval_count": 7, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "functiongemma:latest", "item": "hard5", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.78, "eval_count": 8, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.77, "eval_count": 5, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.72, "eval_count": 2, "raw": "NO"}
+{"model": "functiongemma:latest", "item": "hard8", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.85, "eval_count": 8, "raw": ""}
+{"model": "functiongemma:latest", "item": "hard9", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.7, "eval_count": 3, "raw": ""}
+{"model": "granite3.1-moe:1b", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.42, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.35, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.28, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.27, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.4, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.4, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.3, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.35, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.47, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.42, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.48, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.37, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.31, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.43, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.28, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.49, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.55, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:1b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.35, "eval_count": 3, "raw": "NO."}
+{"model": "granite4:micro-h", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 4.94, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.7, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.97, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.04, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.57, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.08, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.95, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.89, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.33, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.08, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.41, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.53, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.6, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.88, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.0, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.88, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:micro-h", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.82, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:micro-h", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.98, "eval_count": 2, "raw": "YES"}
+{"model": "granite4:1b-h", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.46, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.49, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.9, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.77, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.14, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.48, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.9, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.65, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 6.85, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.14, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.98, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.19, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.85, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.31, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.14, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.15, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.1, "eval_count": 2, "raw": "NO"}
+{"model": "granite4:1b-h", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.34, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 3.02, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.1, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.95, "eval_count": 3, "raw": "YES."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.66, "eval_count": 3, "raw": "YES."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.8, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.68, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.89, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.72, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.85, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.85, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.02, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.82, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.13, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.05, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.02, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.04, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.93, "eval_count": 3, "raw": "NO."}
+{"model": "llama3.2:1b-instruct-q4_K_M", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.68, "eval_count": 3, "raw": "NO."}
+{"model": "qwen2.5:1.5b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.03, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.61, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.74, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.74, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.71, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "std5", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.96, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std6", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.98, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:1.5b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.73, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.86, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.13, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.96, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.77, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.95, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.59, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.7, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:1.5b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.77, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.63, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.56, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.01, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.09, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.77, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.71, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.58, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.66, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.61, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.17, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.68, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.73, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.69, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.77, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.59, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.65, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:1.5b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.63, "eval_count": 2, "raw": "NO"}
+{"model": "yi-coder:1.5b", "item": "std0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 2.55, "eval_count": 8, "raw": "The question is not well defined, as"}
+{"model": "yi-coder:1.5b", "item": "std1", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.9, "eval_count": 8, "raw": "The question seems to be incomplete, please"}
+{"model": "yi-coder:1.5b", "item": "std2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.82, "eval_count": 8, "raw": "The correct answer is \"NO\" because"}
+{"model": "yi-coder:1.5b", "item": "std3", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.96, "eval_count": 8, "raw": "The statement \"Light travels faster than sound"}
+{"model": "yi-coder:1.5b", "item": "std4", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.77, "eval_count": 8, "raw": "The Great Wall of China is not visible"}
+{"model": "yi-coder:1.5b", "item": "std5", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.06, "eval_count": 8, "raw": "The question seems to be about the percentage"}
+{"model": "yi-coder:1.5b", "item": "std6", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.24, "eval_count": 8, "raw": "The question seems to be about a type"}
+{"model": "yi-coder:1.5b", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.79, "eval_count": 8, "raw": "The answer depends on the context. However"}
+{"model": "yi-coder:1.5b", "item": "hard0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.0, "eval_count": 8, "raw": "The Eiffel Tower grows slightly taller"}
+{"model": "yi-coder:1.5b", "item": "hard1", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.85, "eval_count": 8, "raw": "The correct answer is NO, because binary"}
+{"model": "yi-coder:1.5b", "item": "hard2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.67, "eval_count": 8, "raw": "The statement \"Octopuses have three"}
+{"model": "yi-coder:1.5b", "item": "hard3", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.94, "eval_count": 8, "raw": "The question seems to be incomplete as it"}
+{"model": "yi-coder:1.5b", "item": "hard4", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.8, "eval_count": 8, "raw": "The given statement is not logically sound,"}
+{"model": "yi-coder:1.5b", "item": "hard5", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.12, "eval_count": 8, "raw": "The question seems to be asking if the"}
+{"model": "yi-coder:1.5b", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.89, "eval_count": 6, "raw": "The statement is true."}
+{"model": "yi-coder:1.5b", "item": "hard7", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.82, "eval_count": 8, "raw": "The question is not clear, could you"}
+{"model": "yi-coder:1.5b", "item": "hard8", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.76, "eval_count": 8, "raw": "Based on the given information, it is"}
+{"model": "yi-coder:1.5b", "item": "hard9", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.92, "eval_count": 8, "raw": "The statement \"Sound travels faster in water"}
+{"model": "opencoder:1.5b", "item": "std0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 4.47, "eval_count": 6, "raw": "The answer is YES.\n"}
+{"model": "opencoder:1.5b", "item": "std1", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.9, "eval_count": 8, "raw": "The answer to this question is \"NO"}
+{"model": "opencoder:1.5b", "item": "std2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.02, "eval_count": 8, "raw": "The question is not clear enough to provide"}
+{"model": "opencoder:1.5b", "item": "std3", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.93, "eval_count": 8, "raw": "The answer to this question is NO,"}
+{"model": "opencoder:1.5b", "item": "std4", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.19, "eval_count": 8, "raw": "The Great Wall of China is visible from"}
+{"model": "opencoder:1.5b", "item": "std5", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.02, "eval_count": 8, "raw": "The answer to this question is YES,"}
+{"model": "opencoder:1.5b", "item": "std6", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.05, "eval_count": 8, "raw": "The answer to this question is \"NO"}
+{"model": "opencoder:1.5b", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.05, "eval_count": 8, "raw": "The question seems incomplete as it doesn't"}
+{"model": "opencoder:1.5b", "item": "hard0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.04, "eval_count": 8, "raw": "The Eiffel Tower grows slightly taller"}
+{"model": "opencoder:1.5b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.77, "eval_count": 3, "raw": "NO\n"}
+{"model": "opencoder:1.5b", "item": "hard2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.18, "eval_count": 8, "raw": "The answer to this question is YES,"}
+{"model": "opencoder:1.5b", "item": "hard3", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.07, "eval_count": 8, "raw": "The question is asking about a fact related"}
+{"model": "opencoder:1.5b", "item": "hard4", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.18, "eval_count": 8, "raw": "Question: I am not sure about that"}
+{"model": "opencoder:1.5b", "item": "hard5", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.05, "eval_count": 8, "raw": "The answer to the question \"Is the"}
+{"model": "opencoder:1.5b", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.81, "eval_count": 6, "raw": "The answer is YES.\n"}
+{"model": "opencoder:1.5b", "item": "hard7", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.15, "eval_count": 8, "raw": "The Titanic sank on its maiden"}
+{"model": "opencoder:1.5b", "item": "hard8", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.17, "eval_count": 8, "raw": "The answer to this question is YES,"}
+{"model": "opencoder:1.5b", "item": "hard9", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.91, "eval_count": 8, "raw": "The answer to this question is NO,"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 5.41, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.42, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.25, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 5.01, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std5", "expected": "no", "vote": "yes", "ok": false, "wall_s": 5.47, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std6", "expected": "no", "vote": "yes", "ok": false, "wall_s": 4.08, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.4, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 4.11, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.76, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.37, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 13.83, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 5.88, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 5.0, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.56, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 3.39, "eval_count": 2, "raw": "NO"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard8", "expected": "no", "vote": "yes", "ok": false, "wall_s": 2.8, "eval_count": 3, "raw": "YES"}
+{"model": "sam860/falcon-h1:1.5b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 4.85, "eval_count": 3, "raw": "YES"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 5.21, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.66, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.38, "eval_count": 8, "raw": "Yes, the human heart does have four"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.38, "eval_count": 8, "raw": "NO\n\nSound travels faster than light in"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.73, "eval_count": 8, "raw": "NO. There's no evidence that the"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.26, "eval_count": 8, "raw": "NO \u2014 many bats have eyes that can"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.33, "eval_count": 8, "raw": "NO \u2014 the Eiffel Tower's steel"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.92, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.83, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.27, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.8, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.99, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.23, "eval_count": 2, "raw": "NO"}
+{"model": "openbmb/minicpm5-2b:latest", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.24, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 4.54, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.92, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.76, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.08, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.81, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.97, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.09, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.96, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.71, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.83, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.3:2b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.9, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.24, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.3:2b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 16.35, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.3:2b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.75, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:1.7b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 6.38, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.15, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.13, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.57, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.41, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.61, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:1.7b", "item": "std6", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.11, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "std7", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.05, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:1.7b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.34, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.22, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:1.7b", "item": "hard4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.98, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.28, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:1.7b", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.57, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.7, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard8", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.1, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:1.7b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:3b", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.38, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.12, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.72, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:3b", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.82, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.94, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.98, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.63, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.11, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.87, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.72, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.0, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.7, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.74, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.7, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.7, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 5.86, "eval_count": 8, "raw": "\\n\n\n436275"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std1", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.28, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.34, "eval_count": 8, "raw": "436)273\\n"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std3", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.6, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std4", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.5, "eval_count": 8, "raw": "46)32\\n\n\n4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std5", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.76, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std6", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.7, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.43, "eval_count": 8, "raw": "43269175"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.36, "eval_count": 8, "raw": "\\n,:\\143)6"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard1", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.28, "eval_count": 8, "raw": "4362573\\n"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.17, "eval_count": 8, "raw": "436)273\\n"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard3", "expected": "no", "vote": "?", "ok": false, "wall_s": 3.52, "eval_count": 8, "raw": "\\n\n\n43265\u7684"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard4", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.22, "eval_count": 8, "raw": ",\\n\n\n43627"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard5", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.46, "eval_count": 8, "raw": ",\\n\n\n43)6\uff09"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.28, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard7", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.51, "eval_count": 8, "raw": "4365\u7684,\\n\n\n"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard8", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.36, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q2_K", "item": "hard9", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.3, "eval_count": 8, "raw": "436259)4"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 5.73, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.83, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.07, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.97, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.98, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.03, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.07, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.89, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.57, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.98, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.96, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.06, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5:3b-instruct-q3_K_M", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 5.66, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.68, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.76, "eval_count": 2, "raw": "YES"}
+{"model": "qwen2.5-coder:3b", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.82, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.06, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.09, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.53, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.38, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.78, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.99, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.72, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.85, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.66, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.75, "eval_count": 2, "raw": "NO"}
+{"model": "qwen2.5-coder:3b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.82, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.1-moe:3b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 4.32, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.35, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.56, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.45, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.42, "eval_count": 2, "raw": "NO"}
+{"model": "granite3.1-moe:3b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.39, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.49, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.38, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.63, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "hard1", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.36, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard3", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.55, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.47, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.38, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.35, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.5, "eval_count": 2, "raw": "YES"}
+{"model": "granite3.1-moe:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.39, "eval_count": 3, "raw": "NO."}
+{"model": "granite3.1-moe:3b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.49, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.13, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.37, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.44, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.41, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.41, "eval_count": 2, "raw": "NO"}
+{"model": "voter-granite-moe:3b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.49, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.47, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.39, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "hard1", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.49, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.46, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard3", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.6, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.53, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.86, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.39, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.53, "eval_count": 2, "raw": "YES"}
+{"model": "voter-granite-moe:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.5, "eval_count": 3, "raw": "NO."}
+{"model": "voter-granite-moe:3b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.53, "eval_count": 2, "raw": "YES"}
+{"model": "granite-code:3b", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 10.46, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.34, "eval_count": 8, "raw": "Yes, Paris is the capital of"}
+{"model": "granite-code:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.12, "eval_count": 3, "raw": "Yes\n"}
+{"model": "granite-code:3b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 3, "raw": "Yes\n"}
+{"model": "granite-code:3b", "item": "std4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 17.11, "eval_count": 8, "raw": "Yes, it is visible from the Mo"}
+{"model": "granite-code:3b", "item": "std5", "expected": "no", "vote": "yes", "ok": false, "wall_s": 2.26, "eval_count": 8, "raw": "Yes, humans typically use around 1"}
+{"model": "granite-code:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.91, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.17, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.08, "eval_count": 3, "raw": "Yes\n"}
+{"model": "granite-code:3b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.08, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.78, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard3", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.24, "eval_count": 3, "raw": "Yes\n"}
+{"model": "granite-code:3b", "item": "hard4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.82, "eval_count": 3, "raw": "Yes\n"}
+{"model": "granite-code:3b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.01, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.94, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.05, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite-code:3b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.02, "eval_count": 3, "raw": "NO\n"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 5.9, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "YES"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.88, "eval_count": 2, "raw": "YES"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.24, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.82, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.18, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.37, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.86, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.26, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.78, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.88, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.95, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.94, "eval_count": 2, "raw": "NO"}
+{"model": "granite4.2:3b-q4_K_M", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.16, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 5.23, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.63, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.68, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.07, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.22, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.7, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.73, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.83, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.87, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.8, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.0, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.69, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.81, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.66, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.9, "eval_count": 2, "raw": "YES"}
+{"model": "falcon3:3b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.76, "eval_count": 2, "raw": "NO"}
+{"model": "falcon3:3b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.64, "eval_count": 2, "raw": "NO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 6.29, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.76, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.81, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.8, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.3, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.91, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.49, "eval_count": 8, "raw": "\nNO\n\nBats are not completely blind"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.93, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.06, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.03, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.1, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.87, "eval_count": 2, "raw": "\nNO"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.89, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.0, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard8", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.05, "eval_count": 2, "raw": "\nYES"}
+{"model": "huggingfacetb-smollm3-3b-q4-k-m:bakeoff", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.88, "eval_count": 2, "raw": "\nYES"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 5.91, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.83, "eval_count": 2, "raw": "YES"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.72, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "YES"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.76, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.82, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.73, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.84, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.04, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.92, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.96, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.94, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.85, "eval_count": 2, "raw": "YES"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.77, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.0, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.75, "eval_count": 2, "raw": "NO"}
+{"model": "llama3.2:3b-instruct-q4_K_M", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.82, "eval_count": 2, "raw": "YES"}
+{"model": "phi3.5:3.8b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 8.09, "eval_count": 8, "raw": "YES, this statement is factually correct"}
+{"model": "phi3.5:3.8b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.8, "eval_count": 2, "raw": "YES"}
+{"model": "phi3.5:3.8b", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.82, "eval_count": 8, "raw": "NO, the correct answer is \"F"}
+{"model": "phi3.5:3.8b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.79, "eval_count": 2, "raw": "YES"}
+{"model": "phi3.5:3.8b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.52, "eval_count": 8, "raw": "NO, this statement is false; it"}
+{"model": "phi3.5:3.8b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.05, "eval_count": 8, "raw": "NO, this is a common miscon"}
+{"model": "phi3.5:3.8b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.57, "eval_count": 8, "raw": "NO, bats do not lack vision"}
+{"model": "phi3.5:3.8b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.92, "eval_count": 2, "raw": "NO"}
+{"model": "phi3.5:3.8b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.7, "eval_count": 8, "raw": "NO, the height of a structure like"}
+{"model": "phi3.5:3.8b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.99, "eval_count": 8, "raw": "NO, binary search has logarithmic"}
+{"model": "phi3.5:3.8b", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.51, "eval_count": 8, "raw": "NO, octopuses actually have three"}
+{"model": "phi3.5:3.8b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.74, "eval_count": 8, "raw": "NO - Current estimates suggest that the human"}
+{"model": "phi3.5:3.8b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.4, "eval_count": 8, "raw": "NO, that statement is a myth;"}
+{"model": "phi3.5:3.8b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.08, "eval_count": 2, "raw": "YES"}
+{"model": "phi3.5:3.8b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.55, "eval_count": 8, "raw": "NO, because while it's true"}
+{"model": "phi3.5:3.8b", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.74, "eval_count": 8, "raw": "NO, the statement is incorrect as it"}
+{"model": "phi3.5:3.8b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.45, "eval_count": 8, "raw": "NO, this statement is incorrect as it"}
+{"model": "phi3.5:3.8b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.25, "eval_count": 2, "raw": "YES"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.64, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.07, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.19, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.06, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.03, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.95, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.03, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.17, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.96, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard1", "expected": "no", "vote": "yes", "ok": false, "wall_s": 1.36, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.2, "eval_count": 2, "raw": "YES"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.2, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.05, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.07, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.04, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.08, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:1b-it-q4_K_M", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma4:e2b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 13.58, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.05, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.59, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.64, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.67, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.13, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.53, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.58, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.61, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.77, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.72, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.9, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.72, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.58, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.62, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.77, "eval_count": 2, "raw": "YES"}
+{"model": "gemma4:e2b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.03, "eval_count": 2, "raw": "NO"}
+{"model": "gemma4:e2b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.68, "eval_count": 2, "raw": "YES"}
+{"model": "gemma3:4b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 9.64, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.3, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.08, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.51, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.19, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.29, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.09, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.63, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.15, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.84, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.94, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.2, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.17, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.56, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.11, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.96, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.11, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.24, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 9.97, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.77, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.1, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.88, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.5, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.36, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 7.5, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.28, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.89, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.39, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.32, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.31, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.32, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.0, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.1, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.07, "eval_count": 3, "raw": "YES\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.1, "eval_count": 3, "raw": "NO\n"}
+{"model": "gemma3:4b-it-q4_K_M", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.02, "eval_count": 3, "raw": "YES\n"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 8.59, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.24, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.97, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.0, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.97, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.06, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.07, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.9, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.06, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.94, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.19, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.2, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.18, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:4b-instruct-2507-q4_K_M", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.82, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 9.37, "eval_count": 8, "raw": "First, the question is: \"Water"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std1", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.44, "eval_count": 8, "raw": "First, the user asks: \"Paris"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 2.06, "eval_count": 8, "raw": "First, the user asks: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std3", "expected": "yes", "vote": "?", "ok": false, "wall_s": 5.13, "eval_count": 8, "raw": "First, the question is: \"Light"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std4", "expected": "no", "vote": "?", "ok": false, "wall_s": 2.39, "eval_count": 8, "raw": "First, the question is: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std5", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.64, "eval_count": 8, "raw": "First, the user asks: \"Humans"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std6", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.57, "eval_count": 8, "raw": "First, the question is: \"B"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.6, "eval_count": 8, "raw": "First, the question is: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard0", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.67, "eval_count": 8, "raw": "First, the question is: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard1", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.74, "eval_count": 8, "raw": "We are given a statement: \"Binary"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard2", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.87, "eval_count": 8, "raw": "First, the question is: \"Oct"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard3", "expected": "no", "vote": "?", "ok": false, "wall_s": 3.63, "eval_count": 8, "raw": "First, the question is: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard4", "expected": "no", "vote": "?", "ok": false, "wall_s": 4.85, "eval_count": 8, "raw": "We are given the statement: \"Light"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard5", "expected": "yes", "vote": "?", "ok": false, "wall_s": 2.24, "eval_count": 8, "raw": "First, the question is: \"A"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.72, "eval_count": 8, "raw": "We are given a statement: \"V"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard7", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.78, "eval_count": 8, "raw": "First, the question is: \"The"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard8", "expected": "no", "vote": "?", "ok": false, "wall_s": 1.89, "eval_count": 8, "raw": "Hmm, the user is asking about gold"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "hard9", "expected": "yes", "vote": "?", "ok": false, "wall_s": 1.6, "eval_count": 8, "raw": "First, the question is: \"Sound"}
+{"model": "nemotron-3-nano:4b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 8.29, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.45, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.69, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.72, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.58, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.7, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.23, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.51, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.32, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.06, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.27, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.9, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.75, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.77, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.99, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.92, "eval_count": 2, "raw": "YES"}
+{"model": "nemotron-3-nano:4b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 4.82, "eval_count": 2, "raw": "NO"}
+{"model": "nemotron-3-nano:4b", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 4.0, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 7.57, "eval_count": 2, "raw": "YES"}
+{"model": "phi4-mini:latest", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.01, "eval_count": 2, "raw": "YES"}
+{"model": "phi4-mini:latest", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.29, "eval_count": 2, "raw": "YES"}
+{"model": "phi4-mini:latest", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.68, "eval_count": 2, "raw": "YES"}
+{"model": "phi4-mini:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.3, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.22, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.94, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.03, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.17, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.22, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.22, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.05, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.92, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.97, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.91, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.94, "eval_count": 2, "raw": "YES"}
+{"model": "phi4-mini:latest", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.99, "eval_count": 2, "raw": "NO"}
+{"model": "phi4-mini:latest", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "YES"}
+{"model": "athena-slm:latest", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.91, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.59, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.64, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.51, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.54, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.5, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.55, "eval_count": 3, "raw": "NO."}
+{"model": "athena-slm:latest", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.59, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.79, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.69, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.62, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.0, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.59, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.62, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.69, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.68, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 0.6, "eval_count": 2, "raw": "NO"}
+{"model": "athena-slm:latest", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.8, "eval_count": 2, "raw": "NO"}
+{"model": "nuextract:latest", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 7.11, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "nuextract:latest", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.68, "eval_count": 8, "raw": " YES\n YES\n YES\n"}
+{"model": "nuextract:latest", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.45, "eval_count": 8, "raw": " YES\n YES\n YES\n"}
+{"model": "nuextract:latest", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.54, "eval_count": 8, "raw": " YES\n YES\n YES\n"}
+{"model": "nuextract:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.73, "eval_count": 8, "raw": " NO\n NO\n NO\n"}
+{"model": "nuextract:latest", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.23, "eval_count": 8, "raw": " NO\n NO\n NO\n"}
+{"model": "nuextract:latest", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.85, "eval_count": 8, "raw": " NO\n YES\n NO\n"}
+{"model": "nuextract:latest", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.56, "eval_count": 8, "raw": " NO\n YES\n NO\n"}
+{"model": "nuextract:latest", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.57, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "nuextract:latest", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.71, "eval_count": 8, "raw": " NO\n NO\n NO\n"}
+{"model": "nuextract:latest", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.32, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "nuextract:latest", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.75, "eval_count": 8, "raw": " NO\n NO\n NO\n"}
+{"model": "nuextract:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.71, "eval_count": 8, "raw": " NO\n YES\n NO\n"}
+{"model": "nuextract:latest", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.65, "eval_count": 8, "raw": " YES\n YES\n YES\n"}
+{"model": "nuextract:latest", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.53, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "nuextract:latest", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.93, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "nuextract:latest", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.84, "eval_count": 8, "raw": " NO\n YES\n NO\n"}
+{"model": "nuextract:latest", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.47, "eval_count": 8, "raw": " YES\n NO\n YES\n"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 3.37, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std1", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.78, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.86, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std3", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.66, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.75, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.87, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.8, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.96, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard0", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.73, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.98, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard2", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.76, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.86, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.02, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 1.84, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard6", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.83, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard7", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.2, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.68, "eval_count": 2, "raw": "NO"}
+{"model": "rwkv7-g1g-proof:latest", "item": "hard9", "expected": "yes", "vote": "no", "ok": false, "wall_s": 0.69, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 42.27, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 5.94, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.43, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "std3", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.24, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "std4", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.8, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "std5", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.78, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "std6", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.65, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "std7", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.14, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.99, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "hard1", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.76, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 1.75, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "hard3", "expected": "no", "vote": "no", "ok": true, "wall_s": 3.48, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard4", "expected": "no", "vote": "no", "ok": true, "wall_s": 1.76, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard5", "expected": "yes", "vote": "no", "ok": false, "wall_s": 2.81, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard6", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.8, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 3.88, "eval_count": 2, "raw": "YES"}
+{"model": "qwen3:8b", "item": "hard8", "expected": "no", "vote": "no", "ok": true, "wall_s": 2.92, "eval_count": 2, "raw": "NO"}
+{"model": "qwen3:8b", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.63, "eval_count": 2, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 2.09, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std1", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.5, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std3", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.39, "eval_count": 1, "raw": ""}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std4", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.58, "eval_count": 1, "raw": ""}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std5", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.49, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std6", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.67, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "std7", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.44, "eval_count": 1, "raw": ""}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard0", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.67, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard1", "expected": "no", "vote": "?", "ok": false, "wall_s": 0.76, "eval_count": 1, "raw": ""}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard2", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.52, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard3", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.68, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard4", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.58, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard5", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.7, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard6", "expected": "yes", "vote": "?", "ok": false, "wall_s": 0.5, "eval_count": 1, "raw": ""}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard7", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.79, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard8", "expected": "no", "vote": "yes", "ok": false, "wall_s": 0.51, "eval_count": 3, "raw": "YES"}
+{"model": "hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M", "item": "hard9", "expected": "yes", "vote": "yes", "ok": true, "wall_s": 0.5, "eval_count": 3, "raw": "YES"}

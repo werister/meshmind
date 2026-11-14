@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird</title>
+    <style>body{margin:0;background:#70c5ce}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<script>
+const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+canvas.width = 288; canvas.height = 512;
+const GRAVITY = 0.5, FLAP_STRENGTH = -10, PIPE_GAP = 120, PIPE_SPEED = 2;
+let bird = { y: 256, velocity: 0 }, pipes = [], score = 0, gameOver = false;
+
+function drawBird() {
+    ctx.fillStyle = '#FF0000';
+    ctx.beginPath();
+    ctx.arc(bird.x || 50, bird.y, 12, 0, Math.PI*2);
+    ctx.fill();
+}
+
+function drawPipes() {
+    ctx.fillStyle = '#008000';
+    pipes.forEach(pipe => {
+        ctx.fillRect(pipe.x, 0, 52, pipe.top);
+        ctx.fillRect(pipe.x, pipe.top + PIPE_GAP, 52, 384 - pipe.top - PIPE_GAP);
+    });
+}
+
+function update() {
+    bird.velocity += GRAVITY;
+    bird.y += bird.velocity;
+    if (bird.y > 512) bird.y = 512;
+    if (bird.y < 0) bird.y = 0;
+
+    pipes.forEach(pipe => {
+        pipe.x -= PIPE_SPEED;
+        if (pipe.x + 52 < 0) {
+            pipes.shift();
+            if (pipe.x + 52 < 0 && !gameOver) score++;
+        }
+    });
+
+    for (let i = 0; i < pipes.length; i++) {
+        let pipe = pipes[i];
+        if (bird.x > pipe.x && bird.x < pipe.x + 52) {
+            if (bird.y < pipe.top || bird.y > pipe.top + PIPE_GAP) {
+                gameOver = true;
+            }
+        }
+    }
+
+    if (bird.y > 512 || bird.y < 0) gameOver = true;
+}
+
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBird();
+    drawPipes();
+    update();
+    window.__flappy = { y: bird.y, score: score, over: gameOver };
+    if (!gameOver) requestAnimationFrame(gameLoop);
+}
+
+document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && !gameOver) {
+        bird.velocity = FLAP_STRENGTH;
+    }
+});
+
+canvas.addEventListener('click', () => {
+    if (!gameOver) {
+        bird.velocity = FLAP_STRENGTH;
+    } else {
+        restart();
+    }
+});
+
+function restart() {
+    bird = { y: 256, velocity: 0 };
+    pipes = [];
+    score = 0;
+    gameOver = false;
+    gameLoop();
+}
+
+gameLoop();
+</script>
+</body>
+</html>

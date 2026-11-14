@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+    <script>
+        let canvas = document.getElementById('game');
+        let ctx = canvas.getContext('2d');
+        let bird = { x: 400, y: 500, speed: 0, gravity: 0.5 };
+        let score = 0;
+        let pipes = [];
+        let gameOver = false;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPipes();
+            drawBird();
+            if (!gameOver) {
+                bird.y += bird.speed;
+                bird.speed += bird.gravity;
+            }
+            window.__flappy = { y: bird.y, score, over: gameOver };
+            requestAnimationFrame(draw);
+        }
+
+        function drawBird() {
+            ctx.fillStyle = 'blue';
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, 20, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(pipe.x, pipe.y, 50, 100);
+            });
+        }
+
+        function flap() {
+            bird.speed = -10;
+        }
+
+        function checkCollision() {
+            const pipeGap = 100;
+            const pipeHeight = 100;
+            const pipeWidth = 50;
+            const pipeSpacing = 200;
+
+            pipes.forEach((pipe, index) => {
+                const pipeBottom = pipe.y + pipeHeight;
+                const pipeTop = pipe.y;
+                const birdBottom = bird.y + 20;
+                const birdTop = bird.y;
+
+                if (bird.x >= pipe.x && bird.x <= pipe.x + pipeWidth &&
+                    birdTop <= pipeBottom && birdBottom >= pipeTop) {
+                    gameOver = true;
+                    return;
+                }
+
+                if (bird.x >= pipe.x + pipeGap && bird.x <= pipe.x + pipeGap + pipeWidth &&
+                    birdTop <= pipeBottom && birdBottom >= pipeTop) {
+                    score++;
+                    pipes.splice(index, 1);
+                }
+            });
+        }
+
+        function restart() {
+            score = 0;
+            gameOver = false;
+            pipes = [];
+        }
+
+        window.addEventListener('keydown', e => {
+            if (e.key === 'r' || e.which === 82) {
+                restart();
+            } else if (e.key === ' ' || e.which === 32) {
+                flap();
+            }
+        });
+
+        draw();
+    </script>
+</body>
+</html>

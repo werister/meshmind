@@ -1,0 +1,76 @@
+<script>
+let canvas, ctx, bird, pipes, score, over, debug = { y: 0, score: 0, over: false };
+
+canvas = document.getElementById('gameCanvas');
+ctx = canvas.getContext('2d');
+
+bird = { x: canvas.width / 2, y: 100, width: 30, height: 30 };
+pipes = [
+  { x: 100, y: 200, width: 40, height: 30 },
+  { x: 500, y: 200, width: 40, height: 30 }
+];
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let pipe of pipes) {
+    ctx.beginPath();
+    ctx.rect(pipe.x, pipe.y, pipe.width, pipe.height);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'red';
+  ctx.font = '20px Arial';
+  ctx.fillText(`Score: ${score}`, 10, 30);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  requestAnimationFrame(draw);
+}
+
+function update() {
+  debug.y += 1;
+  if (debug.y > canvas.height) debug.y = 0;
+  if (debug.over) {
+    debug.over = false;
+    return;
+  }
+  if (bird.y + bird.height > debug.y + canvas.height) debug.over = true;
+  for (let pipe of pipes) {
+    if (bird.x < pipe.x + pipe.width && bird.x + bird.width > pipe.x && bird.y >= pipe.y && bird.y + bird.height <= pipe.y + pipe.height) {
+      debug.over = true;
+      return;
+    }
+  }
+  if (bird.y + bird.height >= canvas.height) {
+    debug.over = true;
+    return;
+  }
+}
+
+function flap() {
+  if (bird.y + bird.height > debug.y) return;
+  debug.y -= 10;
+  bird.y = debug.y;
+}
+
+function move() {
+  if (bird.y + bird.height > debug.y + canvas.height) return;
+  if (bird.y + bird.height >= debug.y) {
+    debug.over = true;
+    return;
+  }
+  if (bird.x + bird.width > canvas.width) bird.x = 0;
+  if (bird.x < 0) bird.x = canvas.width;
+}
+
+canvas.addEventListener('click', () => {
+  if (bird.y + bird.height > debug.y) return;
+  debug.y -= 10;
+  bird.y = debug.y;
+});
+
+canvas.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    flap();
+  }
+});
+
+requestAnimationFrame(draw);
+</script>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: sans-serif;
+        }
+        canvas {
+            display: block;
+            background: #000;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const debugObject = {
+            y: 0,
+            score: 0,
+            over: false
+        };
+
+        // Game loop
+        function gameLoop() {
+            requestAnimationFrame(gameLoop);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            debugObject.y += 0.1;
+            debugObject.score++;
+            if (debugObject.y > canvas.height) {
+                debugObject.over = true;
+            }
+
+            // Bird falling
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, debugObject.y, canvas.width, debugObject.y);
+            ctx.fillStyle = 'green';
+            ctx.fillRect(0, debugObject.y, canvas.width, 10);
+
+            // Pipe collision
+            if (pipe1.x + 100 > canvas.width - 100 && pipe1.x + 100 < canvas.width) {
+                debugObject.score++;
+                if (debugObject.score > 10) {
+                    debugObject.over = true;
+                }
+            }
+
+            // Pipe movement
+            pipe1.x += 0.1;
+            pipe2.x += 0.1;
+
+            // Bird flap
+            if (keydown(38)) {
+                debugObject.y -= 10;
+            }
+
+            // Game over check
+            if (debugObject.over) {
+                ctx.fillStyle = 'red';
+                ctx.font = '24px sans-serif';
+                ctx.fillText('Score: ' + debugObject.score, 10, 20);
+                ctx.fillStyle = 'white';
+                ctx.font = '24px sans-serif';
+                ctx.fillText('Restart: R', 10, 40);
+            }
+
+            // Draw pipes
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(pipe1.x, 0, 20, canvas.height);
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(pipe2.x, canvas.height - 20, 20, canvas.height - 20);
+
+            // Draw bird
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, debugObject.y, canvas.width, debugObject.y);
+        }
+
+        // Start game
+        function startGame() {
+            gameLoop();
+        }
+
+        // Initialize game
+        startGame();
+    </script>
+</body>
+</html>

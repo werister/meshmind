@@ -1,0 +1,157 @@
+<setup>
+<style>
+canvas { border: 1px solid black; background: #111; display: block; margin: 0 auto; width: 100vw; height: 100vh; }
+</style>
+
+<script>
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+let bird = { x: 50, y: height / 2, height: 20, velocity: 0, gravity: 0.5, score: 0, over: false };
+let score = 0;
+let gameOver = false;
+let lastFrame = performance.now();
+let pivot = { x: 0, y: 0 };
+
+const pivotSpeed = 0.02;
+const pipeCount = 5;
+const pipeGap = 20;
+const pipeSpeed = 2;
+const scoreTarget = 10;
+
+function update() {
+  if (gameOver) return;
+
+  // Gravity
+  bird.velocity = bird.velocity + gravity;
+  bird.y += bird.velocity;
+
+  // Collision with ground or ceiling
+  if (bird.y + bird.height > height || bird.y < 0) gameOver = true;
+  if (bird.y + bird.height < 0) gameOver = true;
+
+  // Collision with pipes
+  for (let i = 0; i < pipeCount; i++) {
+    const pivotX = pivot.x + pivotSpeed * pivotSpeed;
+    const pivotY = pivot.y + pivotSpeed * pivotSpeed;
+    const pipe = document.getElementById(`pipe-${i}`);
+
+    if (pipe) {
+      const pipeX = pivotX + pivotSpeed * pipeSpeed;
+      const pipeY = pivotY + pivotSpeed * pivotSpeed;
+      if (
+        bird.x < pipeX + pipeGap &&
+        bird.x > pipeX + pipeGap &&
+        bird.y < pipeY + 20 &&
+        bird.y > pipeY - 20
+      ) {
+        score += 1;
+        bird.velocity = 0;
+        break;
+      }
+    }
+  }
+
+  // Collision with player (space or click)
+  if (spaceAvailable) score += 1;
+
+  // Flap: press space or click
+  if (spaceAvailable) bird.velocity = 0; // stop flapping
+  if (document.spacebar) spaceAvailable = false;
+  if (document.restart) spaceAvailable = true;
+
+  // Pipe scoring
+  if (score >= scoreTarget) scoreTarget = 0;
+
+  // Update score and over state
+  score = score;
+  over = bird.velocity > 0;
+  gameOver = over;
+  lastFrame = performance.now();
+
+  // Move bird
+  bird.x = bird.x + bird.velocity;
+  bird.y = height / 2;
+
+  // Draw
+  drawBird(bird);
+  drawPipes();
+}
+
+function drawBird(b) {
+  const canvas = document.getElementById('canvas');
+  const context = canvas.getContext('2d');
+  context.fillStyle = 'white';
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = 'green';
+  context.fillRect(b.x, b.y, bird.height, bird.height);
+}
+
+function drawPipes() {
+  const canvas = document.getElementById('canvas');
+  const context = canvas.getContext('2d');
+  context.fillStyle = 'gray';
+  context.fillRect(0, 0, width, height);
+
+  for (let i = 0; i < pipeCount; i++) {
+    const pipe = document.getElementById(`pipe-${i}`);
+    if (pipe) {
+      const pipeX = pivot.x + pivotSpeed * pivotSpeed;
+      const pipeY = pivot.y + pivotSpeed * pivotSpeed;
+      const pipeTop = pipeY - 20;
+      const pipeBottom = pipeY + 20;
+      const pipeLeft = pivot.x - pipeGap;
+      const pipeRight = pivot.x + pivotSpeed * pivotSpeed + pipeGap;
+
+      if (
+        bird.x < pipeLeft &&
+        bird.x > pipeRight &&
+        bird.y < pipeTop &&
+        bird.y > pipeBottom
+      ) {
+        score += 1;
+        document.getElementById(`score-${score}`).textContent = score;
+      }
+    }
+  }
+}
+
+function spaceAvailable() {
+  const spaceBar = document.getElementById('spacebar');
+  const restart = document.getElementById('restart');
+  return spaceBar.checked || restart.checked;
+}
+
+function restartGame() {
+  bird = { x: 50, y: height / 2, height: 20, velocity: 0, gravity: 0.5, score: 0, over: false };
+  score = 0;
+  gameOver = false;
+  lastFrame = performance.now();
+  pivot = { x: 0, y: 0 };
+  scoreTarget = 10;
+}
+
+function draw() {
+  if (!spaceAvailable()) return;
+
+  update();
+  drawBird(bird);
+  drawPipes();
+
+  if (over) {
+    alert('Game Over! Press R to Restart. Score: ' + score);
+    restartGame();
+  } else {
+    window.__flappy = { y: bird.y, score: score, over: over };
+  }
+}
+
+function requestAnimationFrame(frame) {
+  draw();
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(draw);
+</script>
+
+<canvas id="canvas" width="1000" height="800"></canvas>

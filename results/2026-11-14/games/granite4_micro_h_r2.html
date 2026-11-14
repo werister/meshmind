@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Flappy Bird</title></head>
+<body>
+<canvas id="c" width="400" height="600"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+const w=c.width,h=c.height;
+const bird={x:w/2,y:h/2,v:0};
+const pipes=[];let score=0;
+const g=0.8;//gravity
+const flapThresh=20;//px
+const flapSpeed=5;
+const pipeGap=80;
+const pipeSpeed=2;
+let running=false;
+window.__flappy={y:bird.y,score,score:score,over:!running};
+function drawBird(){
+  ctx.save();
+  ctx.translate(bird.x,bird.y);
+  ctx.beginPath();
+  ctx.arc(0,0,20,0,Math.PI*2);
+  ctx.fillStyle='#F0A';
+  ctx.fill();
+  ctx.restore();
+}
+function drawPipe(p){
+  ctx.fillStyle='#333';
+  ctx.fillRect(p.x,0,p.width,h);
+  drawBird();
+}
+function update(dt){
+  if(!running)return;
+  bird.v+=g*dt;
+  bird.y+=bird.v*dt;
+  if(bird.y>h-flapThresh||bird.y<flapThresh){
+    __flappy.over=true;
+    return;
+  }
+  for(let i=pipes.length-1;i>=0;i--){
+    pipes[i].x-=dt*pipeSpeed;
+    if(bird.x+20>=pipes[i].x&&bird.x-20<=pipes[i].x+40&&
+       bird.y+20>=pipes[i].y&&bird.y-20<=pipes[i].y+30){
+        __flappy.over=true;
+        return;
+      }
+    if(pipes[i].x<-40){
+      pipes.splice(i,1);
+    }
+  }
+  if(!running){
+    return;
+  }
+  for(let i=0;i<pipes.length;i++){
+    if(bird.y+20>=pipes[i].y&&bird.y-20<=pipes[i].y+30&&
+       bird.x+20>=pipes[i].x&&bird.x-20<=pipes[i].x+40){
+        __flappy.over=true;
+        return;
+      }
+  }
+  if(!__flappy.over){
+    score++;
+  }
+}
+function render(){
+  ctx.fillStyle='#87CEEB';
+  ctx.fillRect(0,0,w,h);
+  pipes.forEach(p=>drawPipe(p));
+  drawBird();
+  ctx.fillStyle='#000';
+  ctx.fillText(`Score: ${score}`,10,10);
+}
+function gameLoop(){
+  const dt=16;
+  update(dt/1000);
+  render();
+  requestAnimationFrame(gameLoop);
+}
+canvas.addEventListener('click',e=>{
+  if(__flappy.over)return;
+  bird.v=flapSpeed;
+});
+canvas.addEventListener('keydown',e=>{
+  if(e.code==='Space'){
+    if(__flappy.over)return;
+    bird.v=flapSpeed;
+  }
+});
+running=true;
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>

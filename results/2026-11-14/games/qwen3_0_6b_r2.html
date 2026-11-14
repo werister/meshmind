@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: sans-serif;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const debugObject = {
+            y: 0,
+            score: 0,
+            over: false
+        };
+
+        let bird = {
+            x: 100,
+            y: 500,
+            width: 20,
+            height: 50,
+            gravity: 0.5,
+            flap: false
+        };
+
+        let pipes = [
+            { x: 0, y: 500, width: 100, height: 50 },
+            { x: 200, y: 500, width: 100, height: 50 }
+        ];
+
+        let score = 0;
+
+        function update() {
+            requestAnimationFrame(update);
+
+            // Gravity
+            bird.y += bird.gravity;
+
+            // Flap
+            if (bird.flap) {
+                bird.y -= 5;
+            }
+
+            // Check for collision
+            pipes.forEach(pipe => {
+                if (pipe.x + pipe.width > bird.x && bird.x + bird.width < pipe.x + pipe.width) {
+                    score++;
+                    bird.flap = true;
+                }
+            });
+
+            // Check for game over
+            if (pipes.some(pipe => pipe.x + pipe.width > canvas.width)) {
+                debugObject.over = true;
+            }
+
+            // Update debug object
+            debugObject.y = bird.y;
+            debugObject.score = score;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw bird
+            ctx.fillStyle = 'red';
+            ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+
+            // Draw pipes
+            pipes.forEach(pipe => {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+            });
+
+            // Draw score
+            ctx.fillStyle = 'black';
+            ctx.font = '20px sans-serif';
+            ctx.fillText(`Score: ${score}`, 10, 20);
+        }
+
+        function restart() {
+            score = 0;
+            bird.x = 100;
+            bird.y = 500;
+            pipes = [
+                { x: 0, y: 500, width: 100, height: 50 },
+                { x: 200, y: 500, width: 100, height: 50 }
+            ];
+            debugObject.over = false;
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

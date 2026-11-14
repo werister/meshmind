@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+canvas {
+  border: 1px solid black;
+  width: 384px;
+  height: 512px;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas" width="384" height="512"></canvas>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const birdY = 200;
+const score = 0;
+const over = false;
+const gravity = 0.5;
+const pipeSpeed = 2;
+const pipeWidth = 50;
+const pipeHeight = 150;
+const gap = 100;
+let birdY = birdY;
+let score = 0;
+let pipeX = canvas.width;
+let pipeY = 0;
+let pipeDY = pipeSpeed;
+let lastFrameTime = 0;
+let frameTime;
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'white';
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - pipeHeight);
+  ctx.lineTo(canvas.width, canvas.height - pipeHeight);
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(birdX, birdY, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.rect(pipeX, pipeY, pipeWidth, pipeHeight);
+  ctx.rect(pipeX, canvas.height - pipeHeight, pipeWidth, pipeHeight);
+  ctx.stroke();
+  ctx.font = '20px sans-serif';
+  ctx.fillText(score, 10, 20);
+  window.__flappy = { y: birdY, score: score, over: over };
+}
+function update() {
+  birdY += gravity;
+  if (birdY > canvas.height - 10) {
+    over = true;
+  }
+  if (over) {
+    if (event.key === 'R' || event.type === 'click') {
+      birdY = 200;
+      score = 0;
+      over = false;
+    }
+  }
+  pipeX -= pipeSpeed;
+  if (pipeX < -pipeWidth) {
+    pipeX = canvas.width;
+    pipeY += gap;
+  }
+  if (birdY < pipeY + pipeHeight && birdY > pipeY) {
+    over = true;
+  }
+  if (birdY < canvas.height - pipeHeight && birdY > canvas.height - pipeHeight - 10) {
+    over = true;
+  }
+}
+function main() {
+  frameTime = performance.now() - lastFrameTime;
+  lastFrameTime = performance.now();
+  update();
+  draw();
+  requestAnimationFrame(main);
+}
+main();

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById('gameCanvas');
+        var ctx = canvas.getContext('2d');
+        var birdY = 50;
+        var score = 0;
+        var over = false;
+        var pipeX = 0;
+        var pipeY = 0;
+        var pipeGap = 100;
+        var pipeSpeed = 5;
+        var pipeXSpeed = -pipeSpeed;
+        var pipeYSpeed = pipeSpeed;
+        var pipeGapSpeed = -pipeGapSpeed;
+        var pipeGapSpeed = 10;
+        var pipeGap = 200;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed,
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGapSpeed = 10;
+        var pipeGap.
+        var pipeGap,
+        var gap.
+        var gap.
+        var gap.
+        var gap.
+        gap.
+        var gap.
+        var gap.
+        var.
+       
+       
+       
+       
+       
+       
+       
+       
+       0.
+       
+       
+       000.
+       0
+       0
+       0
+       
+       
+       0.
+       
+       
+
+0.
+0
+
+
+1.
+       0.
+
+1.
+
+0.
+
+
+
+
+
+
+ 
+
+10:
+
+
+
+
+
+
+
+10
+
+
+
+
+
+
+
+
+
+
+10
+
+
+s.
+
+.
+
+
+
+
+
+
+
+t0nt
+
+10
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+   
+ 
+
+
+   
+   ndescribe
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+  
+ 
+
+
+ 
+
+
+
+
+
+
+
+
+
+:
+
+ 
+
+  
+  
+
+ 
+  
+  
+   
+  
+  
+
+def,0000labeled.
+
+
+
+
+
+
+ 
+
+:
+:
+:
+.
+
+
+.
+
+defx
+
+.
+
+
+0.
+
+
+
+
+
+
+
+
+
+
+
+
+10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+ if, if, if, if: if, if, if 
+ 
+ 
+   
+ 
+
+ 
+. 
+
+ 
+
+
+
+ 
+ 
+ 
+ 
+ly
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+n-
+
+
+ 
+ 
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+ 
+
+
+ 
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+ 
+ 
+ 
+ 
+ or or the 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+if,
+ 
+if 
+ 
+if 
+if 
+ 
+
+ � 
+ 
+ 
+ 
+  of 
+ 
+ 
+ 
+ 
+  ( 
+ 
+ 
+ 
+ 
+ 
+of the 
+:s, and:
+ 
+: 
+ 
+ 
+of 
+ , then, and 
+not, and one of a, and, and, and, and: the 
+l, and one, and of no; of; of, and this:
+n the 
+:
+of the 
+and: of the of the of anything: 
+<n, and the one, and the one, of the, and one, of the same, and no one:
+
+
+
+
+
+
+
+code, and this, and no code, and a complete.
+
+
+
+
+
+
+
+
+
+
+F:
+a

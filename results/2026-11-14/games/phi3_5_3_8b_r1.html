@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+  body { margin: 0; overflow: hidden; }
+  canvas { display: block; background: #000; }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+  var canvas = document.getElementById("gameCanvas");
+  var ctx = canvas.getContext("2d");
+  var bird = { x: canvas.width / 2, y: canvas extral, velocity: 0 };
+  var ground = { x1: 0, y1: canvas.height / 2, x2: canvas.width, y2: canvas.height / 2, velocity: -1 };
+  var score = 0;
+  var gameOver = false;
+
+  window.__flappy = { y: bird.y, number: score, over: gameOver };
+
+  function drawGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBird(bird);
+    drawGround(ground);
+    updateGame();
+    requestAnimationFrame(drawGame);
+  }
+
+  function drawBird(bird) {
+    ctx.beginPath();
+    ctx.arc(bird.x, bird.y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = gameOver ? '#f00' : '#09f';
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawGround(ground) {
+    ctx.beginPath();
+    ctx.rect(ground.x1, ground.y1, ground.x2 - ground.x1, ground.y2 - ground.y1);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function updateGame() {
+    if (!gameOver) {
+      bird.y += bird.velocity;
+      bird.velocity = Math.min(bird.velocity + 1, 5);
+
+      if (bird.y > canvas.height / 2) {
+        bird.y = canvas.height / 2;
+        bird.velocity = -1;
+      }
+
+      if (bird.x > ground.x2 + 10 || bird.x < ground.x1 - 10) {
+        gameOver = true;
+      }
+
+      if (bird.x > ground.x1 && bird.x < ground.x2 && bird.y > ground.y1 && (bird.y < ground.y2 - 10 || bird.y > ground.y2 + 10)) {
+        score++;
+        ground.x2 -= 20;
+      }
+    }
+  }
+
+  function flapBird() {
+    if (!gameOver && !gameOver) {
+      bird.velocity = -4;
+    }
+  }
+
+  function handleInput() {
+    if (gameOver && !gameOver) {
+      gameOver = false;
+      score = 0;
+      bird.y = canvas.height / 2;
+      bird.velocity = -1;
+      requestAnimationFrame(drawGame);
+    }
+
+    if (window.keydown) {
+      if (window.keydown.keyCode === 32 || window.keydown.button === 0) {
+        flapBird();
+      }
+    }
+  }
+
+  function gameLoop() {
+    drawGame();
+    handleInput();
+  }
+
+  gameLoop();
+</script>
+</body>
+</html>

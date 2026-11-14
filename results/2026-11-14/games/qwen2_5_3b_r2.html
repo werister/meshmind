@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+canvas { display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const bird = { x: 50, y: 150, width: 20, height: 20, gravity: 0.5, velocity: 0 };
+const pipes = [];
+const score = 0;
+const debug = { y: 150, score, over: false };
+const gameLoop = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBird();
+    drawPipes();
+    drawScore();
+    if (!debug.over) {
+        updateBird();
+        updatePipes();
+        checkCollision();
+    }
+    debug.y = bird.y;
+    debug.score = score;
+    debug.over = debug.over || checkGameOver();
+    requestAnimationFrame(gameLoop);
+};
+const drawBird = () => {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+};
+const drawPipes = () => {
+    for (let i = pipes.length - 1; i >= 0; i--) {
+        const pipe = pipes[i];
+        ctx.fillStyle = pipe.open ? 'green' : 'black';
+        ctx.fillRect(pipe.x, 0, pipe.width, pipe.height);
+        ctx.fillRect(pipe.x, canvas.height - pipe.height, pipe.width, pipe.height);
+        pipe.x -= 2;
+        if (pipe.x + pipe.width < 0) {
+            pipes.splice(i, 1);
+        }
+    }
+    if (!debug.over && !pipes.length) {
+        score++;
+        pipes.push({ x: canvas.width, open: true, width: 50, height: 50 });
+    }
+};
+const drawScore = () => {
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText(`Score: ${score}`, 10, 20);
+};
+const updateBird = () => {
+    bird.velocity += bird.gravity;
+    bird.y += bird.velocity;
+    bird.velocity *= 0.9;
+};
+const updatePipes = () => {
+    for (let i = 0; i < pipes.length; i++) {
+        const pipe = pipes[i];
+        pipe.x = i * 100;
+        if (bird.x < pipe.x + pipe.width && bird.x + bird.width > pipe.x && bird.y < pipe.height + canvas.height / 2 && bird.y + bird.height > canvas.height / 2) {
+            debug.over = true;
+        }
+    }
+};
+const checkCollision = () => {
+    for (let i = 0; i < pipes.length; i++) {
+        const pipe = pipes[i];
+        if (bird.x < pipe.x + pipe.width && bird.x + bird.width > pipe.x && bird.y < pipe.height + canvas.height / 2 && bird.y + bird.height > canvas.height / 2) {
+            debug.over = true;
+        }
+    }
+    if (bird.y + bird.height > canvas.height || bird.y < 0) {
+        debug.over = true;
+    }
+};
+const checkGameOver = () => {
+    return debug.over;
+};
+const flap = (e) => {
+    if (e.key === ' ' || e.type === 'click') {
+        bird.velocity = -4;
+    }
+};
+canvas.addEventListener('click', flap);
+window.addEventListener('keydown', flap);
+window.__flappy = debug;
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>

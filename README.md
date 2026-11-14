@@ -16,6 +16,9 @@ Base URL: `https://mac-mini-von-hugo-1.taild73e38.ts.net`
 | `context-probe.py` | Max-context sweep harness (11 models × 4k–32k, skips 8B/14B per policy) |
 | `AGENTS.md` | Agent quickstart (also served live at `/agents.md`) |
 | `launchd/` | macOS service plists (Ollama, Caddy, monitor, sidecar) |
+| `scripts/` | bench harnesses: sweeps, tier66, bank100, flappy (`scripts/flappy/README.md`) |
+| `results/` | frozen benchmark transcripts by date |
+| `tickets/` | work items (see `tickets/T15-flappy-e2e.md` for the open bench) |
 | `docs/` | Evidence and fit notes |
 
 Live state (`*.log`, `monitor-state`, results) is git-ignored on purpose.

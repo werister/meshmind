@@ -1,0 +1,24 @@
+Write a complete, self-contained, single-file HTML5 Flappy Bird game. Reply with HTML code only: no explanation, no markdown fences, no commentary.
+
+Do not skip any requirement, including requirement 0 (the debug object tested automatically).
+
+Requirements (all must work):
+0. Expose a debug object for automated testing, updated every frame as the LAST line of the game loop:
+   window.__flappy = { y: <bird y in pixels, number>, score: <current score, number>, over: <true after game over, else false> }
+1. A <canvas> element showing the game, animated with requestAnimationFrame.
+2. A bird affected by gravity: it falls when the player does nothing. Use SIMPLE per-frame physics with these exact numbers:
+   every frame: birdVelocity += 0.4; birdY += birdVelocity;
+   Do NOT multiply by delta time, timestamps, or frame duration. Frame-based only.
+3. Flap: pressing Space or clicking the canvas sets birdVelocity = -6 so the bird rises at once. Wire BOTH the keydown listener (e.code === 'Space') AND the canvas click listener to the same flap function.
+4. Pipes scroll from right to left (pipe.x -= 2 each frame) with a vertical gap; passing a pipe scores exactly 1 point. Mark each pipe counted with a flag (e.g. pipe.passed) so it can never score twice.
+5. Collision with a pipe, the ground, or the ceiling ends the run (game over). The ground is a visible strip at the bottom; check it every frame.
+6. After game over, pressing R or clicking restarts a fresh run (score back to 0, bird back to start, pipes cleared).
+7. Keep everything inline in this one file: no external scripts, images, fonts, or network. No audio needed.
+
+CRITICAL correctness rules (automated play-tests fail the game if you break these):
+- ONE variable holds the bird's height (e.g. birdY). Update it, draw it, collide with it, and expose it in window.__flappy from THAT SAME variable. Never copy it into a second variable.
+- Initialize every variable before the loop starts. No undefined values.
+- The bird must visibly fall within half a second of loading when nobody presses anything.
+- A single Space press must visibly move the bird upward within a quarter second.
+
+Plain JavaScript only (no TypeScript, no modules, no build step). Keep it compact but complete and working.

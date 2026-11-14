@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Clone</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px #000;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">Score: <span id="scoreEl">0</span></div>
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+
+<script>
+// 0. Debug Object
+window.__flappy = {
+    y: 0,
+    number: 0,
+    score: 0,
+    over: false
+};
+
+// 1. Canvas Setup
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('scoreEl');
+
+// 2. Game Variables
+let frames = 0;
+let score = 0;
+let gameState = 'START'; // START, PLAYING, GAMEOVER
+let gravity = 0.25;
+let pipeSpeed = 3;
+let pipeGap = 50;
+let pipes = [];
+let bird = { x: 0, y: 0, w: 20, h: 24, velocity: 0, radius: 12, color: '#FFD700' };
+let bg = { color: 'white' };
+
+// 3. Input Handling
+function handleInput(e) {
+    if (e.type === 'keydown' && e.code !== 'Space') return;
+    if (e.type === 'keydown') e.preventDefault(); // Stop scrolling
+
+    if (gameState === 'START') {
+        gameState = 'PLAYING';
+        bird.y = 0;
+        bird.velocity = 0;
+        pipes = [];
+        score = 0;
+        scoreEl.innerText = '0';
+        bg.color = 'white';
+    } else if (gameState === 'GAMEOVER') {
+        gameState = 'START';
+        bird.y = 0;
+        bird.velocity = 0;
+        pipes = [];
+        score = 0;
+        scoreEl.innerText = '0';
+        bg.color = 'white';
+    }
+}
+
+// 4. Game Loop
+function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Update Debug
+    window.__flappy.y += bird.velocity;
+    window.__flappy.score = score;
+    window.__flappy.over = gameState === 'GAMEOVER';
+    
+    // Draw Background
+    ctx.fillStyle = bg.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Pipes
+    for (let i = 0; i < pipes.length; i++) {
+        let p = pipes[i];
+        let topY = p.y;
+        let bottomY = p.y + pipeGap;
+        
+        // Draw Top Pipe
+        ctx.fillStyle = '#2E8B57';
+        ctx.fillRect(p.x, topY, p.w, p.h);
+        // Draw Bottom Pipe
+        ctx.fillStyle = '#2E8B57';
+        ctx.fillRect(p.x, bottomY, p.w, p.h);
+
+        // Draw Pipes
+        ctx.fillStyle = '#2E8B57';
+        ctx.fillRect(p.x, topY, p.w, p.h);
+        ctx.fillStyle = '#2E8B57';
+        ctx.fillRect(p.x + p.w, topY, p.w, p.h);
+
+        // Update Pipe Logic
+        if (gameState === 'PLAYING') {
+            p.x -= pipeSpeed;
+            if (p.x + p.w < 0) {
+                // Pipe passed, score +1
+                score++;
+                scoreEl.innerText = score;
+                // Remove old pipe, add new one
+                pipes.shift();
+                pipes.push(p);
+            }
+        }
+
+        // Collision Detection
+        if (bird.x + bird.w > p.x && bird.x < p.x + p.w) {
+            if (bird.y + bird.h > p.y && bird.y < p.y + pipeGap) {
+                // Collision detected
+                gameState = 'GAMEOVER';
+                window.__flappy.over = true;
+            }
+        }
+
+        // Ground Collision
+        if (bird.y + bird.h > canvas.height - 20) {
+            gameState = 'GAMEOVER';
+            window.__flappy.over = true;
+        }
+    }
+
+    // Draw Bird
+    ctx.fillStyle = bird.color;
+    ctx.beginPath();
+    ctx.arc(bird.x + bird.w/2, bird.y + bird.h/2, bird.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw Debug Object
+    ctx.fillStyle = '#00FF00';
+    ctx.font = '16px Arial';
+    ctx.fillText(window.__flappy.y, canvas.width/2, canvas.height/2);
+    ctx.fillText(window.__flappy.score, canvas.width/2, canvas.height/2 + 20);
+    ctx.fillText(window.__flappy.over, canvas.width/2, canvas.height/2 + 40);
+
+    // Update Bird Physics
+    bird.velocity += gravity;
+    bird.x += bird.velocity;
+    bird.y += bird.velocity;
+
+    // Floor Collision
+    if (bird.y + bird.h > canvas.height - 20) {
+        gameState = 'GAMEOVER';
+        window.__flappy.over = true;
+    }
+
+    // Draw Ground
+    ctx.fillStyle = '#2E8B57';
+    ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+
+    // Draw Score
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + score, canvas.width/2 - 20, canvas.height/2 + 40);
+
+    requestAnimationFrame(loop);
+}
+
+// 5. Start/Restart Logic
+function startGame() {
+    bird.y = 0;
+    bird.velocity = 0;
+    pipes = [];
+    score = 0;
+    scoreEl.innerText = '0';
+    gameState = 'PLAYING';
+    bg.color = 'white';
+}
+
+// 6. Restart Logic
+function restartGame() {
+    bird.y = 0;
+    bird.velocity = 0;
+    pipes = [];
+    score = 0;
+    scoreEl.innerText = '0';
+    gameState = 'PLAYING';
+    bg.color = 'white';
+}
+
+// 7. Event Listeners
+window.addEventListener('keydown', handleInput);
+canvas.addEventListener('mousedown', handleInput);
+
+// Start the loop
+loop();
+
+</script>
+</body>
+</html>

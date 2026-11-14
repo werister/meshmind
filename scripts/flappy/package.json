@@ -1,0 +1,10 @@
+{
+  "name": "flappy-bench",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Headless grader for the Flappy end-to-end app benchmark",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "playwright": "*"
+  }
+}
