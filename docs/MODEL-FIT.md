@@ -82,3 +82,27 @@ no weights; laya needs Apple-Silicon MLX anyway).
   schema — its errors were structural, not reasoning. ADOPTED for the tools
   lane with schema (only p3 abstain wobbles 1-2/2). The vendor BFCL did
   transfer after all; the harness was the blocker twice over.
+
+## Campaign addendum (2026-11-13/14, 41-model sweeps)
+
+Method: voter-18, code 5×26 exec, T1 reasoning, T2 tier-66, T3 bank-100 —
+all serial, temp 0, think:false except T1. Evidence: `docs/SWEEP-*`,
+`docs/T1/T2/T3-*`, `results/2026-11-13/`. Ollama upgraded 0.32.1 → 0.40.16
+mid-campaign (required for LFM3).
+
+Verdict deltas vs rows above:
+- LFM3-1.7B: UNBLOCKED by the Ollama upgrade, then measured weak (8/18 vote,
+  6/26 code) and DELETED 2026-11-14 with the other weaklings.
+- qwen3:8b: was REJECTED for all lanes on swap risk — now RESTRICTED, not
+  rejected: T2 63/66 makes it the best voter on the box (see AGENTS.md
+  judgment lane), but 5.2 GB + slow prefill keep it off default/fast lanes.
+- qwen3:4b-thinking-2507: rejection CONFIRMED (0/18 + 0/26 think-off; 2/4
+  think-on at 900 AND 2048, same items) and DELETED.
+- opencoder:1.5b: new data 1/18 + 20/26 + T3 36/100 (mid coder, format-blind).
+  T14 suspension stands pending its pre-registered gate run.
+- phi3.5, athena-slm, granite3.1-moe:1b, qwen2.5:3b Q2_K/Q3_K_M,
+  functiongemma: measured bottom-third, all DELETED 2026-11-14 (~8 GB freed).
+
+New entries: nemotron-3-nano:4b (T3 65/100, T1 4/4 — top coder+reasoner);
+granite4:micro-h (18/18 + 20/26, tiny all-round); falcon-h1:1.5b (26/26 +
+T3 50); gemma3:1b (26/26 + T3 46); smollm3-3b:bakeoff (T2 57/66).
