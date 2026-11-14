@@ -3,6 +3,10 @@
 <script>
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 let y,vy,score,over,pipes,frames;
+// FIXED gap rotation (not random): the reference must grade identically on
+// every run. All gaps contain the autopilot hover band (~240-300), so a
+// working game scores deterministically; gap-blind luck is not under test.
+const GAPS=[270,250,290,230,260,280,240,300];let gi=0;
 function reset(){y=300;vy=0;score=0;over=false;pipes=[];frames=0;}
 reset();
 function flap(){ if(over){reset();return;} vy=-5; }
@@ -11,14 +15,14 @@ cv.addEventListener('click',()=>{flap();});
 function loop(){
   if(!over){
     vy+=0.4; y+=vy; frames++;
-    if(frames%90===0)pipes.push({x:400,gapY:100+Math.random()*350});
+    if(frames%90===0)pipes.push({x:400,gapY:GAPS[(gi++)%GAPS.length]});
     for(const p of pipes){p.x-=2;}
     if(pipes.length&&pipes[0].x<30){pipes.shift();score++;}
-    for(const p of pipes){ if(p.x<94&&p.x+50>60&&(y<p.gapY-60||y>p.gapY+60)) over=true; }
+    for(const p of pipes){ if(p.x<94&&p.x+50>60&&(y<p.gapY-100||y>p.gapY+100)) over=true; }
     if(y>590||y<0)over=true;
   }
   ctx.fillStyle='#70c5ce';ctx.fillRect(0,0,400,600);
-  ctx.fillStyle='#0a0';for(const p of pipes){ctx.fillRect(p.x,0,50,p.gapY-60);ctx.fillRect(p.x,p.gapY+60,50,600);}
+  ctx.fillStyle='#0a0';for(const p of pipes){ctx.fillRect(p.x,0,50,p.gapY-100);ctx.fillRect(p.x,p.gapY+100,50,600);}
   ctx.fillStyle='#ff0';ctx.fillRect(60,y-12,34,24);
   ctx.fillStyle='#000';ctx.font='24px sans-serif';ctx.fillText(score,10,30);
   if(over){ctx.fillText('GAME OVER - click/R',60,300);}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Flappy Bird</title>
+</head>
+<body>
+<canvas id="game" width="400" height="600"></canvas>
+<script>
+let canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,birdY=0,birdVel=0,score=0,over=false,pipes=[],pipeW=50,pipeH=300,pipeGap=150,pipeTop=(h-pipeH)/2,pipeBottom=pipeTop+pipeH;
+for(let i=0;i<5;i++)pipes.push({x:w+100,yTop:pipeTop-i*pipeGap,yBottom:pipeBottom+i*pipeGap,passed:false});
+function flap(){birdVel=-6;}
+canvas.addEventListener('click',flap);
+window.addEventListener('keydown',e=>{if(e.code==='Space')flap();});
+function animate(){
+if(!over){
+birdVel+=0.4;birdY+=birdVel;
+if(birdY<0||birdY>h-20)over=true;
+for(let p of pipes){
+if(p.x<birdY&&!p.passed){score++;p.passed=true;}
+}
+}
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle='yellow';ctx.fillRect(birdY-10,0,20,20);
+for(let p of pipes){
+if(p.x>0)ctx.fillStyle='green';ctx.fillRect(p.x-pipeW,p.yTop,pipeW,pipeH);
+}
+ctx.fillStyle='green';ctx.fillRect(0,h-20,w,20);
+window.__flappy={y:birdY,number:score,over:over};
+requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

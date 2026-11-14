@@ -1,0 +1,35 @@
+SYSTEM:
+You are an expert game programmer. Output a single self-contained HTML file and nothing else — no markdown fences, no explanation, no placeholders, no TODOs.
+
+USER:
+Build a fully playable Flappy Bird clone in ONE self-contained HTML file.
+No external dependencies, no external URLs, no images or fonts from the network.
+Canvas 2D only. It must run by opening the file in a browser.
+
+REQUIRED MECHANICS (all must work):
+0. Debug object for automated testing, updated every frame as the LAST line of the game loop:
+   window.__flappy = { y: <bird y in pixels, number>, score: <number>, over: <true after game over, else false> }
+1. A bird affected by gravity: it falls when the player does nothing. SIMPLE per-frame physics, exact numbers:
+   every frame: birdVel += 0.4; birdY += birdVel;
+   Never scale by delta time, timestamps, or frame duration. Frame-based only.
+2. Flap: pressing Space (e.code === 'Space') or clicking/tapping the canvas sets birdVel = -6 so the bird rises at once. Wire keydown AND canvas click to the same flap function.
+3. Pipes spawn from the right at a steady rate with a vertical gap and scroll left at constant speed (pipe.x -= 2 each frame). Pipe gap and speed stay constant.
+4. Score +1 exactly once per passed pipe (mark each pipe with a passed flag so it can never score twice). Show score live during play.
+5. Collision with a pipe, the ground, or the ceiling ends the run. The ground is a visible strip at the bottom, checked every frame. Show GAME OVER with final score and BEST score.
+6. Game states: READY (title + "click to start"), PLAYING, DEAD. After game over, pressing R or clicking restarts a fresh run (score 0, bird reset, pipes cleared).
+7. Everything inline in this one file. No audio needed.
+
+STRUCTURE your file in exactly these sections, in order:
+(a) HTML + canvas + minimal CSS, (b) constants, (c) game state, (d) input handlers,
+(e) physics update, (f) pipe spawn/update, (g) collision check, (h) render,
+(i) main loop with requestAnimationFrame, (j) UI overlays.
+First write the section list as an HTML comment, then implement every section fully.
+Every function you reference must be defined. No stubs.
+
+CRITICAL correctness rules (automated play-tests fail the game if broken):
+- ONE variable holds the bird's height (birdY). Update it, draw it, collide with it, and expose it in window.__flappy from THAT SAME variable. Never copy it into a second variable.
+- Initialize every variable before the loop starts. No undefined values.
+- The bird must visibly fall within half a second when nobody presses anything.
+- A single Space press must visibly move the bird upward within a quarter second.
+
+Plain JavaScript only: no TypeScript, no modules, no build step, no setTimeout game loops. Compact but complete and working. HTML code only.

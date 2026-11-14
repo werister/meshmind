@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><title>Flappy lab benchmark FINAL (v3)</title>
+<style>body{font-family:system-ui,sans-serif;max-width:1100px;margin:2em auto;padding:0 1em}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 8px;text-align:left}th{background:#f0f0f0}.hi{background:#e6f4ea}.banner{background:#fff8e1;border:1px solid #e0c36a;padding:10px 14px;border-radius:6px}</style></head><body>
+<h1>Flappy Bird lab benchmark &mdash; final (38 Ollama models + Qwen3-Coder-30B)</h1>
+<div class=banner><b>Honesty banner.</b> v1 graded mechanics only and crowned decorative games (see v3 collapse below).
+v2 added visibility, paced scoring, bounded physics. <b>v3 is input-causal:</b> control-vs-treatment flap test, hands-off-vs-autopilot scoring arms,
+flight filter (scores count only from lives where the bird flew), floor-death check, and hard caps (no input response &rarr; max 35, nothing flown+scored &rarr; max 50).
+Machine tie at 90 (gemma4 R1, coli30b R1) broken by owner play-test: <b>coli30b R1 crowned &ldquo;by far the best&rdquo; (2026-11-14)</b>.
+Known calibration wrinkle: the <tt>visible</tt> gate samples the first 600ms, so legit tap-to-start screens fail it &mdash; both 90s fail only that gate.</div>
+<p>v3 = input-causal grade (best of R1/R2 bolded). R1 = single shot, R2 = repair with failure feedback (note: repairs sometimes HURT &mdash; gemma4 R1 90 &rarr; R2 35).
+Click to play. 30B run: research-built prompt v3gen, temp 0, patch-first repairs.</p>
+<table><tr><th>model</th><th>v1 R1</th><th>v1 R2</th><th>v2 R1</th><th>v2 R2</th><th>v3 R1</th><th>v3 R2</th><th>play</th></tr>
+<tr class=hi><td>Qwen3-Coder-30B (colibri) &#9733; human crown</td><td>-</td><td>-</td><td>-</td><td>-</td><td colspan=2><b>90</b> (prompt v3gen)</td><td><a href="coli30b_r1.html">R1 (90)</a></td></tr>
+<tr class=hi><td>gemma4:e2b</td><td>78</td><td>75</td><td>68</td><td>75</td><td><b>90</b></td><td>45</td><td><a href="gemma4_e2b_r1.html">R1</a> <a href="gemma4_e2b_r2.html">R2</a></td></tr>
+<tr class=hi><td>qwen3:8b</td><td>70</td><td>58</td><td>65</td><td>78</td><td><b>60</b></td><td>45</td><td><a href="qwen3_8b_r1.html">R1</a> <a href="qwen3_8b_r2.html">R2</a></td></tr>
+<tr class=hi><td>qwen2.5-coder:1.5b</td><td>30</td><td>67</td><td>30</td><td>62</td><td>30</td><td><b>60</b></td><td><a href="qwen2_5_coder_1_5b_r1.html">R1</a> <a href="qwen2_5_coder_1_5b_r2.html">R2</a></td></tr>
+<tr><td>falcon3:3b</td><td>45</td><td>70</td><td>40</td><td>53</td><td><b>53</b></td><td><b>53</b></td><td><a href="falcon3_3b_r1.html">R1</a> <a href="falcon3_3b_r2.html">R2</a></td></tr>
+<tr><td>granite4:micro-h</td><td>45</td><td>55</td><td>40</td><td>60</td><td>40</td><td><b>45</b></td><td><a href="granite4_micro_h_r1.html">R1</a> <a href="granite4_micro_h_r2.html">R2</a></td></tr>
+<tr><td>hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M</td><td>77</td><td>45</td><td>77</td><td>40</td><td><b>45</b></td><td>40</td><td><a href="hf_co_turintech_Qwen3_5_0_8B_Artemis_GGUF_Q5_K_M_r1.html">R1</a> <a href="hf_co_turintech_Qwen3_5_0_8B_Artemis_GGUF_Q5_K_M_r2.html">R2</a></td></tr>
+<tr><td>gemma3:4b-it-q4_K_M</td><td>25</td><td>55</td><td>25</td><td>50</td><td>25</td><td><b>45</b></td><td><a href="gemma3_4b_it_q4_K_M_r1.html">R1</a> <a href="gemma3_4b_it_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>gemma3:4b</td><td>25</td><td>55</td><td>25</td><td>50</td><td>25</td><td><b>45</b></td><td><a href="gemma3_4b_r1.html">R1</a> <a href="gemma3_4b_r2.html">R2</a></td></tr>
+<tr><td>qwen3:4b-instruct-2507-q4_K_M</td><td>30</td><td>10</td><td>40</td><td>10</td><td>40</td><td><b>45</b></td><td><a href="qwen3_4b_instruct_2507_q4_K_M_r1.html">R1</a> <a href="qwen3_4b_instruct_2507_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>llama3.2:3b-instruct-q4_K_M</td><td>87</td><td>30</td><td>70</td><td>30</td><td><b>40</b></td><td>30</td><td><a href="llama3_2_3b_instruct_q4_K_M_r1.html">R1</a> <a href="llama3_2_3b_instruct_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>qwen3:1.7b</td><td>30</td><td>45</td><td>25</td><td>40</td><td>25</td><td><b>40</b></td><td><a href="qwen3_1_7b_r1.html">R1</a> <a href="qwen3_1_7b_r2.html">R2</a></td></tr>
+<tr><td>granite3.1-moe:3b</td><td>45</td><td>20</td><td>40</td><td>20</td><td><b>40</b></td><td>20</td><td><a href="granite3_1_moe_3b_r1.html">R1</a> <a href="granite3_1_moe_3b_r2.html">R2</a></td></tr>
+<tr><td>opencoder:1.5b</td><td>30</td><td>45</td><td>30</td><td>40</td><td>30</td><td><b>40</b></td><td><a href="opencoder_1_5b_r1.html">R1</a> <a href="opencoder_1_5b_r2.html">R2</a></td></tr>
+<tr><td>granite4:1b-h</td><td>45</td><td>45</td><td>40</td><td>40</td><td><b>40</b></td><td><b>40</b></td><td><a href="granite4_1b_h_r1.html">R1</a> <a href="granite4_1b_h_r2.html">R2</a></td></tr>
+<tr><td>hf.co/LiquidAI/LFM3-1.7B-GGUF:Q4_K_M</td><td>25</td><td>45</td><td>25</td><td>40</td><td>25</td><td><b>40</b></td><td><a href="hf_co_LiquidAI_LFM3_1_7B_GGUF_Q4_K_M_r1.html">R1</a> <a href="hf_co_LiquidAI_LFM3_1_7B_GGUF_Q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>yi-coder:1.5b</td><td>10</td><td>30</td><td>10</td><td>30</td><td><b>40</b></td><td>30</td><td><a href="yi_coder_1_5b_r1.html">R1</a> <a href="yi_coder_1_5b_r2.html">R2</a></td></tr>
+<tr><td>llama3.2:1b-instruct-q4_K_M</td><td>30</td><td>45</td><td>25</td><td>40</td><td>25</td><td><b>40</b></td><td><a href="llama3_2_1b_instruct_q4_K_M_r1.html">R1</a> <a href="llama3_2_1b_instruct_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>qwen3:0.6b</td><td>25</td><td>30</td><td>25</td><td>40</td><td>25</td><td><b>40</b></td><td><a href="qwen3_0_6b_r1.html">R1</a> <a href="qwen3_0_6b_r2.html">R2</a></td></tr>
+<tr><td>qwen2.5:3b</td><td>30</td><td>40</td><td>30</td><td>35</td><td>30</td><td><b>35</b></td><td><a href="qwen2_5_3b_r1.html">R1</a> <a href="qwen2_5_3b_r2.html">R2</a></td></tr>
+<tr><td>phi4-mini:latest</td><td>57</td><td>30</td><td>35</td><td>25</td><td><b>35</b></td><td>25</td><td><a href="phi4_mini_latest_r1.html">R1</a> <a href="phi4_mini_latest_r2.html">R2</a></td></tr>
+<tr><td>nemotron-3-nano:4b</td><td>30</td><td>30</td><td>30</td><td>30</td><td><b>30</b></td><td><b>30</b></td><td><a href="nemotron_3_nano_4b_r1.html">R1</a> <a href="nemotron_3_nano_4b_r2.html">R2</a></td></tr>
+<tr><td>nuextract:latest</td><td>30</td><td>30</td><td>30</td><td>30</td><td><b>30</b></td><td><b>30</b></td><td><a href="nuextract_latest_r1.html">R1</a> <a href="nuextract_latest_r2.html">R2</a></td></tr>
+<tr><td>granite4.2:3b-q4_K_M</td><td>30</td><td>25</td><td>30</td><td>25</td><td><b>30</b></td><td>25</td><td><a href="granite4_2_3b_q4_K_M_r1.html">R1</a> <a href="granite4_2_3b_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>sam860/falcon-h1:1.5b</td><td>30</td><td>25</td><td>30</td><td>25</td><td><b>30</b></td><td>25</td><td><a href="sam860_falcon_h1_1_5b_r1.html">R1</a> <a href="sam860_falcon_h1_1_5b_r2.html">R2</a></td></tr>
+<tr><td>huggingfacetb-smollm3-3b-q4-k-m:bakeoff</td><td>30</td><td>30</td><td>30</td><td>30</td><td><b>30</b></td><td><b>30</b></td><td><a href="huggingfacetb_smollm3_3b_q4_k_m_bakeoff_r1.html">R1</a> <a href="huggingfacetb_smollm3_3b_q4_k_m_bakeoff_r2.html">R2</a></td></tr>
+<tr><td>granite3.3:2b</td><td>30</td><td>30</td><td>30</td><td>30</td><td><b>30</b></td><td><b>30</b></td><td><a href="granite3_3_2b_r1.html">R1</a> <a href="granite3_3_2b_r2.html">R2</a></td></tr>
+<tr><td>openbmb/minicpm5-2b:latest</td><td>30</td><td>25</td><td>30</td><td>25</td><td><b>30</b></td><td>25</td><td><a href="openbmb_minicpm5_2b_latest_r1.html">R1</a> <a href="openbmb_minicpm5_2b_latest_r2.html">R2</a></td></tr>
+<tr><td>qwen2.5:0.5b</td><td>30</td><td>30</td><td>25</td><td>25</td><td><b>25</b></td><td><b>25</b></td><td><a href="qwen2_5_0_5b_r1.html">R1</a> <a href="qwen2_5_0_5b_r2.html">R2</a></td></tr>
+<tr><td>qwen2.5:1.5b</td><td>30</td><td>30</td><td>25</td><td>25</td><td><b>25</b></td><td><b>25</b></td><td><a href="qwen2_5_1_5b_r1.html">R1</a> <a href="qwen2_5_1_5b_r2.html">R2</a></td></tr>
+<tr><td>qwen2.5-coder:3b</td><td>30</td><td>25</td><td>25</td><td>25</td><td><b>25</b></td><td><b>25</b></td><td><a href="qwen2_5_coder_3b_r1.html">R1</a> <a href="qwen2_5_coder_3b_r2.html">R2</a></td></tr>
+<tr><td>gemma3:1b-it-q4_K_M</td><td>30</td><td>25</td><td>25</td><td>25</td><td><b>25</b></td><td><b>25</b></td><td><a href="gemma3_1b_it_q4_K_M_r1.html">R1</a> <a href="gemma3_1b_it_q4_K_M_r2.html">R2</a></td></tr>
+<tr><td>rwkv7-g1g-proof:latest</td><td>25</td><td>25</td><td>25</td><td>25</td><td><b>25</b></td><td><b>25</b></td><td><a href="rwkv7_g1g_proof_latest_r1.html">R1</a> <a href="rwkv7_g1g_proof_latest_r2.html">R2</a></td></tr>
+<tr><td>phi3.5:3.8b</td><td>25</td><td>0</td><td>25</td><td>10</td><td><b>25</b></td><td>10</td><td><a href="phi3_5_3_8b_r1.html">R1</a> <a href="phi3_5_3_8b_r2.html">R2</a></td></tr>
+<tr><td>athena-slm:latest</td><td>20</td><td>15</td><td>20</td><td>15</td><td><b>20</b></td><td>15</td><td><a href="athena_slm_latest_r1.html">R1</a> <a href="athena_slm_latest_r2.html">R2</a></td></tr>
+<tr><td>voter-granite-moe:3b</td><td>15</td><td>10</td><td>15</td><td>10</td><td><b>15</b></td><td>10</td><td><a href="voter_granite_moe_3b_r1.html">R1</a> <a href="voter_granite_moe_3b_r2.html">R2</a></td></tr>
+<tr><td>granite3.1-moe:1b</td><td>0</td><td>0</td><td>10</td><td>10</td><td><b>10</b></td><td><b>10</b></td><td><a href="granite3_1_moe_1b_r1.html">R1</a> <a href="granite3_1_moe_1b_r2.html">R2</a></td></tr>
+<tr><td>granite-code:3b</td><td>0</td><td>0</td><td>10</td><td>10</td><td><b>10</b></td><td><b>10</b></td><td><a href="granite_code_3b_r1.html">R1</a> <a href="granite_code_3b_r2.html">R2</a></td></tr>
+<tr><td>qwen3:4b-thinking-2507-q4_K_M</td><td>0</td><td>0</td><td>10</td><td>10</td><td><b>10</b></td><td><b>10</b></td><td><a href="qwen3_4b_thinking_2507_q4_K_M_r1.html">R1</a> <a href="qwen3_4b_thinking_2507_q4_K_M_r2.html">R2</a></td></tr>
+</table>
+<p><small>Grader: grade3.cjs (control-treatment physics, two-arm input-causal scoring, flight filter, floor check, hard caps).
+Ref calibration: ref-good 90/90 twice, ref-bad 10. Transcripts: flappy_transcript.jsonl (v1), flappy_v2.jsonl, flappy_v3.jsonl, flappy_coli30b.jsonl.</small></p>
+</body></html>

@@ -28,3 +28,16 @@ model under 100. Runner is serial, streaming (partials kept), resume-safe.
 ## Follow-up (this ticket stays open)
 Land `results/2026-11-14/flappy.jsonl` + `docs/FLAPPY-2026-11-14.md` when the
 38-model run completes; analyze repair-round deltas (coachability axis).
+
+## v3 follow-up (2026-11-14, Flappy lane)
+
+v1/v2 crowned decorative games (owner play-test: "don't even take
+keystrokes"). `grade3.cjs` is input-causal (control-treatment flap,
+two-arm scoring, flight filter, floor check, hard caps); full 76-file
+regrade in `results/2026-11-14/flappy_v3.jsonl`, findings in
+`docs/FLAPPY-V3-2026-11-14.md`, gallery `games/gallery-v3.html`.
+Machine best: gemma4 R1 + Qwen3-Coder-30B R1 (90 each); human crown:
+coli30b R1. Both 90s fail only `visible` (start-screen wrinkle — see
+issues). Repair rounds can HURT (90→35); T3 snippet scores don't predict
+app builds. Prompts: `prompt-v2.txt`, `prompt-v3gen.txt`; 30B driver:
+`flappy_coli30b.py` (transcript R1-only until repairs land).
