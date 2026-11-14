@@ -21,27 +21,42 @@ curl:
 
     curl https://mac-mini-von-hugo-1.taild73e38.ts.net/api/chat -d "{\"model\":\"gemma3:4b\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"stream\":false}"
 
-## Routing (measured on this 8 GB Intel box)
+## Routing (measured on this 8 GB Intel box; Nov 13-14 campaign)
 
-- Default quality: `gemma3:4b` (about 1 min per answer at ~9.7 tok/s)
+- Judgment/votes: `qwen3:8b` (T2 63/66) when quality matters; fast lane
+  `granite3.1-moe:3b` (13/18 at ~0.5 s/vote). Cheap all-round: `granite4:micro-h`
+  (18/18 voter, 20/26 code). See `docs/T2-tier66-2026-11-13.md`.
+- General chat: unrevised this campaign — `gemma3:4b` stays the standing pick.
 - Fast: `qwen2.5:0.5b` (about 2 s); step up: `qwen3:1.7b` with `"think": false` (~10-20 s, correct on simple reasoning)
-- Code: `qwen2.5-coder:3b`
+- Code: `nemotron-3-nano:4b` (bank 65/100, T1 4/4) for depth;
+  `qwen2.5-coder:3b` (bank 64/100) as the faster alternate. Specialist:
+  `yi-coder:1.5b` codes 25/26 but cannot follow one-word formats — code only.
+  See `docs/T3-bank100-2026-11-13.md`.
 - Embed: `nomic-embed-text:v1.5` (`POST /api/embed`, 768 dims, fastest on CPU)
 - Tools: `hf.co/turintech/Qwen3.5-0.8B-Artemis-GGUF:Q5_K_M` with the per-tool JSON schema (11-12/12 on the T12 bench); fallback `phi4-mini` (7/12). Always send `"think": false` to tool models
-- Reasoning (opt-in, slow): `granite4.2:3b` with `"think": true` and `num_predict` >= 900 (~75-95 s per answer) — the only reliable small thinker here
+- Reasoning (opt-in): `nemotron-3-nano:4b` or `qwen3:4b-instruct-2507`
+  (both 4/4, no thinking needed). Legacy slow lane: `granite4.2:3b` with
+  `"think": true` and `num_predict` >= 900 (~75-95 s per answer).
 - Keep context at 4k or below (llmfit: nothing above 4k fits here)
 - Do NOT run `qwen2.5:14b` or `deepseek-r1:8b` (too big for 8 GB)
+- Removed 2026-11-14 (measured weak, freed ~8 GB — do not request):
+  `qwen3:4b-thinking-2507`, `phi3.5:3.8b`, `athena-slm`, `LFM3-1.7B`,
+  `granite3.1-moe:1b`, `qwen2.5:3b-instruct-q2_K`, `qwen2.5:3b-instruct-q3_K_M`,
+  `functiongemma`
 
 Every request names its model. There is no server-side switching and no restart, ever.
 
 ### Thinking policy
 
-Think-off is the default everywhere except the granite reasoning lane above.
+Think-off is the default everywhere except the reasoning picks above.
 Never send `"think": true` to instruct-only models (`gemma3:4b`, `qwen2.5:*`,
-`phi4-mini`, `qwen2.5:0.5b`, `functiongemma`) — the server hard-errors with
+`phi4-mini`, `qwen2.5:0.5b`) — the server hard-errors with
 "does not support thinking". Small thinkers that over-think past the output
 budget return empty answers, so always pair `"think": true` with a generous
-`num_predict` (>= 900).
+`num_predict` (>= 900). `qwen3:4b-thinking-2507` was removed 2026-11-14: it
+ignored think:false, and with think:true answered 2/4 at both 900 and 2048
+budgets (same items empty) while burning ~5k tokens — use
+`qwen3:4b-instruct-2507` instead.
 
 ## Web tools
 
