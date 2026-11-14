@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird Game</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const bird = { x: 50, y: 50, vy: 0, image: new Image() };
+        const pipes = [];
+        let score = 0;
+        let gameOver = false;
+
+        bird.image.src = 'bird.png'; // Replace with your bird image
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bird.image, bird.x, bird.y);
+            pipes.forEach(p => {
+                ctx.drawImage(p.image, p.x, p.y);
+                ctx.drawImage(p.image, p.x + p.width, p.y);
+            });
+            ctx.fillText(`Score: ${score}`, 10, 20);
+            if (gameOver) {
+                ctx.fillText('Game Over', canvas.width / 2 - 50, canvas.height / 2);
+            }
+        }
+
+        function update() {
+            if (!gameOver) {
+                bird.vy += 0.5;
+                bird.y += bird.vy;
+                pipes.forEach(p => {
+                    p.x -= 1;
+                    if (bird.x + 30 > p.x && bird.x < p.x + p.width && (bird.y < p.y + p.height || bird.y + 30 > p.y + p.height)) {
+                        gameOver = true;
+                    }
+                });
+                if (bird.x > canvas.width || bird.y > canvas.height || bird.y < 0) {
+                    gameOver = true;
+                }
+                if (pipes.length > 0 && pipes[0].x < 0) {
+                    score += 1;
+                    pipes.shift();
+                }
+            }
+            draw();
+            if (!gameOver) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        function startGame() {
+            bird.y = 50;
+            score = 0;
+            gameOver = false;
+            pipes.length = 0;
+            update();
+        }
+
+        canvas.addEventListener('click', () => {
+            bird.vy = -10;
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                bird.vy = -10;
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyR') {
+                startGame();
+            }
+        });
+
+        startGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flappy Bird</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+
+<script>
+  window.__flappy = { y: 50, number: 0, over: true };
+
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let bird = { y: 50, number: 0, over: true };
+  let pipe = { x: 100, y: 50, width: 20, height: 20, over: true };
+  let score = 0;
+
+  function update() {
+    // Update bird position
+    bird.y += 2;
+
+    // Flip bird
+    bird.over = !bird.over;
+
+    // Check for collision
+    if (bird.y < 0 || bird.y > canvas.height - 50) {
+      bird.over = false;
+      score++;
+    }
+
+    // Check for pipe collision
+    if (bird.y > canvas.height - 50 && bird.y < canvas.height - 20) {
+      bird.over = false;
+      score++;
+    }
+
+    // Check for ground collision
+    if (bird.y > canvas.height - 50) {
+      bird.over = false;
+      score--;
+    }
+
+    // Check for ceiling collision
+    if (bird.y < 0) {
+      bird.over = false;
+      score--;
+    }
+
+    // Draw the game
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the pipe
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(pipe.x, pipe.y, 20, 20);
+
+    // Draw the bird
+    ctx.fillStyle = 'green';
+    ctx.fillRect(bird.x, bird.y, 1, 1);
+
+    // Update score
+    score = score - 1;
+
+    // Check for game over
+    if (bird.over) {
+      score = 0;
+      bird.over = false;
+    }
+  }
+
+  function gameLoop() {
+    update();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+</script>
+</body>
+</html>

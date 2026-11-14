@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #000;
+        }
+        canvas {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const GAME_HEIGHT = 600;
+        const GAME_WIDTH = 800;
+        const BIRD_SPEED = 2;
+        const PIPE_SPEED = 2;
+        const PIPE_GAP = 100;
+        const PIPE_WIDTH = 50;
+        const PIPE_HEIGHT = 100;
+        const PIPE_GAP_MAX = 300;
+        const PIPE_GAP_MIN = 100;
+        const GAME_OVER_SCORE = 100;
+        const GAME_OVER_TIME = 5000;
+        const GAME_RESTART_TIME = 1000;
+
+        let gameOver = false;
+        let score = 0;
+        let birdY = GAME_HEIGHT / 2;
+        let birdSpeed = BIRD_SPEED;
+        let pipeSpeed = PIPE_SPEED;
+        let pipeGap = PIPE_GAP_MIN;
+        let pipeGapMax = PIPE_GAP_MAX;
+        let pipeGapMin = PIPE_GAP_MIN;
+        let gameStartTime = Date.now();
+
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+        canvas.width = GAME_WIDTH;
+        canvas.height = GAME_HEIGHT;
+
+        function draw() {
+            context.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            
+            drawPipes();
+            drawBird();
+            
+            if (!gameOver) {
+                update();
+            }
+            
+            requestAnimationFrame(draw);
+        }
+
+        function drawPipes() {
+            for (let i = 0; i < 2; i++) {
+                let x = i * (PIPE_WIDTH + PIPE_GAP) + PIPE_GAP;
+                let y = Math.random() * (GAME_HEIGHT - PIPE_HEIGHT) + PIPE_HEIGHT;
+                drawRectangle(x, y, PIPE_WIDTH, PIPE_HEIGHT, 'black');
+                drawRectangle(x, 0, PIPE_WIDTH, PIPE_HEIGHT, 'black');
+            }
+        }
+
+        function drawBird() {
+            drawRectangle(0, birdY, 10, 10, 'white');
+        }
+
+        function drawRectangle(x, y, width, height, color) {
+            context.fillStyle = color;
+            context.fillRect(x, y, width, height);
+        }
+
+        function update() {
+            if (birdY < GAME_HEIGHT && (birdY > 0 || birdY + birdSpeed > GAME_HEIGHT)) {
+                birdY += birdSpeed;
+                birdSpeed += 0.5;
+            } else {
+                gameOver = true;
+                setTimeout(() => {
+                    location.reload();
+                }, GAME_RESTART_TIME);
+            }
+            
+            if (Date.now() - gameStartTime > GAME_OVER_TIME) {
+                gameOver = true;
+                score = GAME_OVER_SCORE;
+                setTimeout(() => {
+                    location.reload();
+                }, GAME_RESTART_TIME);
+            }
+            
+            if (!gameOver) {
+                if (checkCollision(getPipeX(0), getPipeY(0)) ||
+                    checkCollision(getPipeX(1), getPipeY(1))) {
+                    gameOver = true;
+                    score = 0;
+                    setTimeout(() => {
+                        location.reload();
+                    }, GAME_RESTART_TIME);
+                }
+                
+                if (checkCollision(0, getBirdY())) {
+                    gameOver = true;
+                    score = 0;
+                    setTimeout(() => {
+                        location.reload();
+                    }, GAME_RESTART_TIME);
+                }
+                
+                if (checkCollision(GAME_WIDTH, getPipeY(0)) ||
+                    checkCollision(GAME_WIDTH, getPipeY(1))) {
+                    gameOver = true;
+                    score = 0;
+                    setTimeout(() => {
+                        location.reload();
+                    }, GAME_RESTART_TIME);
+                }
+            }
+            
+            if (!gameOver) {
+                pipeGap += pipeSpeed;
+                if (pipeGap > pipeGapMax) {
+                    pipeGap = pipeGapMax;
+                    pipeGapMin = Math.random() * (GAME_HEIGHT - PIPE_HEIGHT) + PIPE_HEIGHT;
+                    pipeGapMax = PIPE_GAP_MAX + pipeGapMin;
+                }
+            }
+        }
+
+        function checkCollision(x, y) {
+            return birdY > y && birdY < y + PIPE_HEIGHT && x < GAME_WIDTH && x > 0;
+        }
+
+        function getBirdY() {
+            return birdY;
+        }
+
+        function getPipeX(index) {
+            return (GAME_WIDTH + PIPE_GAP) * index;
+        }
+
+        function getPipeY(index) {
+            return pipeGapMin + index * (PIPE_HEIGHT + PIPE_GAP);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === ' ') {
+                birdSpeed = -BIRD_SPEED;
+            }
+        });
+
+        canvas.addEventListener('click', (event) => {
+            if (event.clientX < GAME_WIDTH / 2) {
+                birdSpeed = BIRD_SPEED;
+            }
+        });
+
+        window.__flappy = { y: birdY, score, over: gameOver };
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let birdX = 50;
+        let birdY = 150;
+        let gravity = 0.5;
+        let velocity = 0;
+        let score = 0;
+        let over = false;
+
+        let pipes = [];
+        let pipeWidth = 50;
+        let pipeGap = 150;
+        let pipeSpeed = 2;
+
+        let debug = { y: birdY, score: score, over: over };
+
+        function drawBird() {
+            ctx.fillStyle = 'yellow';
+            ctx.beginPath();
+            ctx.arc(birdX, birdY, 20, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            for (let i = 0; i < pipes.length; i++) {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(pipes[i].x, pipes[i].y, pipeWidth, 600);
+            }
+        }
+
+        function createPipe() {
+            let x = 400;
+            let y = Math.random() * (600 - pipeGap) + 50;
+            pipes.push({ x: x, y: y });
+        }
+
+        function update() {
+            if (over) return;
+
+            velocity += gravity;
+            birdY += velocity;
+
+            if (birdY + 20 > 600) {
+                birdY = 600 - 20;
+                over = true;
+                debug.over = true;
+            }
+
+            for (let i = 0; i < pipes.length; i++) {
+                pipes[i].x -= pipeSpeed;
+
+                if (pipes[i].x + pipeWidth < 0) {
+                    pipes.splice(i, 1);
+                    score++;
+                    debug.score = score;
+                    i--;
+                }
+
+                if (birdX + 20 > pipes[i].x && birdX - 20 < pipes[i].x + pipeWidth && birdY < pipes[i].y + pipeGap || birdY + 20 > pipes[i].y && birdY < pipes[i].y + pipeGap) {
+                    birdY = 600 - 20;
+                    over = true;
+                    debug.over = true;
+                }
+            }
+
+            if (score % 10 === 0) {
+                createPipe();
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, 400, 600);
+            drawBird();
+            drawPipes();
+            debug.y = birdY;
+            debug.score = score;
+            debug.over = over;
+        }
+
+        function handleInput() {
+            if (over) return;
+
+            if (keys[' '] || event.button === 0) {
+                velocity = -10;
+            }
+        }
+
+        function reset() {
+            score = 0;
+            over = false;
+            pipes = [];
+            birdX = 50;
+            birdY = 150;
+            velocity = 0;
+            debug.over = false;
+            debug.score = 0;
+            debug.y = 150;
+        }
+
+        let keys = {
+            ArrowUp: false,
+            Space: false,
+            r: false
+        };
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowUp' || event.key === 'Space') {
+                keys[' '] = true;
+            }
+            if (event.key === 'r') {
+                keys.r = true;
+            }
+        });
+
+        document.addEventListener('keyup', function (event) {
+            if (event.key === 'ArrowUp' || event.key === 'Space') {
+                keys[' '] = false;
+            }
+            if (event.key === 'r') {
+                keys.r = false;
+            }
+        });
+
+        function gameLoop() {
+            handleInput();
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+            debug.y = birdY;
+            debug.score = score;
+            debug.over = over;
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

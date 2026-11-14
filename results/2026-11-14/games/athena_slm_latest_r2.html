@@ -1,0 +1,289 @@
+<no_errors>  
+// Flappy Bird - Single File HTML5  
+const CANVAS = document.getElementById('gameCanvas');  
+const PIPES = document.documentElement.innerHTML.trim().split('\n')[0];  
+const GROUND_HEIGHT = 200;  
+const PIPE_WIDTH = 20;  
+const PIPE_GAP = 10;  
+const FLAP_SPEED = 5;  
+const GRAVITY = 0.5;  
+const PREDICTION_DELAY = 20;  
+let bird = { x: 50, y: 200, height: 200, velocity: { x: 0, y: 0 }, score: 0, over: false };  
+let gameOver = false;  
+let lastTime = performance.now();  
+let restarts = 0;  
+let currentScore = 0;  
+
+window.__flappy = { y: 0, score: 0, over: false };  
+
+function draw() {  
+  const now = performance.now();  
+  const deltaTime = now - lastTime;  
+  lastTime = now;  
+
+  if (!gameOver) {  
+    const timeElapsed = deltaTime / 1000;  
+    const frameCount = 60;  
+    const steps = Math.floor(frameCount / PREDICTION_DELAY);  
+
+    // Update bird  
+    bird.velocity.y = GRAVITY;  
+    bird.y += bird.velocity.y;  
+    bird.x = bird.x;  
+    bird.y = bird.y;  
+
+    // Flap: press space or click  
+    if (restarts > 0) {  
+      if (spaceEvent) {  
+        bird.velocity.x = FLAP_SPEED;  
+      }  
+      if (clickEvent) {  
+        bird.velocity.x = 0;  
+      }  
+    }  
+
+    // Collision with ground or ceiling  
+    if (bird.y + bird.height > GROUND_HEIGHT || bird.y < 0) {  
+      gameOver = true;  
+      return;  
+    }  
+
+    // Collision with pipes  
+    if (checkCollision(bird, PIPES)) {  
+      gameOver = true;  
+      return;  
+    }  
+
+    // Pipe collision score  
+    if (checkPipeCollision(bird, PIPES)) {  
+      score = score + 1;  
+      drawPipes();  
+    }  
+
+    // Check for over (collision or gap)  
+    if (checkCollision(bird, PIPES + PIPES.slice(0, PIPES.length - 1)) || checkCollision(bird, CANVAS)) {  
+      gameOver = true;  
+      return;  
+    }  
+
+    // Restart on game over  
+    if (restarts > 0) {  
+      bird = { x: 50, y: 200, height: 200, velocity: { x: 0, y: 0 }, score: 0, over: false };  
+      score = 0;  
+      gameOver = false;  
+      restarts--;  
+    }  
+
+    // Draw background  
+    drawBackground();  
+
+    drawPipes();  
+  }  
+
+  drawBackground();  
+}  
+
+function drawBackground() {  
+  const background = document.documentElement.innerHTML;  
+  background = background.trim().replace(/\r/g, '');  
+  background += '--transparent' + new DataURL(background, { compress: 'nopct' });  
+}  
+
+function drawPipes() {  
+  const pipeCount = PIPES.length;  
+  const pipeList = PIPES.slice(0, pipeCount);  
+  const pipePositions = pipeCount * {  
+    x: 0, y: 0, width: PIPE_WIDTH, gap: PIPE_GAP  
+  };  
+
+  const pipeGraph = document.createDocumentElement();  
+  const pivot = document.createElement('div');  
+  pivot.innerHTML = '';  
+  pipeGraph.appendChild(pivot);  
+
+  for (let i = 0; i < pipeCount; i++) {  
+    const pivotElement = pivotElement = document.collectElement(pipeGraph);  
+    pivotElement.innerHTML = '';  
+
+    pivotElement.appendChild(document.createTextNode(pipePositions[i].x + pivotElement.offsetLeft + 10 + 'px'));  
+  }  
+
+  pivotElement.innerHTML = '';  
+  for (let i = 0; i < pipeCount; i++) {  
+    const pivotElement = document.collectElement(pipeGraph, i + 1);  
+    pivotElement.innerHTML = '';  
+    pivotElement.appendChild(document.createTextNode(pipePositions[i].x + pivotElement.offsetLeft + 10 + 'px'));  
+  }  
+
+  pivotElement.innerHTML += '--background' + new DataURL(pipeGraph.innerHTML, { compress: 'nopct' });  
+}  
+
+function drawBackgroundLine() {  
+  const line = document.createElement('line', { x: 0, y: 0, width: 2, color: 'black' });  
+  line.style.lineCap = 'round';  
+  document.body.appendChild(line);  
+}  
+
+function drawPipeScore() {  
+  const scoreElement = document.getElementById('score');  
+  scoreElement.innerText = `Score: ${currentScore} | Pipes: ${score} | Game: ${gameOver ? 'Over' : 'End'}`;  
+}  
+
+function drawPipesScore() {  
+  const scoreElement = document.getElementById('score');  
+  scoreElement.innerText = `Score: ${currentScore} | Pipes: ${score} | Game: ${gameOver ? 'Over' : 'End'}`;  
+}  
+
+function drawScore() {  
+  const scoreElement = document.getElementById('score');  
+  scoreElement.innerText = `Score: 0 | Pipes: 0 | Game: ${gameOver ? 'Over' : 'End'}`;  
+}  
+
+function checkCollision(a, pipes) {  
+  for (let i = 0; i < pipes.length; i++) {  
+    const pipe = pipes[i];  
+    const pipeX = pipe.x;  
+    const pipeY = pipe.y;  
+    const pipeWidth = pipe.width;  
+    const pipeLeft = pipeX - pipeGap;  
+    const pipeRight = pipeX + pipeWidth;  
+
+    if (a.y + a.height > pipeY && a.y < pipeY + pipeHeight) {  
+      return true;  
+    }  
+
+    if (a.x + a.width > pipeLeft && a.x < pipeRight) {  
+      return true;  
+    }  
+  }  
+
+  return false;  
+}  
+
+function checkPipeCollision(a, pipes) {  
+  for (let i = 0; i < pipes.length; i++) {  
+    const pipe = pipes[i];  
+    const pipeX = pipe.x;  
+    const pipeY = pipe.y;  
+    const pipeWidth = pipe.width;  
+    const pipeLeft = pipeX - pipeGap;  
+    const pipeRight = pipeX + pipeWidth;  
+
+    if (a.y + a.height > pipeY && a.y < pipeY + pipeHeight) {  
+      return true;  
+    }  
+
+    if (a.x + a.width > pipeLeft && a.x < pipeRight) {  
+      return true;  
+    }  
+  }  
+
+  return false;  
+}  
+
+function spaceEvent() {  
+  const spaceEvent = document.documentElement.dispatchEvent(new Event('keypress', { keys: [Space] }));  
+  bird.velocity.x = FLAP_SPEED;  
+}  
+
+function clickEvent() {  
+  const clickEvent = document.documentElement.dispatchEvent(new Event('click', { bubbles: true }));  
+  bird.velocity.x = 0;  
+}  
+
+function resetRestarts() {  
+  restarts = 0;  
+  drawPipes();  
+}  
+
+function gameOverEvent() {  
+  const gameOverElement = document.getElementById('gameOver');  
+  gameOverElement.innerText = 'Game Over! Press R to Restart or R to Exit';  
+  gameOver = true;  
+}  
+
+function restartGame() {  
+  currentScore = 0;  
+  scoreElement.innerText = 'Score: 0 | Pipes: 0 | Game: Over';  
+  drawPipes();  
+  drawScore();  
+  gameOver = false;  
+  restarts = 0;  
+}  
+
+function update() {  
+  const deltaTime = performance.now() - lastTime;  
+  lastTime = performance.now();  
+
+  if (!gameOver) {  
+    drawBackground();  
+    drawPipes();  
+    drawScore();  
+  }  
+
+  updateTime = deltaTime;  
+  drawPipesScore();  
+  drawScore();  
+
+  if (restarts > 0) {  
+    drawPipesScore();  
+    drawScore();  
+  }  
+
+  if (gameOver) {  
+    drawGameOverElement();  
+    gameOver = false;  
+    restarts--;  
+  }  
+
+  requestAnimationFrame(update);  
+}  
+
+function drawBackgroundElement() {  
+  drawBackgroundLine();  
+}  
+
+function drawBackgroundLine() {  
+  const background = document.documentElement.innerHTML;  
+  background = background.trim().replace(/\r/g, '');  
+  background += '--transparent' + new DataURL(background, { compress: 'nopct' });  
+}  
+
+function drawGameOverElement() {  
+  const gameOverElement = document.getElementById('gameOver');  
+  gameOverElement.innerText = 'Game Over! Press R to Restart or R to Exit';  
+  gameOver = true;  
+}  
+
+function drawPipesScore() {  
+  const scoreElement = document.getElementById('score');  
+  scoreElement.innerText = `Score: 0 | Pipes: 0 | Game: ${gameOver ? 'Over' : 'End'}`;  
+}  
+
+function drawPipes() {  
+  const pipeCount = PIPES.length;  
+  const pipeList = PIPES.slice(0, pipeCount);  
+  const pipePositions = pipeCount * {  
+    x: 0, y: 0, width: PIPE_WIDTH, gap: PIPE_GAP  
+  };  
+
+  const pivot = document.collectElement(pipeGraph);  
+  pivotElement.innerHTML = '';  
+
+  for (let i = 0; i < pipeCount; i++) {  
+    const pivotElement = pivotElement = document.collectElement(pipeGraph, i + 1);  
+    pivotElement.innerHTML = '';  
+    pivotElement.appendChild(document.createTextNode(pipePositions[i].x + pivotElement.offsetLeft + 10 + 'px'));  
+  }  
+
+  pivotElement.innerHTML += '--background' + new DataURL(pipeGraph.innerHTML, { compress: 'nopct' });  
+}  
+
+window.addEventListener('click', resetRestarts);  
+window.addEventListener('keypress', spaceEvent, { passive: false });  
+window.addEventListener('click', gameOverEvent);  
+restartGame();  
+restarts = 0;  
+restartGame();  
+"~"
+}

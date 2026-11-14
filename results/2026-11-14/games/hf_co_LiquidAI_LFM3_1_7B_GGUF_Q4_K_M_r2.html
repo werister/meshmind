@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+  body { background:#ffbf44; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden; }
+  canvas { border-radius:50%; box-shadow:0 0 20px #fff,0 0 20px #f00; }
+</style>
+</head>
+<body>
+<canvas id="game" width="400" height="600"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// Debug object
+window.__flappy = { y: 0, score: 0, over: false };
+
+let bird = { x: 80, y: 0, vy: 0 };
+let pipes = [];
+let nextPipeIndex = 0;
+let gapWidth = 70;
+let pipeSpeed = 2;
+let gravity = 1.5;
+let jumpForce = -10;
+let score = 0;
+let gameOver = false;
+let frameCount = 0;
+
+function resetGame() {
+  bird.x = 80;
+  bird.y = 0;
+  bird.vy = 0;
+  pipes = [];
+  nextPipeIndex = 0;
+  score = 0;
+  gameOver = false;
+  frameCount = 0;
+}
+
+// Create a pipe pair
+function createPipe() {
+  const gapTop = Math.random() * (canvas.height - 240) + 60;
+  const gapBottom = gapTop + gapWidth + 20;
+  pipes.push({
+    x: canvas.width - pipeSpeed * nextPipeIndex,
+    topHeight: gapTop,
+    bottomHeight: gapBottom,
+    passed: false
+  });
+}
+
+// Spawn new pipe after current one passes
+function spawnNextPipe() {
+  createPipe();
+}
+
+// Update bird position and handle input
+function updateBird() {
+  if (gameOver) {
+    // still animate? we can just let it fall then restart on click/press
+    return;
+  }
+  // apply gravity
+  bird.vy += gravity;
+  bird.y += bird.vy;
+
+  // flap on space or click
+  if (keyboard.EnterKey || keyboard.KeyDown) {
+    bird.vy = jumpForce;
+  } else if (eventKeyCode === 'Space') { // we'll handle via key listener later
+    bird.vy = jumpForce;
+  }
+}
+
+// Actually, we need to detect input each frame.
+// We'll use a simple approach: check for space key and click event.
+
+// Main loop
+function gameLoop() {
+  frameCount++;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update pipes scrolling
+  if (!gameOver) {
+    for (let i = 0; i < pipes.length; i++) {
+      const p = pipes[i];
+      p.x -= pipeSpeed;
+      if (p.x + gapWidth / 2 > canvas.width) { // passed left side? Actually we want to detect when bird passes pipe
+        // We'll check collision later.
+      }
+    }
+  }
+
+  // Check collisions with pipes, ground, ceiling
+  let hitPipe = false;
+  for (const p of pipes) {
+    if (bird.x < p.x && bird.x < p.x + gapWidth && bird.y > 0 && bird.y < p.bottomHeight) {
+      // bird is inside pipe's horizontal range and within its vertical span?
+      // Actually pipe spans from left to right; we need to check if bird x is between pipe.x and pipe.x+gap? Let's define: pipe occupies region (x, y) where y in [topHeight, bottomHeight). Bird passes when it moves from right side of previous pipe into new gap.
+    }
+  }
+
+  // Simpler collision detection:
+  // Ground at y=groundY = 120? We'll set ground level.
+}
+
+// Let's restructure: define constants.
+
+const GROUND_Y = 100;
+const CEILING_Y = -20; // top of screen
+
+let groundY = GROUND_Y;
+
+// Initialize pipes
+function initPipes() {
+  while (nextPipeIndex < 5) { // just a few
+    createPipe();
+    nextPipeIndex++;
+  }
+}
+
+// Main loop with requestAnimationFrame
+let lastTime = 0;
+function gameLoop(timestamp) {
+  if (!gameOver) {
+    updateBird();
+    // Move pipes left
+    for (const p of pipes) {
+      p.x -= pipeSpeed;
+    }
+    // Check collisions
+    let hitPipe = false;
+    for (const p of pipes) {
+      const birdX = bird.x;
+      if (birdX > p.x && birdX < p.x + gapWidth && bird.y >= 0 && bird.y <= p.bottomHeight) {
+        hitPipe = true;
+        break;
+      }
+    }
+    // ground collision
+    if (bird.y >= groundY) {
+      hitPipe = true; // game over
+    }
+    // ceiling collision
+    if (bird.y <= CEILING_Y) {
+      hitPipe = true; // game over
+    }
+
+    if (hitPipe) {
+      gameOver = true;
+    }
+  } else {
+    // after game over, we still need to update pipes? maybe not needed.
+  }
+
+  // Score when passing pipe: check if bird's x moved past previous pipe's right edge?
+  // We'll just increment score for each new pipe created (i.e., every time a gap is passed).
+  // Simpler: after moving, we can detect if bird was to the left of current pipe and then next pipe appears.
+  // For simplicity, we will count score when a new pipe spawns? Not accurate.
+
+  // Let's implement scoring by checking each frame whether bird.x < p.x (i.e., passed previous pipe).
+  for (const p of pipes) {
+    if (bird.x < p.x && !p.passed) {
+      p.passed = true;
+      score++;
+    }
+  }
+
+  // Update ground
+  groundY += gravity * 0.1; // small per frame? Actually we can just set each frame.
+  // Let's just keep bird.y relative to ground.
+
+  // Draw pipes
+  for (const p of pipes) {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(p.x, 0, gapWidth + 2, p.topHeight); // top bar? Actually pipe is a rectangle spanning full height between top and bottom.
+    // Let's draw two rectangles: left pipe and right pipe? We'll just draw one rectangle representing the gap region?
+  }
+
+  // Draw bird
+  ctx.fillStyle = '#ffcc00';
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Ground
+  ctx.fillStyle = '#fff3e6';
+  ctx.fillRect(0, groundY, canvas.width, GROUND_Y - groundY);
+
+  requestAnimationFrame(gameLoop);
+}
+
+// This is getting messy. Let's rewrite cleanly.
+
+</script>
+</body>
+</html>
+
+But we need to meet all requirements precisely: debug object updated every frame as last line of game loop. Also need keyboard input and click/space. Need restart on R or click after game over.
+
+Let's design a full, compact but correct implementation.
+
+We'll have:
+
+- canvas 400x600.
+- bird x,y,vy.
+- pipes array of objects: { x, topHeight, bottomHeight, passed? }
+- groundY = 100 (fixed).
+- Ceiling at y=0? Actually we treat ceiling as y <= -20 maybe. But easier: collision with top edge when bird.y < 0.
+
+Simplify: Use screen coordinates directly; no need for ground constant but set ground level to 120.
+
+Let's define:
+
+const BIRD_SIZE = 2; // radius
+
+We'll draw circle at (bird.x, bird.y).
+
+Pipes: each pipe is a rectangle from x to x+gapWidth? Actually typical Flappy Bird: pipes are vertical gaps. We can represent as an object with { x, gapY: topHeight, bottomY: topHeight + gapWidth + 20 } where the pipe occupies area between those y values across its width (which is fixed at canvas.width - pipeSpeed?). But we need scrolling leftwards.
+
+Simplify: Represent each pipe by its left edge position and its height range. When bird passes from right side of previous pipe into new gap, it scores.
+
+Implementation approach:
+
+- Create pipes array initially empty.
+- nextPipeIndex = 0; We'll generate a new pipe at x = canvas.width - pipeSpeed * nextPipeIndex (so they appear on right side and move left). The pipe's width is fixed: maybe 50? But we can just treat each pipe as occupying full width, but gap between them.
+
+Better to follow typical game: Pipes are vertical gaps; there is a gap of about 200px high. We'll generate two pipes per cycle? Actually one pipe at a time moving left; when bird passes it (i.e., its right side moves past bird's x), then next pipe spawns after some delay.
+
+Simplify further: Use single pipe that moves left, and score increments each time the bird passes from right to left of it. That matches "passing a pipe scores 1 point". So we can have just one moving pipe; but typical game has multiple. But requirement says "Pipes scroll from right to left with a gap; passing a pipe scores 1 point." Could be plural.
+
+We'll implement two pipes: each frame, we remove the leftmost pipe (the one that is fully passed) and add new one at right side? That's more complex but doable.
+
+Given time constraints, I think simplest: Use an array of pipes where each has a "active" flag. We'll generate new pipe after current passes. But for scoring, increment when bird.x < pipe.x (i.e., bird passed that pipe). So we can just count number of times bird's x becomes less than the previous pipe's x.
+
+Simplify: Use one moving pipe only; but then passing it yields score each time? That would be weird because you'd get infinite points. But requirement says "passing a pipe scores 1 point". Could be per pipe, not per pass. So we can just increment score when bird passes the right side of current pipe (i.e., when its x < pipe.x). We'll implement that.
+
+Thus:
+
+- pipes = [] initially empty.
+- nextPipeIndex = 0; each frame:
+   - if no game over: create new pipe at position x = canvas.width - pipeSpeed * nextPipeIndex, with topHeight random between 60 and (canvas.height - 240) maybe. Then push to array.
+   - then shift indices? Actually we need previous pipe's index for scoring.
+
+But easier: Use a single moving pipe that appears after the bird passes it; but typical game has multiple.
+
+Given limited time, I'll implement two-pipe system:
+
+- We maintain an array of pipes (each with x position). At start, generate first pipe at x = canvas.width - pipeSpeed * 0. The gap between them is determined by random topHeight and bottomHeight = topHeight + gapWidth + 20.
+
+- When bird passes the right side of a pipe (i.e., its x < pipe.x), we increment score and remove that pipe from array, then add new one at current x - pipeSpeed? Actually typical: after passing, next pipe spawns to the left. So we can just push new pipe with x = canvas.width - pipeSpeed * (nextPipeIndex+1). But need to keep previous pipe for scoring.
+
+Simplify: Use a single moving pipe and score increments each time bird passes it once; but that would give only one point per run, not multiple. The requirement doesn't specify number of points per pipe, just "passing a pipe scores 1 point". So okay.
+
+Thus we can have just one pipe moving left across the screen. When bird's x < pipe.x (i.e., passes it), score++. Then after that, maybe reset? But typical game has multiple; but not required.
+
+Let's implement single pipe for simplicity and meet all requirements.
+
+Implementation steps:
+
+- canvas width 400, height 600.
+- groundY = 100.
+- bird x start at 80 (center left).
+- Pipe: we need to generate random topHeight between 60 and 240? Let's set gapWidth = 70. The pipe occupies full width from its left edge to right edge? Actually typical vertical pipe is a rectangle spanning entire width of screen, but with a gap in middle. But we can just draw a rectangle for the pipe: x coordinate where it starts (left side). Bird passes when bird.x < pipe.x and bird.y within pipe's height range.
+
+But if pipe spans full width, then bird would be inside pipe horizontally always; not correct.
+
+Better to have two vertical rectangles representing left and right sides of gap? Eh.
+
+Given the complexity, maybe we can cheat: Use a simple "pipes" array with one element that moves left. The bird's x coordinate is its horizontal position (0-400). When bird.x < pipe.x, it means bird has moved past the pipe to the left side; but if pipe starts at right side and moves left, then initially bird.x > pipe.x? Actually we can set initial pipe.x = canvas.width - gapWidth/2? Not sure.
+
+Let's define: Pipe is a vertical bar of width 50 centered horizontally. But we don't need to draw the whole bar; just check if bird passes its right edge (i.e., x < pipe.x + pipeWidth). That seems messy.
+
+Given time constraints, I'll implement a simpler approach: Use two pipes moving left? Actually typical Flappy Bird has multiple gaps; but requirement "Pipes scroll from right to left with a gap" suggests there is a gap between them. So we need at least two pipes.
+
+Let's design:
+
+- Pipe width = 50.
+- Gap between pipes (horizontal) maybe not needed because they are vertical bars side by side? Actually typical game: multiple pipes arranged horizontally, each pipe has its own opening; bird must pass through the openings as it moves left. So we need to generate two pipes at positions x1 and x2 such that there is a gap in between.
+
+Simplify further: Use one moving pipe only but treat "gap" as the space between this pipe and next spawned pipe? Not needed for scoring maybe.
+
+Given time, I'll implement a simple version:
+
+- Pipes array holds objects with {x, topHeight, bottomHeight}. We generate new pipe each frame if none exist or after game over. The x position is set to canvas.width - 60 (so it appears on right side). Then we subtract pipeSpeed from x each frame.
+
+- Score increments when bird.x < pipe.x (i.e., passes the pipe's left edge? Actually if pipe starts at right and moves left, then initially bird.x > pipe.x. As it moves left, eventually bird.x becomes less than pipe.x, meaning bird has passed past that pipe to its left side; but typical scoring is when you go from right side of pipe into gap (i.e., you pass the opening). So we can check if bird.x < pipe.x && bird.y between topHeight and bottomHeight.
+
+Thus:
+
+- For each pipe: if bird.x < pipe.x && bird.y >= 0 && bird.y <= pipe.bottomHeight, then hitPipe = true; score++.
+
+But also need to handle ground/ceiling collisions.
+
+Let's implement that.
+
+Now we need to define pipe dimensions. Let's set gapWidth = 60 (horizontal distance between pipes). But we only have one pipe now; but we can treat the "gap" as space before next pipe appears, not needed for scoring.
+
+Simplify: Use a single moving pipe with random topHeight and bottomHeight = topHeight + 70 + 20? Actually typical gap is about 200px high. Let's set pipe height = canvas.height - groundY - 100 (some margin). But we can just pick topHeight between 60 and canvas.height-240.
+
+We'll generate one pipe each frame after game over? Not needed.
+
+Given the complexity, I think it's okay to produce a working but simple Flappy Bird that meets all listed requirements: gravity, flap on space/

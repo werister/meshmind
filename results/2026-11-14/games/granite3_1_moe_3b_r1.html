@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Game</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let canvas, ctx, bird, pipes, score, over;
+        let gameOver = false;
+        let lastFrame = requestAnimationFrame(gameLoop);
+
+        window.__flappy = { y: 0, score: 0, over: false };
+
+        canvas = document.createElement('canvas');
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext('2d');
+
+        bird = { x: canvas.width / 2, y: 100, width: 30, height: 30 };
+        pipes = [
+            { x: 100, y: canvas.height - 50 },
+            { x: canvas.width - 100, y: canvas.height - 50 }
+        ];
+        score = 0;
+        over = false;
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!over) {
+                bird.y += 5;
+                ctx.fillStyle = 'green';
+                ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+            }
+
+            for (let pipe of pipes) {
+                ctx.fillStyle = 'black';
+                ctx.fillRect(pipe.x, pipe.y, 30, 50);
+            }
+
+            if (bird.y > canvas.height - 50) {
+                over = true;
+                gameOver = true;
+            }
+
+            if (gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.button === 0) {
+                bird.y -= 10;
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target === canvas) {
+                bird.y -= 10;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space' || e.button === 0) {
+                bird.y += 10;
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target === canvas) {
+                gameOver = true;
+                score = 0;
+                over = false;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'R') {
+                gameOver = false;
+                score = 0;
+                over = false;
+            }
+        });
+
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

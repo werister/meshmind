@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="480" height="640"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const flappy = { y: 100, score: 0, over: false };
+
+    const bird = { x: 100, y: 280, dy: 0.5, radius: 20 };
+    const pipeHeight = 80;
+    let pipes = [];
+    let gap = 300;
+    let speed = 4;
+
+    function drawBird() {
+        ctx.beginPath();
+        ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawPipes() {
+        pipes.forEach(pipe => {
+            ctx.beginPath();
+            ctx.moveTo(pipe.x, 0);
+            ctx.lineTo(pipe.x, pipeHeight);
+            ctx.stroke();
+        });
+    }
+
+    function updateBird() {
+        bird.y += bird.dy;
+        if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+            flappy.over = true;
+        }
+        if (Math.abs(bird.x) > gap / 2) {
+            if (bird.y < pipeHeight && Math.abs(bird.x - pipes[pipes.length - 1].x) < pipeHeight / 2) {
+                flappy.over = true;
+            } else {
+                pipes.push({ x: bird.x - gap, height: pipeHeight });
+                if (pipes.length > 6) pipes.shift();
+                score++;
+                flappy.y = 100;
+            }
+        }
+        bird.dy -= 0.5; // Gravity
+    }
+
+    function flapBird() {
+        if (Math.random() * 2 < 1) { // 50% chance to flap
+            bird.dy = -5;
+        }
+    }
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawBird();
+        updateBird();
+        drawPipes();
+
+        flappy.y = flappy.y + (bird.dy * 1000); // Update debug object
+        requestAnimationFrame(gameLoop);
+
+        if (flappy.over) {
+            document.addEventListener('keydown', restartGame);
+            document.addEventListener('click', restartGame);
+        }
+    }
+
+    function restartGame() {
+        bird.x = canvas.width / 2;
+        bird.y = 280;
+        score = 0;
+        flappy = { y: 100, score, over: false };
+    }
+
+    document.addEventListener('keydown', flapBird);
+    canvas.addEventListener('mousedown', flapBird);
+
+    gameLoop();
+</script>
+</body>
+</html>

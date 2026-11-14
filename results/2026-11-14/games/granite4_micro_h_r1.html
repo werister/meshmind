@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Flappy Bird</title></head>
+<body>
+<canvas id="c" width="400" height="600"></canvas>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+const w=c.width,h=c.height,birdY=150,pipeGap=100;
+const bird={x:20,y:birdY,r:10};
+const pipes=[];let score=0,gameOver=false;
+function spawnPipe(){
+  const pipe={x:w,y:Math.random()*h};
+  pipes.push(pipe);
+}
+function drawPipes(){
+  ctx.fillStyle='brown';
+  for(const p of pipes){
+    ctx.fillRect(p.x,p.y,p.w,h);
+    p.x-=5;
+    if(p.x<-p.w){pipes.shift();spawnPipe();}
+    if(p.x>0 && p.y<bird.y+p.r && p.x+w>p.x+bird.r){gameOver=true;}
+    if(p.y+2*h>h && p.y>birdY+p.r){gameOver=true;}
+  }
+}
+function drawBird(){
+  ctx.fillStyle='pink';
+  ctx.beginPath();
+  ctx.arc(bird.x+bird.r,bird.y,bird.r,0,Math.PI*2);
+  ctx.fill();
+}
+function gameLoop(){
+  ctx.clearRect(0,0,w,h);
+  drawPipes();
+  if(!gameOver){
+    drawBird();
+    bird.y+=2;
+    if(!gameOver && !window.__flappy.over){
+      if(!window.__flappy.over){window.__flappy.y=150;window.__flappy.score=0;}
+      if(window.__flappy.over){window.__flappy.over=false;}
+    }
+    if(window.__flappy.over){return;}
+    if(window.__flappy.y!==150){window.__flappy.y=150;}
+  }
+  requestAnimationFrame(gameLoop);
+}
+window.__flappy={y:150,score:0,over:false};
+canvas.addEventListener('click',()=>{bird.y=150;});
+document.addEventListener('keydown',()=>{if(bird.y<h-150){bird.y=150;}})
+gameLoop();
+</script>
+</body>
+</html>

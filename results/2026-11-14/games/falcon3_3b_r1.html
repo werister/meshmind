@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+    <script>
+        window.__flappy = { y: 200, score: 0, over: false };
+
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const bird = { x: 400, y: 200, speed: 0, gravity: 0.5 };
+        const pipes = [];
+        const score = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = '30px Arial';
+            ctx.fillText(`Score: ${score}`, 10, 30);
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 590, canvas.width, 10);
+            ctx.fillStyle = 'white';
+            ctx.fillText(`Score: ${score}`, 10, 590);
+
+            if (window.__flappy.over) {
+                ctx.fillStyle = 'red';
+                ctx.fillText('Game Over', 10, 30);
+                ctx.fillStyle = 'black';
+                ctx.fillText('Press R to Restart', 10, 590);
+            }
+
+            drawPipes();
+            drawBird();
+
+            window.__flappy.y += bird.speed;
+            if (window.__flappy.y > 590) {
+                window.__flappy.over = true;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function drawBird() {
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, 20, 0, Math.PI * 2);
+            ctx.fillStyle = 'blue';
+            ctx.fill();
+        }
+
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                ctx.beginPath();
+                ctx.rect(pipe.x, 0, 10, 590);
+                ctx.fillStyle = 'black';
+                ctx.fill();
+            });
+        }
+
+        function flap() {
+            bird.speed = -50;
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'r') {
+                window.__flappy.score = 0;
+                window.__flappy.over = false;
+                pipes = [];
+                score = 0;
+            }
+        });
+
+        document.addEventListener('mousedown', e => {
+            if (e.button === 0) {
+                flap();
+            }
+        });
+
+        draw();
+    </script>
+</body>
+</html>

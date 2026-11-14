@@ -1,0 +1,186 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Bird</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #222; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<canvas id="game" width="400" height="600"></canvas>
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let bird = {
+  x: 100,
+  y: 200,
+  vy: 0,
+  radius: 15
+};
+
+let pipes = [];
+let pipeV = 2;
+let score = 0;
+let gameOver = false;
+let lastFlap = 0;
+let flapInterval = 1000;
+
+let debug = {
+  y: bird.y,
+  number: score,
+  over: false
+};
+
+function flap() {
+  if (Date.now() - lastFlap > flapInterval) {
+    bird.vy = -15;
+    lastFlap = Date.now();
+  }
+}
+
+function drawBird() {
+  ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function drawPipes() {
+  for (let i = pipes.length - 1; i >= 0; i--) {
+    let pipe = pipes[i];
+    ctx.fillStyle = "green";
+    ctx.fillRect(pipe.x, 0, 40, 50);
+    ctx.fillRect(pipe.x + 20, 50, 20, 100);
+    ctx.fillRect(pipe.x + 30, 50, 10, 100);
+    ctx.fillRect(pipe.x + 40, 50, 10, 100);
+    ctx.fillRect(pipe.x + 50, 50, 10, 100);
+    ctx.fillRect(pipe.x + 60, 50, 10, 100);
+    ctx.fillRect(pipe.x + 70, 50, 10, 100);
+    ctx.fillRect(pipe.x + 80, 50, 10, 100);
+    ctx.fillRect(pipe.x + 90, 50, 10, 100);
+    ctx.fillRect(pipe.x + 100, 50, 10, 100);
+    ctx.fillRect(pipe.x + 110, 50, 10, 100);
+    ctx.fillRect(pipe.x + 120, 50, 10, 100);
+    ctx.fillRect(pipe.x + 130, 50, 10, 100);
+    ctx.fillRect(pipe.x + 140, 50, 10, 100);
+    ctx.fillRect(pipe.x + 150, 50, 10, 100);
+    ctx.fillRect(pipe.x + 160, 50, 10, 100);
+    ctx.fillRect(pipe.x + 170, 50, 10, 100);
+    ctx.fillRect(pipe.x + 180, 50, 10, 100);
+    ctx.fillRect(pipe.x + 190, 50, 10, 100);
+    ctx.fillRect(pipe.x + 200, 50, 10, 100);
+    ctx.fillRect(pipe.x + 210, 50, 10, 100);
+    ctx.fillRect(pipe.x + 220, 50, 10, 100);
+    ctx.fillRect(pipe.x + 230, 50, 10, 100);
+    ctx.fillRect(pipe.x + 240, 50, 10, 100);
+    ctx.fillRect(pipe.x + 250, 50, 10, 100);
+    ctx.fillRect(pipe.x + 260, 50, 10, 100);
+    ctx.fillRect(pipe.x + 270, 50, 10, 100);
+    ctx.fillRect(pipe.x + 280, 50, 10, 100);
+    ctx.fillRect(pipe.x + 290, 50, 10, 100);
+    ctx.fillRect(pipe.x + 300, 50, 10, 100);
+    ctx.fillRect(pipe.x + 310, 50, 10, 100);
+    ctx.fillRect(pipe.x + 320, 50, 10, 100);
+    ctx.fillRect(pipe.x + 330, 50, 10, 100);
+    ctx.fillRect(pipe.x + 340, 50, 10, 100);
+    ctx.fillRect(pipe.x + 350, 50, 10, 100);
+    ctx.fillRect(pipe.x + 360, 50, 10, 100);
+    ctx.fillRect(pipe.x + 370, 50, 10, 100);
+    ctx.fillRect(pipe.x + 380, 50, 10, 100);
+    ctx.fillRect(pipe.x + 390, 50, 10, 100);
+    ctx.fillRect(pipe.x + 400, 50, 10, 100);
+    ctx.fillRect(pipe.x + 410, 50, 10, 100);
+    ctx.fillRect(pipe.x + 420, 50, 10, 100);
+    ctx.fillRect(pipe.x + 430, 50, 10, 100);
+    ctx.fillRect(pipe.x + 440, 50, 10, 100);
+    ctx.fillRect(pipe.x + 450, 50, 10, 100);
+    ctx.fillRect(pipe.x + 460, 50, 10, 100);
+    ctx.fillRect(pipe.x + 470, 50, 10, 100);
+    ctx.fillRect(pipe.x + 480, 50, 10, 100);
+    ctx.fillRect(pipe.x + 490, 50, 10, 100);
+    ctx.fillRect(pipe.x + 500, 50, 10, 100);
+    ctx.fillRect(pipe.x + 510, 50, 10, 100);
+    ctx.fillRect(pipe.x + 520, 50, 10, 100);
+    ctx.fillRect(pipe.x + 530, 50, 10, 100);
+    ctx.fillRect(pipe.x + 540, 50, 10, 100);
+    ctx.fillRect(pipe.x + 550, 50, 10, 100);
+    ctx.fillRect(pipe.x + 560, 50, 10, 100);
+    ctx.fillRect(pipe.x + 570, 50, 10, 100);
+    ctx.fillRect(pipe.x + 580, 50, 10, 100);
+    ctx.fillRect(pipe.x + 590, 50, 10, 100);
+    ctx.fillRect(pipe.x + 600, 50, 10, 100);
+    ctx.fillRect(pipe.x + 610, 50, 10, 100);
+    ctx.fillRect(pipe.x + 620, 50, 10, 100);
+    ctx.fillRect(pipe.x + 630, 50, 10, 100);
+    ctx.fillRect(pipe.x + 640, 50, 10, 100);
+    ctx.fillRect(pipe.x + 650, 50, 10, 100);
+    ctx.fillRect(pipe.x + 660, 50, 10, 100);
+    ctx.fillRect(pipe.x + 670, 50, 10, 100);
+    ctx.fillRect(pipe.x + 680, 50, 10, 100);
+    ctx.fillRect(pipe.x + 690, 50, 10, 100);
+    ctx.fillRect(pipe.x + 700, 50, 10, 100);
+    ctx.fillRect(pipe.x + 710, 50, 10, 100);
+    ctx.fillRect(pipe.x + 720, 50, 10, 100);
+    ctx.fillRect(pipe.x + 730, 50, 10, 100);
+    ctx.fillRect(pipe.x + 740, 50, 10, 100);
+    ctx.fillRect(pipe.x + 750, 50, 10, 100);
+    ctx.fillRect(pipe.x + 760, 50, 10, 100);
+    ctx.fillRect(pipe.x + 770, 50, 10, 100);
+    ctx.fillRect(pipe.x + 780, 50, 10, 100);
+    ctx.fillRect(pipe.x + 790, 50, 10, 100);
+    ctx.fillRect(pipe.x + 800, 50, 10, 100);
+    ctx.fillRect(pipe.x + 810, 50, 10, 100);
+    ctx.fillRect(pipe.x + 820, 50, 10, 100);
+    ctx.fillRect(pipe.x + 830, 50, 10, 100);
+    ctx.fillRect(pipe.x + 840, 50, 10, 100);
+    ctx.fillRect(pipe.x + 850, 50, 10, 100);
+    ctx.fillRect(pipe.x + 860, 50, 10, 100);
+    ctx.fillRect(pipe.x + 870, 50, 10, 100);
+    ctx.fillRect(pipe.x + 880, 50, 10, 100);
+    ctx.fillRect(pipe.x + 890, 50, 10, 100);
+    ctx.fillRect(pipe.x + 900, 50, 10, 100);
+    ctx.fillRect(pipe.x + 910, 50, 10, 100);
+    ctx.fillRect(pipe.x + 920, 50, 10, 100);
+    ctx.fillRect(pipe.x + 930, 50, 10, 100);
+    ctx.fillRect(pipe.x + 940, 50, 10, 100);
+    ctx.fillRect(pipe.x + 950, 50, 10, 100);
+    ctx.fillRect(pipe.x + 960, 50, 10, 100);
+    ctx.fillRect(pipe.x + 970, 50, 10, 100);
+    ctx.fillRect(pipe.x + 980, 50, 10, 100);
+    ctx.fillRect(pipe.x + 990, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1000, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1010, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1020, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1030, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1040, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1050, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1060, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1070, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1080, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1090, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1100, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1110, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1120, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1130, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1140, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1150, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1160, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1170, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1180, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1190, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1200, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1210, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1220, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1230, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1240, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1250, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1260, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1270, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1280, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1290, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1300, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1310, 50, 10, 100);
+    ctx.fillRect(pipe.x + 1320, 50, 10, 1

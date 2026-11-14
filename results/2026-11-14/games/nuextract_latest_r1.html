@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        let debug = { y: 100, number: 0, score: 0, over: false };
+        let birdY = 100;
+        let pipeX = 0;
+        let pipeGap = 100;
+        let pipeY = 0;
+        let pipeSpeed = 5;
+        let score = 0;
+        let isGameOver = false;
+        let isGameStarted = false;
+        let isFlap = false;
+        let isRestart = false;
+        let canvas;
+        let ctx;
+        let lastFrame;
+        let gameLoop;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeX;
+        let pipeGap;
+        let pipeY;
+        let pipeXSpeed;
+        let pipeYSpeed;
+        let pipeGap;
+        let pipeX;
+        let pipeY;
+        let pipeGap;
+        let pipeX;
+        let pipeY;
+        let pipeGap;
+        let pipeX;
+        let pipeY;
+        let pipeGap;
+        let pipeX;
+        let pipeY;
+        let pipeGap;
+        let pipeX;
+        let pipeY;
+        let pipeY;
+        let pipeX;
+        let pipeY;
+        let pipeX;
+        let pipeY;
+        let pipeX;
+        letX;
+        let pipeX;
+        letX;
+        letX;
+        letX;
+        letX;
+        letX:
+        letX;
+        with.
+       
+       
+       
+        <code.
+       
+       
+       
+       
+       
+       ndefine
+       
+       
+       
+       00000reversible
+       0r;
+       
+       
+       0000ub.
+       
+
+noun.
+
+
+1.
+
+:
+
+.
+
+
+:0.
+
+
+.
+
+ 
+
+
+.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
+
+
+lyt.
+
+
+s.
+
+.
+
+
+
+
+
+
+
+
+n:n.
+
+lyt:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+   ndescribe
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+offer:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:n:
+
+
+  
+:
+
+ 
+  
+  
+   
+  
+  
+
+def,0000lintergreetle.
+
+
+
+ 
+
+ 
+
+.
+from.
+
+.
+
+
+defx
+
+
+
+
+
+
+.

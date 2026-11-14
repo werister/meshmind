@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+  canvas {
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let bird = { x: 50, y: 200 };
+let pipes = [];
+let pipeInterval = null;
+let score = 0;
+let gameOver = false;
+
+function drawBird() {
+  ctx.fillStyle = 'blue';
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, 20, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawPipes() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = pipes.length - 1; i >= 0; i--) {
+    const p = pipes[i];
+    ctx.fillStyle = 'green';
+    ctx.fillRect(p.x, p.y, 80, 20);
+    if (p.y > 0) {
+      p.y -= 1;
+    } else {
+      pipes.splice(i, 1);
+    }
+  }
+}
+
+function updateBird() {
+  if (!gameOver) {
+    bird.y += 1;
+    if (bird.y >= canvas.height - 40) {
+      gameOver = true;
+    }
+  }
+}
+
+function updatePipes() {
+  if (pipeInterval) {
+    clearInterval(pipeInterval);
+  }
+  pipeInterval = setInterval(() => {
+    const p = { x: canvas.width - 40, y: Math.random() * (canvas.height - 40) };
+    pipes.push(p);
+  }, 1000);
+}
+
+function checkCollision() {
+  if (gameOver) return;
+  for (let p of pipes) {
+    if (bird.x < p.x + 80 && bird.x + 20 > p.x && bird.y + 20 > p.y && bird.y - 20 < p.y + 20) {
+      gameOver = true;
+    }
+  }
+}
+
+function handleInput() {
+  if (gameOver) return;
+  if (canvas.width / 2 < bird.x && bird.y - 40 < canvas.height) {
+    bird.y -= 10;
+  }
+  if (canvas.width / 2 > bird.x) {
+    bird.y += 10;
+  }
+  if (canvas.width / 2 < bird.x) {
+    bird.x = canvas.width / 2;
+  }
+  if (canvas.width / 2 > bird.x) {
+    bird.x = canvas.width / 2;
+  }
+}
+
+function restart() {
+  score = 0;
+  gameOver = false;
+  pipes = [];
+  bird = { x: 50, y: 200 };
+  document.body.removeChild(document.getElementById('gameOver'));
+}
+
+function gameLoop() {
+  updateBird();
+  updatePipes();
+  checkCollision();
+  drawBird();
+  drawPipes();
+  handleInput();
+  requestAnimationFrame(gameLoop);
+}
+
+window.__flappy = { y: bird.y, score: score, over: gameOver };
+
+document.addEventListener('keydown', e => {
+  if (e.key === ' ') {
+    bird.y -= 10;
+  } else if (e.key === 'ArrowUp') {
+    bird.y += 10;
+  }
+});
+
+document.addEventListener('click', restart);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'r') {
+    restart();
+  }
+});
+
+gameLoop();
+</script>
+</body>
+</html>

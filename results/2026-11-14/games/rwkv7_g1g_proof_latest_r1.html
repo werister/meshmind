@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; background: #000; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const windowWidth = canvas.width;
+        const windowHeight = canvas.height;
+        // Game state
+        let gameRunning = true;
+        let score = 0;
+        let birdY = 50; // pixels from top of screen (50 is center)
+        let birdSpeed = 5; // pixels per frame (gravity)
+        let pipeGap = 100; // pixels between pipes
+        let pipeX1, pipeX2; // x positions of left and right pipes
+        // Pipes: [x1, y1, x2, y2] where y1 < y2
+        const pipes = [
+            { x: 0, y: 0 },
+            { x: 0, y: windowHeight - 50 }
+        ];
+        let pipeIndex = 0; // index of current pipe being drawn
+        // Flappy Bird object for debugging
+        const window__flappy = {
+            y: birdY,
+            score: score,
+            over: false
+        };
+        // Animation loop (requestAnimationFrame)
+        function animate() {
+            if (!gameRunning) return;
+            requestAnimationFrame(animate);
+            update();
+            draw();
+        }
+        function update() {
+            // Update bird position based on gravity and speed
+            birdY += birdSpeed;
+            
+            // Check for collision with ground (bottom of screen)
+            if (birdY >= windowHeight - 50) {
+                gameRunning = false;
+                score = 0;
+                over = true;
+                return;
+            }
+            
+            // Check for collision with pipes
+            for (let i = 0; i < pipes.length; i++) {
+                const pipe = pipes[i];
+                if (pipeX1 <= windowX && pipeX2 >= windowX) {
+                    // Bird collides with pipe
+                    birdY = 50; // reset to top of screen
+                    score = 0;
+                    over = true;
+                    return;
+                }
+            }
+            
+            // Check for collision with ceiling (top of screen)
+            if (birdY <= 0) {
+                gameRunning = false;
+                score = 0;
+                over = true;
+                return;
+            }
+        }
+        function draw() {
+            // Clear canvas with background color (dark gray)
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, windowWidth, windowHeight);
+            
+            // Draw pipes (horizontal lines)
+            for (let i = 0; i < pipes.length; i++) {
+                const pipe = pipes[i];
+                ctx.fillStyle = '#333';
+                ctx.fillRect(pipeX1, pipe.y - 10, pipeX2 - pipeX1, 20); // vertical line for gap
+            }
+            
+            // Draw bird
+            ctx.fillStyle = '#FF0000'; // red bird
+            ctx.beginPath();
+            ctx.arc(birdX, birdY, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw score and game over message if needed (not shown for simplicity)
+        }
+        // Update game state when spacebar or click is pressed
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'KeyR') {
+                gameRunning = true;
+                birdY = 50; // reset bird position
+                score = 0; // reset score
+                over = false; // reset game over state
+            }
+        });
+        // Start the game loop
+        animate();
+    </script>
+</body>
+</html>

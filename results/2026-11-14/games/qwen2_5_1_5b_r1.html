@@ -1,0 +1,107 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bird</title>
+<style>
+body { margin: 0; overflow: hidden; }
+canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<script>
+window.__flappy = { y: 100, score: 0, over: false };
+let bird = { x: 20, y: 100, dy: 0, width: 20, height: 20, color: "blue" };
+let pipes = [];
+let score = 0;
+let gameOver = false;
+
+function draw() {
+    if (gameOver) {
+        if (window.__flappy.over) {
+            window.__flappy.over = false;
+            score = 0;
+            pipes = [];
+        }
+        window.__flappy.score++;
+    }
+    window.__flappy.y -= 2;
+    if (window.__flappy.y < 0) window.__flappy.y = 0;
+    if (pipes.length > 0) {
+        pipes[0].x -= 2;
+        if (pipes[0].x < -20) pipes.shift();
+    }
+    if (bird.y > 580) gameOver = true;
+    if (bird.y < 0) gameOver = true;
+    if (bird.y > 580) gameOver = true;
+    if (bird.y < 0) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y) gameOver = true;
+    if (pipes.length > 0 && pipes[0].x < bird.x + bird.width && pipes[0].y < bird.y + bird.height && pipes[0].y > bird.y

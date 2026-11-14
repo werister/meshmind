@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird Game</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const bird = { x: 50, y: 50, vy: 0, image: new Image() };
+        const pipes = [];
+        let score = 0;
+        let gameOver = false;
+        let lastFrame = 0;
+
+        bird.image.src = 'bird.png'; // Replace with your image path
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bird.image, bird.x, bird.y);
+            pipes.forEach(p => {
+                ctx.drawImage(p.image, p.x, p.y);
+                ctx.drawImage(p.image, p.x + p.image.width, p.y);
+                if (p.passed) score++;
+                if (p.x + p.image.width < 0) p.x = canvas.width;
+            });
+            ctx.fillText(`Score: ${score}`, 10, 20);
+            if (gameOver) {
+                ctx.fillText('Game Over', canvas.width / 2 - 50, canvas.height / 2);
+                if (new Date().getTime() - lastFrame > 1000) {
+                    location.reload();
+                }
+            }
+            window.__flappy = { y: bird.y, score, over: gameOver };
+            requestAnimationFrame(draw);
+        }
+
+        function update() {
+            if (!gameOver) {
+                bird.vy += 0.5;
+                bird.y += bird.vy;
+                pipes.forEach(p => p.x -= 1);
+                if (pipes.length < 2) {
+                    const gap = canvas.height - 100;
+                    const pipeHeight = canvas.height * 0.5;
+                    pipes.push({ x: canvas.width, y: Math.random() * gap, image: new Image(), passed: false });
+                    pipes.push({ x: canvas.width, y: Math.random() * gap + pipeHeight, image: new Image(), passed: false });
+                }
+                if (bird.y > canvas.height - 30 || bird.y < 0) gameOver = true;
+                if (pipes.some(p => p.x + p.image.width < 0)) {
+                    bird.y = 50;
+                    bird.vy = 0;
+                    score = 0;
+                    gameOver = true;
+                }
+                for (let i = 0; i < pipes.length; i++) {
+                    if (bird.x + 30 > pipes[i].x && bird.x < pipes[i].x + pipes[i].image.width) {
+                        if (bird.y < pipes[i].y || bird.y + 30 > pipes[i].y + pipes[i].image.height) {
+                            gameOver = true;
+                        }
+                    }
+                }
+            }
+            lastFrame = new Date().getTime();
+        }
+
+        canvas.addEventListener('click', () => {
+            bird.vy = -10;
+        });
+
+        canvas.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                bird.vy = -10;
+            }
+        });
+
+        canvas.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyR') {
+                location.reload();
+            }
+        });
+
+        draw();
+    </script>
+</body>
+</html>

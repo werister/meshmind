@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flappy Bird</title>
+<style>
+  body { margin: 0; padding: 0; background: #000; }
+</style>
+</head>
+<body>
+<canvas id="c" width="W" height="H"></canvas>
+<script>
+const c = document.getElementById("c");
+c.width = W = 640;
+c.height = H = 480;
+const bird = { x: 320, y: 90, size: 30, speed: 0, flap: () => { bird.y -= bird.speed; bird.speed = -600; } };
+const pipes = [];
+let score = 0;
+let gameOver = false;
+let run = true;
+let anim = 0;
+
+function draw() {
+  c.clearRect(0, 0, c.width, c.height);
+  if (!run) {
+    c.fillStyle = "#fff"; c.font = "bold 48px monospace"; c.textAlign = "center"; c.textBaseline = "middle";
+    c.fillText("GAME OVER", c.width / 2, c.height / 2);
+    c.font = "30px monospace"; c.textAlign = "center"; c.textBaseline = "top";
+    c.fillText("Press R to restart", c.width / 2, c.height / 2 + 100);
+  } else {
+    c.fillStyle = "#fff"; c.font = "bold 48px monospace"; c.textAlign = "center"; c.textBaseline = "middle";
+    c.fillText(`Score: ${score}`, c.width / 2, c.height / 2);
+    c.font = "30px monospace"; c.textAlign = "center"; c.textBaseline = "top";
+    c.fillText("Press R to restart", c.width / 2, c.height / 2 + 100);
+  }
+  c.fillStyle = "#000"; c.strokeRect(0, 0, c.width, c.height);
+  // Draw pipes
+  for (let p of pipes) {
+    const gap = 40;
+    c.fillStyle = p.color ? p.color : "#333";
+    c.fillRect(p.x, p.top, 20, p.length);
+    c.fillStyle = "#fff"; c.font = "bold 24px monospace"; c.textAlign = "center"; c.textBaseline = "middle";
+    c.fillText("PIPE", p.x + 10, p.top + p.length / 2);
+  }
+  // Draw bird
+  c.fillStyle = "#fff"; c.beginPath(); c.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2); c.fill();
+  // Draw ground
+  c.fillStyle = "#000"; c.fillRect(0, 420, c.width, 60);
+  // Draw ceiling
+  c.fillStyle = "#000"; c.fillRect(0, 0, c.width, 60);
+  // Draw clouds
+  c.fillStyle = "#fff"; c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  // Draw clouds
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c.arc(320, 60, 20, 0, Math.PI * 2); c.stroke();
+  c.beginPath();
+  c
