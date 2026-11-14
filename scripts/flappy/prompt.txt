@@ -1,0 +1,16 @@
+Write a complete, self-contained, single-file HTML5 Flappy Bird game. Reply with HTML code only: no explanation, no markdown fences, no commentary.
+
+Do not skip any requirement, including requirement 0 (the debug object tested automatically).
+
+Requirements (all must work):
+0. Expose a debug object for automated testing, updated every frame as the LAST line of the game loop:
+   window.__flappy = { y: <bird y in pixels, number>, score: <current score, number>, over: <true after game over, else false> }
+1. A <canvas> element showing the game, animated with requestAnimationFrame.
+2. A bird affected by gravity: it falls when the player does nothing.
+3. Flap: pressing Space or clicking the canvas makes the bird rise.
+4. Pipes scroll from right to left with a gap; passing a pipe scores 1 point.
+5. Collision with a pipe, the ground, or the ceiling ends the run (game over).
+6. After game over, pressing R or clicking restarts a fresh run (score back to 0).
+7. Keep everything inline in this one file: no external scripts, images, fonts, or network. No audio needed.
+
+Plain JavaScript only (no TypeScript, no modules, no build step). Keep it compact but complete and working.

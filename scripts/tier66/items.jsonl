@@ -1,0 +1,66 @@
+{"id": "T1-01", "tier": 1, "label": "yes", "question": "Is water's chemical formula H2O?"}
+{"id": "T1-02", "tier": 1, "label": "no", "question": "Is the Moon made of cheese?"}
+{"id": "T1-03", "tier": 1, "label": "yes", "question": "Is Paris the capital of France?"}
+{"id": "T1-04", "tier": 1, "label": "no", "question": "Is 15 divisible by 4?"}
+{"id": "T1-05", "tier": 1, "label": "yes", "question": "Do birds lay eggs?"}
+{"id": "T1-06", "tier": 1, "label": "no", "question": "Is London the capital of Italy?"}
+{"id": "T1-07", "tier": 1, "label": "yes", "question": "Is 7 a prime number?"}
+{"id": "T1-08", "tier": 1, "label": "no", "question": "Is gold's chemical symbol Ag?"}
+{"id": "T1-09", "tier": 1, "label": "yes", "question": "Does the Earth orbit the Sun?"}
+{"id": "T1-10", "tier": 1, "label": "no", "question": "Did humans first land on the Moon in 1959?"}
+{"id": "T1-11", "tier": 1, "label": "yes", "question": "Is oxygen a gas at room temperature?"}
+{"id": "T1-12", "tier": 1, "label": "no", "question": "Is a tomato a root vegetable?"}
+{"id": "T1-13", "tier": 1, "label": "yes", "question": "Are there 7 days in a week?"}
+{"id": "T1-14", "tier": 1, "label": "no", "question": "Does the Sun orbit the Earth?"}
+{"id": "T1-15", "tier": 1, "label": "yes", "question": "Is Shakespeare the author of Hamlet?"}
+{"id": "T1-16", "tier": 1, "label": "no", "question": "Is 1 a prime number?"}
+{"id": "T1-17", "tier": 1, "label": "yes", "question": "Does ice float on liquid water?"}
+{"id": "T1-18", "tier": 1, "label": "no", "question": "Are penguins able to fly?"}
+{"id": "T1-19", "tier": 1, "label": "yes", "question": "Is 100 degrees Celsius the boiling point of water at sea level?"}
+{"id": "T1-20", "tier": 1, "label": "no", "question": "Is French the official language of Brazil?"}
+{"id": "T1-21", "tier": 1, "label": "yes", "question": "Are mammals warm-blooded?"}
+{"id": "T1-22", "tier": 1, "label": "no", "question": "Does water boil at 50 degrees Celsius at sea level?"}
+{"id": "T2-01", "tier": 2, "label": "yes", "question": "Is the atomic number of carbon 6?"}
+{"id": "T2-02", "tier": 2, "label": "no", "question": "Is the Great Wall of China visible from the Moon with the naked eye?"}
+{"id": "T2-03", "tier": 2, "label": "yes", "question": "Is Antarctica the largest desert in the world by area?"}
+{"id": "T2-04", "tier": 2, "label": "no", "question": "Is mercury (the element) a gas at room temperature?"}
+{"id": "T2-05", "tier": 2, "label": "yes", "question": "Did the Berlin Wall fall in 1989?"}
+{"id": "T2-06", "tier": 2, "label": "no", "question": "Did Albert Einstein fail mathematics as a schoolchild?"}
+{"id": "T2-07", "tier": 2, "label": "yes", "question": "Is a hexagon a six-sided polygon?"}
+{"id": "T2-08", "tier": 2, "label": "no", "question": "Is Mount Everest the tallest mountain measured from base to peak?"}
+{"id": "T2-09", "tier": 2, "label": "yes", "question": "Is Java (the island) part of Indonesia?"}
+{"id": "T2-10", "tier": 2, "label": "no", "question": "Is 91 a prime number?"}
+{"id": "T2-11", "tier": 2, "label": "yes", "question": "Is the speed of light approximately 300,000 km/s?"}
+{"id": "T2-12", "tier": 2, "label": "no", "question": "Is the capital of Australia Sydney?"}
+{"id": "T2-13", "tier": 2, "label": "yes", "question": "Are octopuses mollusks?"}
+{"id": "T2-14", "tier": 2, "label": "no", "question": "Do humans have five senses and no more?"}
+{"id": "T2-15", "tier": 2, "label": "yes", "question": "Is 144 a perfect square?"}
+{"id": "T2-16", "tier": 2, "label": "no", "question": "Is glass a slow-flowing liquid?"}
+{"id": "T2-17", "tier": 2, "label": "yes", "question": "Is the Nile generally considered one of the two longest rivers in the world?"}
+{"id": "T2-18", "tier": 2, "label": "no", "question": "Was the telephone invented before the telegraph?"}
+{"id": "T2-19", "tier": 2, "label": "yes", "question": "Is helium lighter than air?"}
+{"id": "T2-20", "tier": 2, "label": "no", "question": "Is a dolphin a fish?"}
+{"id": "T2-21", "tier": 2, "label": "yes", "question": "Does the adult human body have 206 bones?"}
+{"id": "T2-22", "tier": 2, "label": "no", "question": "Is it true that lightning never strikes the same place twice?"}
+{"id": "T3-01", "tier": 3, "label": "yes", "question": "Is 2 the only even prime number?"}
+{"id": "T3-02", "tier": 3, "label": "no", "question": "Is 1,729 a prime number?"}
+{"id": "T3-03", "tier": 3, "label": "yes", "question": "Is the Eiffel Tower taller in summer than in winter?"}
+{"id": "T3-04", "tier": 3, "label": "no", "question": "Is the Danube the longest river in Europe?"}
+{"id": "T3-05", "tier": 3, "label": "yes", "question": "Do snails have teeth?"}
+{"id": "T3-06", "tier": 3, "label": "no", "question": "Did the ancient Romans use the number zero?"}
+{"id": "T3-07", "tier": 3, "label": "yes", "question": "Is the unicorn the national animal of Scotland?"}
+{"id": "T3-08", "tier": 3, "label": "no", "question": "Is blood blue inside the body before it contacts air?"}
+{"id": "T3-09", "tier": 3, "label": "yes", "question": "Can hot water freeze faster than cold water under some conditions?"}
+{"id": "T3-10", "tier": 3, "label": "no", "question": "Are bulls enraged specifically by the color red?"}
+{"id": "T3-11", "tier": 3, "label": "yes", "question": "Is Lake Baikal the world's deepest freshwater lake?"}
+{"id": "T3-12", "tier": 3, "label": "no", "question": "Is the Dead Sea a sea?"}
+{"id": "T3-13", "tier": 3, "label": "yes", "question": "Is 0 an even number?"}
+{"id": "T3-14", "tier": 3, "label": "no", "question": "Did Vikings wear horned helmets in battle?"}
+{"id": "T3-15", "tier": 3, "label": "yes", "question": "Are there more possible chess games than atoms in the observable universe?"}
+{"id": "T3-16", "tier": 3, "label": "no", "question": "Is the word 'robot' derived from ancient Greek?"}
+{"id": "T3-17", "tier": 3, "label": "yes", "question": "Is the word 'nerd' first recorded in a Dr. Seuss book?"}
+{"id": "T3-18", "tier": 3, "label": "no", "question": "Is 0.999... (repeating) strictly less than 1?"}
+{"id": "T3-19", "tier": 3, "label": "yes", "question": "Do wombat droppings have a cube-like shape?"}
+{"id": "T3-20", "tier": 3, "label": "no", "question": "Is Pluto currently classified as a planet by the IAU?"}
+{"id": "T3-21", "tier": 3, "label": "yes", "question": "Is the shortest verse in the English Bible 'Jesus wept'?"}
+{"id": "T3-22", "tier": 3, "label": "no", "question": "Is the human gene count greater than that of a grain of rice?"}

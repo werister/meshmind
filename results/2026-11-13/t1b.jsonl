@@ -1,0 +1,4 @@
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "apples", "ok": false, "note": "empty", "wall_s": 278.9, "raw": ""}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "train", "ok": true, "note": "lastnum=4", "wall_s": 46.0, "raw": "4"}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "syllogism", "ok": false, "note": "empty", "wall_s": 272.2, "raw": ""}
+{"model": "qwen3:4b-thinking-2507-q4_K_M", "item": "batball", "ok": true, "note": "lastnum=5", "wall_s": 67.7, "raw": "5"}
